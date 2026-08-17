@@ -1,0 +1,26 @@
+generated: '2026-08-17'
+method: searched
+source: openapi/switstack-switcloud-openapi.yml, openapi/switstack-swittest-openapi.yml
+docs: https://docs.switstack.io/switcloud/security_authentication/
+schemes:
+- name: OAuth2PasswordBearer
+  source: openapi/switstack-switcloud-openapi.yml
+  flows:
+  - flow: password
+    tokenUrl: auth/token
+  - flow: clientCredentials
+    tokenUrl: auth/token
+    source: https://docs.switstack.io/switcloud/security_authentication/
+- name: OAuth2PasswordBearer
+  source: openapi/switstack-swittest-openapi.yml
+  flows:
+  - flow: password
+    tokenUrl: auth/token
+scopes: []
+scope_count: 0
+note: >-
+  Switstack publishes OAuth 2.0 but no scope vocabulary. Both OpenAPI documents declare the password flow with an
+  empty `scopes` map, and the Switcloud security & authentication page describes authorization as three named roles
+  (Super Admin, Organization Admin, Simple User) rather than delegatable scopes; Swittest documents two (Data,
+  Full). There is no published scopes/permissions reference page. The roles are recorded in
+  authentication/switstack-authentication.yml under authorization_model — an honest zero here, not an omission.

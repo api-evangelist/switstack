@@ -42,6 +42,29 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Switstack is a company surfaced as a portfolio company of serena and added to the API Evangelist network as a stub for enrichment. Sector: fintech-insurtech. This profile is a lead awaiting the enrichment pipeline.
+Switstack is a payment infrastructure company building software-defined EMV acceptance for physical retail. It ships
+three products: **switstack moka**, a source-available EMV Level 2 kernel stack with brand Letters of Compliance;
+**Switcloud**, a hosted "universal compliance infrastructure" that abstracts EMV L2 execution and centralizes estate
+(organization/merchant/store/POI) and EMV configuration (CAPK, BIN, CRL, kernel parameter) management behind a REST API;
+and **Swittest**, a managed EMV functional test-automation service for labs and developers certifying card-present
+applications. The platform is terminal-agnostic and L2-stack agnostic — one L3 application runs across Android COTS
+tap-to-pay devices and PCI-PTS terminals via a GLA adapter layer — and Switstack supplies pre-certified PCI MPoC
+software and service components to shrink certification scope.
+
+## What this profile holds
+
+Two complete OpenAPI 3.1.0 documents, harvested from Switstack's own published API reference:
+
+| API | Version | Operations | Reference |
+|---|---|---|---|
+| Switcloud API | 2.28.0 | 106 across 40 paths | https://docs.switstack.io/api/switcloud/api/switcloud-srv/ |
+| Swittest API | 0.13.0 | 22 across 22 paths | https://docs.switstack.io/api/swittest/api/swittest-srv/ |
+
+Alongside them: the authentication profile, API conventions, error catalogue, entity-relationship model, lifecycle,
+conformance (web-API standards and the EMV/PCI MPoC scope Switstack publishes), packages read from Switstack's own
+public Sonatype Nexus, the Swittest CLI command surface, sandbox and test-tooling, five Agent Skills and five Arazzo
+workflows grounded in verified operationIds, plus probed records of what is **not** published (no pricing page, no
+changelog, no status page, no terms or privacy policy, no `/.well-known/*` document, no agent card, and — despite the
+homepage headline — no MCP server).
 
 Source: portfolio company of [serena](https://github.com/api-evangelist/serena) — https://www.switstack.io/

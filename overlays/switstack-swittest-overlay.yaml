@@ -1,0 +1,95 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Switstack Swittest API
+  version: 1.0.0
+extends: openapi/switstack-swittest-openapi.yml
+x-provenance:
+  generated: '2026-08-17'
+  method: generated
+  source: >-
+    Derived from the verbatim spec at openapi/_original/switstack-swittest-openapi.json, harvested from the Redoc state
+    embedded in https://docs.switstack.io/api/swittest/api/swittest-srv/ on 2026-08-17, plus the Swittest docs cited in
+    each action. The harvested document is never mutated.
+actions:
+- target: $.info
+  description: Record provenance and rating context.
+  update:
+    x-apievangelist-source: https://docs.switstack.io/api/swittest/api/swittest-srv/
+    x-apievangelist-harvested: '2026-08-17'
+    x-apievangelist-provider: Switstack
+    x-apievangelist-product: Swittest
+    x-apievangelist-operations: 22
+    x-apievangelist-prerelease: true
+- target: $.info
+  description: Add the contact block the spec omits, using the address published in info.description.
+  update:
+    contact:
+      name: Switstack
+      email: contact@switstack.io
+      url: https://docs.switstack.io/swittest/
+- target: $
+  description: >-
+    Do NOT add a concrete server. Swittest is deployed as separate per-customer instances — "Switstack host several
+    instances of the Swittest service for customers, partners, etc... Please contact a Switstack representative to
+    receive your access details" (https://docs.switstack.io/swittest/setup/) — and the Swittest L3 app takes the host
+    on its Settings screen. Declare a templated server variable instead of guessing a hostname.
+  update:
+    servers:
+    - url: https://{swittest_instance}
+      description: >-
+        Per-customer Swittest instance. Switstack does not publish a shared base URL; the host is supplied with your
+        access details and entered in the Swittest L3 app's Settings screen.
+      variables:
+        swittest_instance:
+          default: swittest-instance.example
+          description: >-
+            The hostname of the Swittest instance provisioned for your organization. API Evangelist did not invent or
+            probe a value — none is published.
+      x-apievangelist-verified: false
+- target: $
+  description: Apply the security scheme at the document root; it is declared per operation but not at the root.
+  update:
+    security:
+    - OAuth2PasswordBearer: []
+- target: $
+  description: Name and describe the six tag groups; the document declares no tags[] block.
+  update:
+    tags:
+    - name: Auth
+      description: OAuth 2.0 token issue, refresh and revoke.
+    - name: Config
+      description: Browse and load Switstack configuration files.
+    - name: Suite
+      description: Discover EMV test suites, addressable by name or index.
+    - name: Test
+      description: >-
+        Read individual tests and their config/vcard, run a test selection with SSE streaming, or submit an ad-hoc
+        custom test.
+    - name: Validation
+      description: Verify custom test suites, tests, and BIN/CAPK/CR/EMV scope documents before running them.
+    - name: Parser
+      description: Parse Eval+ log files, TLV strings and EMV tags.
+- target: $.paths['/api/tests/{test_suite_name_or_index}/{test_selection}'].post
+  description: >-
+    Mark the streaming contract explicitly. This is Switstack's only event surface and there is no AsyncAPI document
+    describing it.
+  update:
+    x-apievangelist-streaming: sse
+    x-apievangelist-event-fields: [data, event, id, retry]
+    x-apievangelist-verbose-levels:
+      0: Status and errors only
+      1: Level 0 plus payment data and log data sets
+      2: Level 1 plus parsed authorization TLV in payment data
+      3: 'Level 2 plus parsed DF8129, DF8115 and DF8116 tags'
+- target: $.components.schemas.HTTPValidationError
+  description: Name the error envelope.
+  update:
+    description: >-
+      The only error envelope this API declares. Returned with HTTP 422 on all 22 operations, with `input` and `ctx`
+      populated in addition to loc/msg/type. No other status is declared — see errors/switstack-problem-types.yml.
+- target: $.components.schemas.ErrorIndicationSchema
+  description: Distinguish an in-band test failure from an HTTP error.
+  update:
+    description: >-
+      Per-test failure detail carried INSIDE a 200 test-result payload or an SSE event — not an HTTP error body. An
+      agent must read this (and TestStatusEnum) to know a test failed.

@@ -1,0 +1,100 @@
+generated: '2026-08-17'
+method: derived
+status: candidate
+source: openapi/switstack-switcloud-openapi.yml, openapi/switstack-swittest-openapi.yml
+deployment:
+  mode: none
+  auth: oauth
+  verified: probed
+  note: >-
+    Switstack ADVERTISES an MCP surface but does not publish one. The homepage headline reads "Choose a MCP-based
+    workflow for agent-initiated payments rather than switcloud easy-to-use set of APIs" under a section titled
+    "MCP-based Payment Workflow", and the hero copy sells "an agentic layer to orchestrate in-store payment
+    solutions". Nothing behind it is reachable: there is no MCP page in the docs (docs.switstack.io has zero
+    occurrences of "MCP"), no endpoint in either OpenAPI, no server in the GitHub org, and every candidate host is
+    NXDOMAIN or rejects the JSON-RPC POST. mode is therefore `none` and the tools below are OUR derivation from the
+    published REST operations, not Switstack's tool list. No endpoint URL is recorded because none exists — guessing
+    one would read as a verified agent surface.
+claim:
+  advertised: true
+  source: https://www.switstack.io/
+  quote: >-
+    Build a merchant's payment solution within days. Choose a MCP-based workflow for agent-initiated payments rather
+    than switcloud easy-to-use set of APIs.
+  documented: false
+probes:
+- {url: 'https://mcp.switstack.io/mcp', method: 'POST tools/list', status: 0, note: NXDOMAIN}
+- {url: 'https://mcp.switstack.io/', method: 'POST tools/list', status: 0, note: NXDOMAIN}
+- {url: 'https://api.switstack.io/mcp', method: 'POST tools/list', status: 0, note: NXDOMAIN}
+- {url: 'https://mcp.switcloud.switstack.io/mcp', method: 'POST tools/list', status: 0, note: NXDOMAIN}
+- {url: 'https://www.switstack.io/mcp', method: 'POST tools/list', status: 405, note: 'Webflow site, POST not allowed'}
+- {url: 'https://docs.switstack.io/mcp/', method: 'POST tools/list', status: 405, note: 'GitHub Pages, POST not allowed'}
+- {url: 'https://docs.switstack.io/.well-known/agent-card.json', method: GET, status: 404}
+- {url: 'https://www.switstack.io/.well-known/agent-card.json', method: GET, status: 404}
+server:
+  name: switstack
+  transport: null
+  url: null
+tools:
+- name: switcloud_list_merchants
+  description: List merchants in the caller's organization.
+  source_operation: openapi/switstack-switcloud-openapi.yml#list_merchants
+- name: switcloud_create_merchant
+  description: Create a merchant.
+  source_operation: openapi/switstack-switcloud-openapi.yml#create_merchant
+- name: switcloud_list_stores
+  description: List stores, optionally filtered by merchant.
+  source_operation: openapi/switstack-switcloud-openapi.yml#list_stores
+- name: switcloud_create_store
+  description: Create a store under a merchant.
+  source_operation: openapi/switstack-switcloud-openapi.yml#create_store
+- name: switcloud_list_pois
+  description: List points of interaction (terminals), filterable by store, brand and state.
+  source_operation: openapi/switstack-switcloud-openapi.yml#list_pois
+- name: switcloud_get_poi
+  description: Read one point of interaction.
+  source_operation: openapi/switstack-switcloud-openapi.yml#get_poi
+- name: switcloud_create_poi
+  description: Register a point of interaction against a store.
+  source_operation: openapi/switstack-switcloud-openapi.yml#create_poi
+- name: switcloud_list_poi_configs
+  description: List POI configurations (the EMV config bundle a terminal fetches at runtime).
+  source_operation: openapi/switstack-switcloud-openapi.yml#list_poi_configs
+- name: switcloud_get_poi_config
+  description: Read one POI configuration with its BIN config, CAPK list, CR list and EMV config.
+  source_operation: openapi/switstack-switcloud-openapi.yml#get_poi_config
+- name: switcloud_create_payment
+  description: Create a payment and return the payment ID the on-device application transacts against.
+  source_operation: openapi/switstack-switcloud-openapi.yml#create_payment
+- name: switcloud_get_payment
+  description: Read a payment's state, outcome status and EMV transaction data.
+  source_operation: openapi/switstack-switcloud-openapi.yml#get_payment
+- name: switcloud_list_payments
+  description: List payments, filterable by POI and outcome status.
+  source_operation: openapi/switstack-switcloud-openapi.yml#list_payments
+- name: switcloud_get_log_data_set
+  description: Read the log data set (trace, APDUs, telemetry, tags) captured for a payment.
+  source_operation: openapi/switstack-switcloud-openapi.yml#get_log_data_set
+- name: swittest_list_test_suites
+  description: List available EMV test suites.
+  source_operation: openapi/switstack-swittest-openapi.yml#list_test_suites
+- name: swittest_get_test
+  description: Read one test within a suite.
+  source_operation: openapi/switstack-swittest-openapi.yml#get_test
+- name: swittest_run_tests
+  description: Run a test selection and stream execution status (Server-Sent Events).
+  source_operation: openapi/switstack-swittest-openapi.yml#run_tests
+- name: swittest_verify_test_suite
+  description: Validate a custom test-suite document before running it.
+  source_operation: openapi/switstack-swittest-openapi.yml#verify_test_suite
+- name: swittest_parse_tlv
+  description: Parse a TLV string into named EMV tags.
+  source_operation: openapi/switstack-swittest-openapi.yml#parse_tlv
+- name: swittest_parse_log
+  description: Parse a supported Eval+ log file.
+  source_operation: openapi/switstack-swittest-openapi.yml#parse_log
+tool_count: 19
+coverage_note: >-
+  19 candidate tools derived from the 128 published operations (106 Switcloud + 22 Swittest), selecting the read and
+  primary-write paths of each capability group rather than one tool per operationId. Each tool's real input contract
+  is the referenced operation's parameters + requestBody in the linked spec.

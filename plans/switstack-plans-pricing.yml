@@ -1,0 +1,27 @@
+generated: '2026-08-17'
+method: searched
+source: https://www.switstack.io/get-started
+plan_count: 0
+currency: null
+plans: []
+note: >-
+  Switstack publishes no pricing. The homepage "Get started" button links to https://www.switstack.io/pricing, and
+  that page returns HTTP 404 — the pricing page is linked from the site navigation but does not exist. The reachable
+  path is https://www.switstack.io/get-started, which offers "Talk to us" / newsletter capture and no tiers, quotas,
+  overage or list prices. The site advertises a 90-day trial CTA and the moka license
+  (https://docs.switstack.io/moka/license/) is a "TRIAL AND EVALUATION LICENSE AGREEMENT" governing "any switstack's
+  no-charge software product", which is the only concrete commercial term published. Everything else is
+  enterprise/contact-sales. An honest zero, recorded rather than omitted.
+trial:
+  offered: true
+  length_days: 90
+  self_serve: false
+  source: https://www.switstack.io/get-started
+  note: >-
+    The site CTA offers a 90-day trial, but access is granted by Switstack (sales/support provision the Switcloud
+    sandbox and the packages-repository credentials) rather than by self-signup, and no price follows the trial.
+evidence:
+- {url: 'https://www.switstack.io/pricing', status: 404, note: 'linked from site nav; page does not exist'}
+- {url: 'https://www.switstack.io/get-started', status: 200, note: 'contact/sales form, no tiers'}
+- {url: 'https://docs.switstack.io/moka/license/', status: 200, note: 'trial and evaluation license for no-charge software'}
+- {url: 'https://docs.switstack.io/switcloud/getting_started/', status: 200, note: '"Please contact Switstack sales or support if access is required."'}

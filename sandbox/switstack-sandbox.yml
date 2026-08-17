@@ -1,0 +1,99 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.switstack.io/switcloud/getting_started/, https://docs.switstack.io/swittest/setup/,
+  https://docs.switstack.io/swittest/cli/, https://docs.switstack.io/switcloud/certification_overview/
+exists: true
+self_serve: false
+test_live_separation:
+  mode_flag: null
+  key_prefixes: []
+  note: >-
+    No test-vs-live key prefixes, no `mode` flag, no separate test host. Switstack's separation is by ENVIRONMENT, not
+    by credential: a customer is granted "Access to the Switcloud API sandbox" as a provisioned instance. The
+    Switcloud getting-started prerequisites are exactly two lines — sandbox access and packages-repository access —
+    followed by "Please contact Switstack sales or support if access is required."
+provisioning:
+  channel: sales-or-support
+  contact: contact@switstack.io
+  note: >-
+    Both OpenAPI info.description blocks state the prerequisite as an active organization plus an active user, and
+    direct account requests to contact@switstack.io. Swittest is multi-instance: "Switstack host several instances of
+    the Swittest service for customers, partners, etc... Please contact a Switstack representative to receive your
+    access details."
+test_values:
+  published: false
+  test_cards: []
+  test_identifiers: []
+  note: >-
+    NO magic test values are published. This is expected for this product class rather than a gap: Switstack is EMV
+    Level 2 acceptance infrastructure, so the "test data" is physical or simulated card media plus scheme test cards
+    from the brand test plans (EMVCo Books, Visa/Mastercard/Amex/JCB/Discover/CUP), not a list of PAN strings a vendor
+    could publish. Nothing is invented here.
+simulation_tooling:
+  note: >-
+    Switstack's substitute for magic test values is a whole managed testing product. Captured here because it is the
+    real fixture/trigger surface.
+  components:
+  - name: Swittest
+    kind: managed-test-service
+    docs: https://docs.switstack.io/swittest/
+    api: openapi/switstack-swittest-openapi.yml
+    description: >-
+      Fully managed EMV functional test-automation service. Test suites and individual tests are addressable by name
+      or index; test_selection accepts a single name, an index (1036), a comma list (0, 99, 1036), a range (0-5), a
+      list of ranges (0-5, 15-40), a mixed list (0-5, 8, 9, 15-40) or `all`.
+  - name: Swittest L3
+    kind: device-under-test-app
+    package: swittest-l3-template-kt
+    repo: https://github.com/switstack/swittest-l3-template-kt
+    docs: https://docs.switstack.io/swittest/setup/
+    description: >-
+      Android APK ("Swittest L3", Switstack logo icon) installed on the device under test by sideload or ADB; connects
+      out to a Swittest server instance whose host is entered on the app's Settings screen.
+  - name: Loopback mode
+    kind: automation-mode
+    docs: https://docs.switstack.io/switcloud/certification_overview/
+    description: >-
+      Swittest offers "automated combination & integration testing due to its loopback mode" — the mechanism that
+      replaces a lab bench for COTS kernel/hardware combination testing.
+  - name: Verbose test streaming
+    kind: observability
+    operation: openapi/switstack-swittest-openapi.yml#run_tests
+    description: >-
+      Four verbosity levels streamed over SSE — 0 status and errors; 1 adds payment data and log data sets; 2 adds
+      parsed authorization TLV; 3 adds parsed DF8129, DF8115 and DF8116 tags.
+  - name: Scope verification
+    kind: fixture-validation
+    operations:
+    - openapi/switstack-swittest-openapi.yml#verify_test_suite
+    - openapi/switstack-swittest-openapi.yml#verify_test
+    - openapi/switstack-swittest-openapi.yml#verify_bin_scope
+    - openapi/switstack-swittest-openapi.yml#verify_capk_scope
+    - openapi/switstack-swittest-openapi.yml#verify_cr_scope
+    - openapi/switstack-swittest-openapi.yml#verify_emv_scope
+    description: Validate custom suites, tests and BIN/CAPK/CR/EMV scope documents before a run.
+  - name: Parsers
+    kind: post-mortem
+    operations:
+    - openapi/switstack-swittest-openapi.yml#parse_log
+    - openapi/switstack-swittest-openapi.yml#parse_tlv
+    - openapi/switstack-swittest-openapi.yml#parse_tag
+    - openapi/switstack-swittest-openapi.yml#list_tags
+    description: Parse Eval+ log files, TLV strings and EMV tags; also exposed through the swittest CLI.
+  - name: Log data sets
+    kind: trace-capture
+    operations:
+    - openapi/switstack-switcloud-openapi.yml#list_log_data_sets
+    - openapi/switstack-switcloud-openapi.yml#get_log_data_set
+    description: >-
+      Every Switcloud Payment links a LogDataSet carrying meta_data, telemetry, config, trd, all_tags, apdus, trace and
+      signals — the transaction-level debugging surface.
+time_simulation:
+  supported: false
+  note: No test clocks or time-simulation facility is published.
+evidence:
+- {url: 'https://docs.switstack.io/switcloud/getting_started/', status: 200}
+- {url: 'https://docs.switstack.io/swittest/setup/', status: 200}
+- {url: 'https://docs.switstack.io/swittest/cli/', status: 200}
+- {url: 'https://docs.switstack.io/switcloud/certification_overview/', status: 200}

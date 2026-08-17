@@ -1,0 +1,192 @@
+arazzo: 1.0.1
+info:
+  title: Take a Switcloud payment and reconcile it
+  version: 1.0.0
+  description: >-
+    The backend half of a Switcloud card-present transaction: authenticate as a basic/machine user, create a Payment
+    against a POI and POIConfig, wait for the on-device leg, then read the completed transaction and its log data set.
+    Every operationId is verified verbatim against openapi/switstack-switcloud-openapi.yml.
+sourceDescriptions:
+- name: switcloud
+  url: ../openapi/switstack-switcloud-openapi.yml
+  type: openapi
+workflows:
+- workflowId: take-a-payment
+  summary: Create a Payment, poll to COMPLETED, then retrieve the transaction and its diagnostics.
+  description: >-
+    Requires a BASIC or MACHINE user — an Organization Admin cannot create payments. The card interaction itself is not
+    callable over HTTP: it runs on the device through the Switcloud Client SDK using the payment_id this workflow
+    produces, and step `await-completion` stands in for that wait.
+  inputs:
+    type: object
+    required: [client_id, client_secret, poi_id, poi_config_id]
+    properties:
+      client_id:
+        type: string
+        description: Machine-user client id (client_credentials grant).
+      client_secret:
+        type: string
+      poi_id:
+        type: string
+        description: 'POI uuid — from the onboard-a-terminal workflow.'
+      poi_config_id:
+        type: string
+        description: 'POIConfig uuid — from the onboard-a-terminal workflow.'
+  steps:
+  - stepId: authenticate
+    description: >-
+      client_credentials grant for a machine user. The docs also allow the password grant; either yields a bearer token
+      valid for 3600 seconds.
+    operationId: token
+    requestBody:
+      contentType: application/x-www-form-urlencoded
+      payload:
+        grant_type: client_credentials
+        client_id: $inputs.client_id
+        client_secret: $inputs.client_secret
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      access_token: $response.body#/access_token
+  - stepId: create-payment
+    description: >-
+      poi_id and poi_config_id are both required. NOT IDEMPOTENT — no Idempotency-Key parameter exists on this API, so a
+      lost response must be reconciled with list_payments rather than retried.
+    operationId: create_payment
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        poi_id: $inputs.poi_id
+        poi_config_id: $inputs.poi_config_id
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      payment_id: $response.body#/id
+      log_data_set_id: $response.body#/log_data_set_id
+      initial_state: $response.body#/state
+  - stepId: await-completion
+    description: >-
+      Poll until state is COMPLETED. There is no webhook, callback or event surface on this API, so polling is the only
+      option — back off, because no rate limits are published. The device application should also notify your backend
+      directly, which is the faster path.
+    operationId: get_payment
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: id
+      in: path
+      value: $steps.create-payment.outputs.payment_id
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.state == 'COMPLETED'
+      type: jsonpath
+    outputs:
+      state: $response.body#/state
+  - stepId: read-transaction
+    description: >-
+      Check BOTH state and outcome_status. A declined transaction arrives as HTTP 200 with outcome_status DECLINED;
+      TRY_ANOTHER_INTERFACE and TRY_AGAIN are re-present instructions, not errors. trd, authorization and completion are
+      EMV TLV blobs for the acquirer/gateway.
+    operationId: get_payment
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: id
+      in: path
+      value: $steps.create-payment.outputs.payment_id
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      outcome_status: $response.body#/outcome_status
+      trd: $response.body#/trd
+      authorization: $response.body#/authorization
+      completion: $response.body#/completion
+  - stepId: read-log-data-set
+    description: >-
+      The transaction-level diagnostic surface: meta_data, telemetry, config, trd, all_tags, apdus, trace and signals.
+      This is where an EMV failure is actually explained. Swittest's parse_tlv / parse_tag will name the tags.
+    operationId: get_log_data_set
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: id
+      in: path
+      value: $steps.create-payment.outputs.log_data_set_id
+    successCriteria:
+    - condition: $statusCode == 200
+  outputs:
+    payment_id: $steps.create-payment.outputs.payment_id
+    outcome_status: $steps.read-transaction.outputs.outcome_status
+    authorization: $steps.read-transaction.outputs.authorization
+- workflowId: reconcile-payments-for-a-terminal
+  summary: Page through a terminal's payments filtered by outcome, for reconciliation.
+  inputs:
+    type: object
+    required: [client_id, client_secret, poi_id]
+    properties:
+      client_id: {type: string}
+      client_secret: {type: string}
+      poi_id: {type: string}
+      outcome_status:
+        type: string
+        description: >-
+          One of UNDEFINED, APPROVED, DECLINED, ONLINE_REQUEST, END_APPLICATION, SELECT_NEXT, TRY_ANOTHER_INTERFACE,
+          TRY_AGAIN, NA.
+      page: {type: integer}
+      size: {type: integer}
+  steps:
+  - stepId: authenticate
+    operationId: token
+    requestBody:
+      contentType: application/x-www-form-urlencoded
+      payload:
+        grant_type: client_credentials
+        client_id: $inputs.client_id
+        client_secret: $inputs.client_secret
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      access_token: $response.body#/access_token
+  - stepId: list-payments
+    description: >-
+      Page-number paging: the response envelope is {items, total, page, size, pages}. There is no cursor and no Link
+      header — compute the next request from `pages`.
+    operationId: list_payments
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: poi_id
+      in: query
+      value: $inputs.poi_id
+    - name: outcome_status
+      in: query
+      value: $inputs.outcome_status
+    - name: page
+      in: query
+      value: $inputs.page
+    - name: size
+      in: query
+      value: $inputs.size
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      total: $response.body#/total
+      pages: $response.body#/pages
+  outputs:
+    total: $steps.list-payments.outputs.total
+    pages: $steps.list-payments.outputs.pages
+x-provenance:
+  generated: '2026-08-17'
+  method: generated
+  source: >-
+    openapi/switstack-switcloud-openapi.yml (every operationId grepped verbatim),
+    https://docs.switstack.io/switcloud/processing_payments/, https://docs.switstack.io/switcloud/examples/

@@ -1,0 +1,99 @@
+generated: '2026-08-17'
+method: searched
+source: openapi/switstack-switcloud-openapi.yml, openapi/switstack-swittest-openapi.yml
+docs: https://docs.switstack.io/switcloud/security_authentication/
+summary:
+  types:
+  - oauth2
+  oauth2_flows:
+  - password
+  - clientCredentials
+  bearer: true
+  authorization_header: 'Authorization: Bearer <access_token>'
+  note: >-
+    Both published Switstack APIs use the same FastAPI-generated OAuth2 password-bearer scheme. The OpenAPI declares
+    only the password flow; the Switcloud security & authentication docs additionally document a client-credentials
+    grant for machine users. No API-key, basic, mutualTLS or OpenID Connect scheme is published.
+schemes:
+- name: OAuth2PasswordBearer
+  type: oauth2
+  flows:
+  - flow: password
+    tokenUrl: auth/token
+    scopes: 0
+  - flow: clientCredentials
+    tokenUrl: auth/token
+    scopes: 0
+    source: https://docs.switstack.io/switcloud/security_authentication/
+  sources:
+  - openapi/switstack-switcloud-openapi.yml
+  - openapi/switstack-swittest-openapi.yml
+token_endpoints:
+- api: Switcloud API
+  spec_path: /auth/token
+  documented_url: https://switcloud.switstack.io/api/oauth/token
+  grant_types:
+  - password
+  - client_credentials
+  request_schema: OAuth2Form
+  response_schema: TokenSchema
+  response_fields:
+  - access_token
+  - token_type
+  - expires_in
+  token_type: bearer
+  expires_in_seconds: 3600
+  source: https://docs.switstack.io/switcloud/security_authentication/
+  note: >-
+    The docs example posts to https://switcloud.switstack.io/api/oauth/token while OpenAPI 2.28.0 declares
+    /auth/token; the two disagree and the documented host does not resolve in public DNS (see
+    lifecycle/switstack-lifecycle.yml). Recorded as published, not reconciled.
+- api: Swittest API
+  spec_path: /auth/token
+  grant_types:
+  - password
+  request_schema: OAuth2Form
+  response_schema: TokenSchema
+  token_type: bearer
+  source: openapi/switstack-swittest-openapi.yml
+token_lifecycle:
+- operation: token
+  path: /auth/token
+  purpose: Issue an access token
+- operation: refresh_token
+  path: /auth/refresh-token
+  purpose: Exchange a refresh token for a new access token
+- operation: revoke_token
+  path: /auth/revoke-token
+  purpose: Revoke an issued token
+authorization_model:
+  style: role-based
+  note: >-
+    Access control is expressed as named roles, not OAuth scopes; the OpenAPI flow declares an empty scopes map.
+  switcloud_roles:
+  - name: Super Admin
+    description: Manages the entire system (CRUD on all models); Payment data is read-only.
+  - name: Organization Admin
+    description: >-
+      Manages users, merchants, stores and POI configurations within their own organization; cannot see other
+      organizations' data and cannot create payments.
+  - name: Basic user (human or machine)
+    description: Read-only on their organization's data; can create and update Payments.
+  swittest_roles:
+  - name: Data
+    description: Can get test suites, tests, configs and vcards.
+  - name: Full
+    description: Can fully use Swittest.
+  source: https://docs.switstack.io/switcloud/security_authentication/
+onboarding:
+  self_serve: false
+  note: >-
+    Credentials are not self-serve. Switcloud getting-started requires "Access to the Switcloud API sandbox" and
+    "Access to the Switstack packages repository" and directs the reader to contact Switstack sales or support;
+    Swittest instances are provisioned per customer/partner by a Switstack representative. Account requests go to
+    contact@switstack.io.
+  evidence:
+  - url: https://docs.switstack.io/switcloud/getting_started/
+    status: 200
+  - url: https://docs.switstack.io/swittest/setup/
+    status: 200

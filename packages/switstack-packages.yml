@@ -1,0 +1,174 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://public-nexus.switstack.io/repository/switstack-mvn (maven-metadata.xml per artifact),
+  https://github.com/switstack, https://docs.switstack.io/swittest/architecture/, https://docs.switstack.io/swittest/cli/
+registry_note: >-
+  Switstack does not publish to npm, PyPI, Maven Central, NuGet, RubyGems, Packagist, crates.io or pkg.go.dev — all
+  probed and absent (404). Its Kotlin/Android artifacts are published to a first-party Sonatype Nexus 3 repository at
+  https://public-nexus.switstack.io/repository/switstack-mvn, which answers unauthenticated for
+  maven-metadata.xml/POM/JAR fetches (directory browsing and the Nexus search/REST API are disabled: 403). The
+  Python and TypeScript wrappers and swittest-cli are distributed from the same Nexus behind credentials — the docs
+  say "Please contact our support team to get your Nexus access details" — so their versions cannot be read.
+packages:
+- language: kotlin
+  registry: maven
+  registry_url: https://public-nexus.switstack.io/repository/switstack-mvn
+  name: io.switstack.switcloud:switcloud-clt-kt
+  url: https://public-nexus.switstack.io/repository/switstack-mvn/io/switstack/switcloud/switcloud-clt-kt/maven-metadata.xml
+  install: 'implementation("io.switstack.switcloud:switcloud-clt-kt:2.4.0")'
+  official: true
+  version: 2.4.0
+  published: '2026-07-30'
+  release_count: 19
+  first_version: 1.1.0
+  description: >-
+    Switcloud Client — the primary on-device developer interface (configure(), startPayment(), completePayment());
+    manages configuration retrieval, L2 execution and payment-data upload.
+  note: >-
+    version/published read from maven-metadata.xml <latest> and the Last-Modified header on
+    switcloud-clt-kt-2.4.0.pom (Thu, 30 Jul 2026 15:54:04 GMT).
+- language: kotlin
+  registry: maven
+  registry_url: https://public-nexus.switstack.io/repository/switstack-mvn
+  name: io.switstack.switcloud:switcloud-api-kt
+  url: https://public-nexus.switstack.io/repository/switstack-mvn/io/switstack/switcloud/switcloud-api-kt/maven-metadata.xml
+  install: 'implementation("io.switstack.switcloud:switcloud-api-kt:2.28.6")'
+  official: true
+  version: 2.28.6
+  published: '2026-05-13'
+  release_count: 10
+  first_version: 2.22.1
+  description: >-
+    Switcloud API wrapper — a convenience client over the Switcloud REST APIs (estate, config, payment).
+  note: >-
+    The 2.28.x line tracks the Switcloud API's own 2.28.0 OpenAPI version. Last-Modified on
+    switcloud-api-kt-2.28.6.pom is Wed, 13 May 2026 06:09:50 GMT — roughly three months behind the two sibling
+    Kotlin artifacts, which is the only decay signal available here.
+- language: kotlin
+  registry: maven
+  registry_url: https://public-nexus.switstack.io/repository/switstack-mvn
+  name: io.switstack.switcloud:switcloud-l2-kt
+  url: https://public-nexus.switstack.io/repository/switstack-mvn/io/switstack/switcloud/switcloud-l2-kt/maven-metadata.xml
+  install: 'implementation("io.switstack.switcloud:switcloud-l2-kt:2.2.0")'
+  official: true
+  version: 2.2.0
+  published: '2026-07-29'
+  release_count: 16
+  first_version: 1.0.0
+  description: >-
+    GLA adapter — exposes a GLA-compatible interface to Switcloud Client on one side and binds to the device's EMV L2
+    framework on the other. This is the integration seam a terminal/kernel vendor implements.
+  note: >-
+    Published as a Gradle module + POM (no jar/aar at the root coordinate; variants live in the .module metadata).
+    published read from Last-Modified on switcloud-l2-kt-2.2.0.pom (Wed, 29 Jul 2026 16:40:18 GMT).
+- language: python
+  registry: nexus-private
+  name: swittest-cli
+  url: https://docs.switstack.io/swittest/cli/
+  install: 'pip install swittest-cli  # requires an additional source targeting the Switstack Nexus repository'
+  official: true
+  version: null
+  published: null
+  description: >-
+    Typer-based Swittest CLI (invoked as `swittest`) with settings/log/tlv/tag/verify/configs/suites/tests/probe
+    command groups. Command surface captured in cli/switstack-cli.yml.
+  note: >-
+    version null — checked, nothing to record. The docs instruct installing from the Switstack Nexus after obtaining
+    access details from support, so no unauthenticated metadata endpoint exists; the package is absent from PyPI
+    (https://pypi.org/pypi/swittest/json -> 404) and the Nexus pypi repository paths return 403 anonymously.
+- language: python
+  registry: nexus-private
+  name: switcloud-api-py
+  import_name: switcloudapi
+  url: https://docs.switstack.io/api/switcloud/api/switcloud-api-py/
+  official: true
+  version: null
+  published: null
+  description: >-
+    Switcloud API wrapper for Python (API reference published, distribution gated). Imported as `switcloudapi`
+    (`from switcloudapi import SwitcloudApi`) in the published code samples at
+    https://docs.switstack.io/switcloud/examples/, which is the only place the distribution name vs import name is
+    visible.
+  note: >-
+    version null — checked, nothing to record. Reference docs are public; the artifact is only available from the
+    credentialed Switstack Nexus ("Access to the Switstack packages repository ... contact Switstack sales or
+    support"). Absent from PyPI.
+- language: typescript
+  registry: nexus-private
+  name: switcloud-api-ts
+  url: https://docs.switstack.io/api/switcloud/api/switcloud-api-ts/
+  official: true
+  version: null
+  published: null
+  description: Switcloud API wrapper for TypeScript (API reference published, distribution gated).
+  note: >-
+    version null — checked, nothing to record. Absent from npm (registry.npmjs.org 404 for switcloud-api-ts and
+    @switstack/switcloud-api-ts); distributed from the credentialed Switstack Nexus.
+- language: python
+  registry: nexus-private
+  name: swittest-api-py
+  url: https://docs.switstack.io/api/swittest/api/swittest-api-py/
+  official: true
+  version: null
+  published: null
+  description: Swittest API wrapper for Python (API reference published, distribution gated).
+  note: version null — checked, nothing to record. Absent from PyPI; Nexus pypi paths 403 anonymously.
+- language: typescript
+  registry: nexus-private
+  name: swittest-api-ts
+  url: https://docs.switstack.io/api/swittest/api/swittest-api-ts/
+  official: true
+  version: null
+  published: null
+  description: Swittest API wrapper for TypeScript (API reference published, distribution gated).
+  note: version null — checked, nothing to record. Absent from npm; distributed from the credentialed Nexus.
+- language: c
+  registry: none
+  name: moka
+  url: https://docs.switstack.io/api/moka/moka/
+  official: true
+  version: 0.0.0.1
+  published: null
+  description: >-
+    switstack moka — the source-available EMV Level 2 card-processing stack (C). Doxygen API reference is public.
+  note: >-
+    version 0.0.0.1 read from the Doxygen header on the published reference; published null — no dated release
+    artifact or registry entry is public, and the source is distributed under the Switstack moka trial/evaluation
+    license (https://docs.switstack.io/moka/license/) rather than from a package registry.
+templates:
+- name: switcloud-l2-template-kt
+  url: https://github.com/switstack/switcloud-l2-template-kt
+  kind: gradle-template
+  official: true
+  version: null
+  published: '2026-08-03'
+  note: >-
+    Android library template a vendor forks to implement ISwitcloudL2/IGlase against its own kernels. No tagged
+    release; published is the last push date from the GitHub API. Consumes switcloud-l2-kt from the Switstack Nexus.
+- name: switcloud-l3-template-kt
+  url: https://github.com/switstack/switcloud-l3-template-kt
+  kind: gradle-template
+  official: true
+  version: null
+  published: '2026-07-27'
+  note: >-
+    Switcloud L3 template application. gradle/libs.versions.toml pins switcloud-clt 2.3.0 and switcloud-l2 2.1.0 —
+    one minor behind the 2.4.0/2.2.0 currently in the Nexus.
+- name: swittest-l3-template-kt
+  url: https://github.com/switstack/swittest-l3-template-kt
+  kind: gradle-template
+  official: true
+  version: null
+  published: '2026-07-31'
+  note: >-
+    Swittest L3 template application (the Android app that runs on the device under test). Pins switcloud-clt 1.10.0,
+    fourteen releases behind the current 2.4.0.
+- name: switcloud-l2-demo-kt
+  url: https://github.com/switstack/switcloud-l2-demo-kt
+  kind: demo
+  official: true
+  version: null
+  published: '2026-08-17'
+  note: Demo application for switcloud-l2-kt; pins switcloud-l2 1.7.0.
+official_count: 9

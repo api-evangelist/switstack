@@ -1,0 +1,67 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.switstack.io/, https://docs.switstack.io/api/,
+  https://public-nexus.switstack.io/repository/switstack-mvn, live DNS/HTTP probes
+versioning:
+  scheme: document-version-only
+  in_path: false
+  in_header: false
+  current:
+  - {api: Switcloud API, version: 2.28.0, source: 'openapi info.version'}
+  - {api: Swittest API, version: 0.13.0, source: 'openapi info.version'}
+  - {api: switstack moka, version: 0.0.0.1, source: 'https://docs.switstack.io/api/moka/moka/ (Doxygen header)'}
+  policy_url: null
+  note: >-
+    No versioning policy is published. Paths are unversioned on both APIs, so a client cannot pin a version over the
+    wire; the only version signal is info.version in the spec and the Maven coordinate of the wrapper package
+    (switcloud-api-kt 2.28.6 tracks the Switcloud 2.28.x line). Swittest is still pre-1.0.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No deprecation policy, no Sunset/Deprecation header support, and no `deprecated: true` operation in either
+    document (0 of 128). No Deprecation pointer is emitted.
+deprecated_operations: []
+changelog:
+  url: null
+  note: >-
+    No changelog, release-notes or "what's new" page exists on docs.switstack.io or www.switstack.io (probed
+    /changelog/, /releases/, /release_notes/ — all 404; the docs sitemap.xml is served but empty). The only dated
+    version history Switstack publishes is the Nexus maven-metadata for its three Kotlin artifacts — captured in
+    changelog/switstack-changelog.yml. No ChangeLog pointer is emitted, because a package version list is not a
+    changelog.
+status_page:
+  url: null
+  note: >-
+    No status page. status.switstack.io, statuspage or an incident-history page could not be found from the site,
+    docs or GitHub org. No StatusPage pointer is emitted.
+sla:
+  url: null
+  uptime_target: null
+  note: >-
+    No published SLA or uptime commitment. The moka license (https://docs.switstack.io/moka/license/) is a trial and
+    evaluation agreement for the no-charge software and is the only public legal instrument found; there are no
+    terms of service or privacy policy pages on www.switstack.io (/terms, /terms-of-service, /legal,
+    /privacy, /privacy-policy all 404).
+support:
+  channel: https://github.com/switstack/switstack-issues
+  kind: github-issues
+  note: >-
+    "Public repository to open issues related to Switstack's products" — the only public support channel. Account and
+    access requests are directed to contact@switstack.io (stated in both OpenAPI info.description blocks).
+availability:
+  note: >-
+    A live-reachability finding worth recording. The Switcloud security & authentication page instructs callers to
+    POST https://switcloud.switstack.io/api/oauth/token, but that host does not resolve in public DNS, and neither
+    does api.switstack.io. Access to the Switcloud API is described as sandbox provisioning granted by sales/support,
+    and Swittest is explicitly multi-instance ("Switstack host several instances of the Swittest service for
+    customers, partners, etc... Please contact a Switstack representative to receive your access details"), so the
+    published contracts are real and complete while the runtime is per-tenant and not publicly addressable.
+  evidence:
+  - {url: 'https://switcloud.switstack.io/', status: 0, note: NXDOMAIN}
+  - {url: 'https://api.switstack.io/', status: 0, note: NXDOMAIN}
+  - {url: 'https://docs.switstack.io/switcloud/security_authentication/', status: 200}
+  - {url: 'https://docs.switstack.io/swittest/setup/', status: 200}

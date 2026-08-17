@@ -1,25 +1,173 @@
 aid: switstack
 name: Switstack
-description: 'Switstack is a company surfaced as a portfolio company of serena and added to the API Evangelist
-  network as a stub for enrichment. Sector: fintech-insurtech. This profile is a lead awaiting the enrichment
-  pipeline.'
+description: >-
+  Switstack is a payment infrastructure company building software-defined EMV acceptance for physical retail.
+  It ships three products: switstack moka, a source-available EMV Level 2 kernel stack with brand Letters of
+  Compliance; Switcloud, a hosted "universal compliance infrastructure" that abstracts EMV L2 execution and
+  centralizes estate (organization/merchant/store/POI) and EMV configuration (CAPK, BIN, CRL, kernel parameter)
+  management behind a REST API; and Swittest, a managed EMV functional test-automation service for labs and
+  developers certifying card-present applications. The platform is terminal-agnostic and L2-stack agnostic —
+  one L3 application runs across Android COTS tap-to-pay devices and PCI-PTS terminals via a GLA adapter layer —
+  and Switstack supplies pre-certified PCI MPoC software and service components to shrink certification scope.
 url: https://raw.githubusercontent.com/api-evangelist/switstack/refs/heads/main/apis.yml
+image: https://cdn.prod.website-files.com/677bdd3fa1a7f9a1d8e76d2e/67879a394c57fb7c99783259_switstack_meta.png
 x-type: company
 x-source: serena-portfolio
-x-tier: stub
-x-tier-reason: portfolio-lead
-specificationVersion: '0.20'
+specificationVersion: '0.21'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
 - Company
 - Fintech Insurtech
-apis: []
+- payments
+- emv
+- emv-level-2
+- card-present
+- point-of-sale
+- softpos
+- tap-to-pay
+- payment-terminals
+- in-store-payments
+- pci-mpoc
+- certification-testing
+- retail-payments
+- estate-management
+apis:
+- name: Switcloud API
+  description: >-
+    REST API for the Switcloud platform, organized in three surfaces: switcloud-bom (estate — merchants, stores and
+    points of interaction), switcloud-config (EMV L2 configuration — BINs, BIN lists/configs, CAPKs and CAPK lists,
+    CRs and CR lists, EMVs and EMV lists/configs, POI configs) and switcloud-payment (payment lifecycle plus the
+    encrypted transaction log data sets). OAuth 2.0 password / client-credentials grant issues a bearer token from
+    /auth/token. Version 2.28.0 publishes 106 operations across 40 paths as OpenAPI 3.1.0.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - payments
+  - emv
+  - emv-level-2
+  - card-present
+  - estate-management
+  - point-of-sale
+  - in-store-payments
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-switcloud-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: Overlay
+    url: overlays/switstack-switcloud-overlay.yaml
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+- name: Swittest API
+  description: >-
+    REST API for the Swittest managed EMV test-automation service. Exposes test-suite and test discovery, test
+    execution (including a streaming run channel and ad-hoc custom tests), configuration-file browsing, scope
+    verification for BIN/CAPK/CR/EMV definitions, and TLV/tag/log parsers for Eval+ output. OAuth 2.0 password
+    grant issues a bearer token from /auth/token. Version 0.13.0 publishes 22 operations across 22 paths as
+    OpenAPI 3.1.0. Switstack hosts separate Swittest instances per customer or partner, so no single public base
+    URL is published.
+  humanURL: https://docs.switstack.io/swittest/
+  tags:
+  - emv
+  - emv-level-2
+  - certification-testing
+  - card-present
+  - payment-terminals
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-swittest-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
+  - type: Overlay
+    url: overlays/switstack-swittest-overlay.yaml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/switstack-agentic-access.yml
+- type: OAuthScopes
+  url: scopes/switstack-scopes.yml
 - type: Website
   url: https://www.switstack.io/
+- type: DeveloperPortal
+  url: https://docs.switstack.io/
+- type: Documentation
+  url: https://docs.switstack.io/
+- type: APIReference
+  url: https://docs.switstack.io/api/
+- type: GettingStarted
+  url: https://docs.switstack.io/switcloud/getting_started/
+- type: Blog
+  url: https://www.switstack.io/blog
+- type: BlogRSS
+  url: https://www.switstack.io/blog/rss.xml
+- type: GitHubOrganization
+  url: https://github.com/switstack
+- type: Support
+  url: https://github.com/switstack/switstack-issues
+- type: SignUp
+  url: https://www.switstack.io/get-started
+- type: License
+  url: https://docs.switstack.io/moka/license/
+- type: Authentication
+  url: authentication/switstack-authentication.yml
+- type: Conventions
+  url: conventions/switstack-conventions.yml
+- type: ErrorCatalog
+  url: errors/switstack-problem-types.yml
+- type: DataModel
+  url: data-model/switstack-data-model.yml
+- type: Lifecycle
+  url: lifecycle/switstack-lifecycle.yml
+- type: Conformance
+  url: conformance/switstack-conformance.yml
+- type: Packages
+  url: packages/switstack-packages.yml
+- type: SDKs
+  url: packages/switstack-packages.yml
+- type: CLI
+  url: cli/switstack-cli.yml
+- type: Sandbox
+  url: sandbox/switstack-sandbox.yml
+- type: Plans
+  url: plans/switstack-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/switstack-rate-limits.yml
+- type: LLMsTxt
+  url: llms/switstack-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DomainSecurity
+  url: security/switstack-domain-security.yml
+- type: Examples
+  url: examples/switstack-code-samples.yml
+- type: Examples
+  url: https://docs.switstack.io/switcloud/examples/
+- type: Arazzo
+  name: Onboard a Switcloud terminal
+  url: arazzo/switstack-onboard-a-terminal.yml
+- type: Arazzo
+  name: Take a Switcloud payment and reconcile it
+  url: arazzo/switstack-take-a-payment.yml
+- type: Arazzo
+  name: Verify and run a Swittest EMV test suite
+  url: arazzo/switstack-run-a-test-suite.yml
+x-enrichment:
+  date: '2026-08-17'
+  status: enriched
+  artifacts_added: 36
+  pass: local-v1

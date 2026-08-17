@@ -1,0 +1,25 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.switstack.io/switcloud/, https://docs.switstack.io/swittest/,
+  openapi/switstack-switcloud-openapi.yml, openapi/switstack-swittest-openapi.yml
+limit_count: 0
+limits: []
+headers: []
+status_on_exhaustion: null
+note: >-
+  No rate limits are published. Neither OpenAPI declares a single response header across its 128 operations (zero
+  `responses[*].headers` entries in either document) and no 429 response is declared anywhere; the Switstack knowledge
+  base has no rate-limit, quota or throttling page. There is also no X-RateLimit-*/RateLimit-*/Retry-After signal to
+  observe live, because the documented API host (switcloud.switstack.io) does not resolve in public DNS and Swittest
+  runs as per-customer instances — so there is no unauthenticated production response to read headers from. An honest
+  zero: not measured as absent-by-inference, measured as undocumented and unobservable.
+evidence:
+- {url: 'https://docs.switstack.io/api/switcloud/api/switcloud-srv/', status: 200, note: 'full OpenAPI 3.1.0 2.28.0 — no rate-limit headers, no 429'}
+- {url: 'https://docs.switstack.io/api/swittest/api/swittest-srv/', status: 200, note: 'full OpenAPI 3.1.0 0.13.0 — no rate-limit headers, no 429'}
+- {url: 'https://switcloud.switstack.io/', status: 0, note: 'NXDOMAIN — cannot observe live headers'}
+related:
+  quota_adjacent: >-
+    The closest thing to a documented limit is operational, not numeric: Swittest's docs warn that the "Automatic"
+    page is for developer regression testing and "is not meant to be used by labs during debug or certification
+    sessions", and run_tests accepts index ranges up to `all`, which is where concurrency pressure would land.

@@ -1,0 +1,144 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/switstack-switcloud-openapi.yml, openapi/switstack-swittest-openapi.yml,
+  https://docs.switstack.io/switcloud/security_authentication/, https://docs.switstack.io/switcloud/getting_started/
+apis:
+- Switcloud API 2.28.0
+- Swittest API 0.13.0
+implementation_note: >-
+  Both APIs are FastAPI-generated OpenAPI 3.1.0 documents and share one convention set: the same OAuth2 password
+  bearer scheme, the same 422 HTTPValidationError envelope, the same fastapi-pagination Page wrapper on Switcloud
+  collections, and the same absence of runtime headers.
+authentication:
+  style: oauth2-bearer
+  header: 'Authorization: Bearer <access_token>'
+  token_endpoint: /auth/token
+  grant_types: [password, client_credentials]
+  token_ttl_seconds: 3600
+  refresh: /auth/refresh-token
+  revoke: /auth/revoke-token
+  applied_per_operation: true
+  global_security: false
+  note: >-
+    Security is declared per operation rather than at the document root (no top-level `security` block); every
+    operation except the three /auth/* endpoints carries `OAuth2PasswordBearer: []`.
+  detail: authentication/switstack-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No idempotency contract is published. Neither OpenAPI declares an Idempotency-Key (or any equivalent) parameter,
+    and no docs page describes retry-safe writes — which matters here because create_payment is the operation an
+    integrator retries most. Recorded as absent; no Idempotency pointer is emitted.
+pagination:
+  supported: true
+  scope: Switcloud collection endpoints (16 list operations)
+  style: page-number
+  params:
+  - {name: page, in: query, type: integer}
+  - {name: size, in: query, type: integer}
+  response_envelope:
+    schema_family: Page_TypeVar_Customized_<Entity>ReadSchema_
+    fields: [items, total, page, size, pages]
+  note: >-
+    fastapi-pagination page/size paging. No cursor, no Link header, no next/previous URLs — the client computes the
+    next request from `pages`. The Swittest API has no paginated collection.
+filtering_and_sorting:
+  supported: true
+  scope: Switcloud collection endpoints
+  params:
+  - {name: organization_id, in: query, note: 'tenant selector, present on all 16 Switcloud list operations'}
+  - {name: search, in: query, note: 'free-text search, 14 list operations'}
+  - {name: order_by, in: query, note: 'sort key, 16 list operations'}
+  - {name: with_related, in: query, note: 'expand nested related objects on read, 14 operations'}
+  - {name: cascade_delete, in: query, note: 'delete children with the parent, 7 delete operations'}
+  entity_filters:
+  - {name: store_id, on: list_stores}
+  - {name: brand, on: list_pois}
+  - {name: state, on: list_pois}
+  - {name: poi_id, on: list_payments}
+  - {name: outcome_status, on: list_payments}
+  - {name: hash_type, on: list_capks}
+  - {name: algorithm_type, on: list_capks}
+  - {name: technology_type, on: list_emvs}
+  - {name: transaction_type, on: list_emvs}
+field_expansion:
+  supported: true
+  mechanism: with_related query parameter
+  note: >-
+    `with_related=true` inlines nested read schemas — a POIConfig read returns bin_config, capk_list, cr_list and
+    emv_config objects alongside their *_id fields. This is Switstack's sparse-vs-expanded switch; there is no
+    per-field selection.
+partial_update:
+  supported: true
+  mechanism: 'PATCH <collection>/{id} with a *PartialUpdateSchema body (paired with PUT + *UpdateSchema for full replace)'
+  note: Every Switcloud resource publishes both PUT (full) and PATCH (partial) alongside a distinct create schema.
+metadata:
+  supported: false
+  note: No customer-defined metadata/tags field is published on any Switcloud entity.
+request_tracing:
+  supported: false
+  request_id_header: null
+  note: >-
+    No request-id / correlation-id header is documented or declared in either spec. For payment-level tracing
+    Switcloud instead exposes the LogDataSet object (trace, apdus, telemetry, signals, all_tags) linked from every
+    Payment via log_data_set_id.
+versioning:
+  scheme: document-version-only
+  switcloud_version: 2.28.0
+  swittest_version: 0.13.0
+  in_path: false
+  in_header: false
+  note: >-
+    Versions appear only in OpenAPI `info.version` and in the Maven artifact coordinates (switcloud-api-kt tracks the
+    2.28.x line). Paths are unversioned — /api/bom/…, /api/config/…, /api/payment/… on Switcloud and /api/… on
+    Swittest — so there is no way for a client to pin a version over the wire.
+  detail: lifecycle/switstack-lifecycle.yml
+error_envelope:
+  format: fastapi-validation
+  rfc9457: false
+  media_type: application/json
+  shape: '{"detail": [{"loc": [...], "msg": "...", "type": "..."}]}'
+  documented_statuses: [200, 201, 204, 422]
+  note: >-
+    The only error response either spec declares is 422 Validation Error (106 of 106 Switcloud operations, 22 of 22
+    Swittest operations). 401/403/404/409/429/5xx are not declared anywhere, and no application/problem+json is used.
+  detail: errors/switstack-problem-types.yml
+rate_limit_signaling:
+  supported: false
+  headers: []
+  note: >-
+    No rate-limit headers are declared in either spec (zero response headers across all 128 operations) and no limits
+    are documented. See rate-limits/switstack-rate-limits.yml.
+streaming:
+  supported: true
+  mechanism: Server-Sent Events
+  operations:
+  - {api: Swittest API, operationId: run_tests, media_type: text/event-stream}
+  item_schema_fields: [data, event, id, retry]
+  note: >-
+    run_tests streams test-execution status in real time with four verbose levels (0 status/errors, 1 + payment and
+    log data sets, 2 + parsed authorization TLV, 3 + parsed DF8129/DF8115/DF8116 tags). Declared with OpenAPI 3.1
+    `itemSchema`. This is Switstack's only event surface — there is no webhook catalog and no AsyncAPI document, so
+    no AsyncAPI or Webhooks pointer is emitted.
+media_types:
+  request: [application/json, application/x-www-form-urlencoded]
+  response: [application/json, text/event-stream]
+  note: The /auth/token endpoints take an OAuth2Form body; everything else is JSON.
+identifiers:
+  style: uuid
+  note: >-
+    Entity ids are strings, with `format: uuid` on the foreign-key fields of POIConfig and EMVConfig. There are no
+    prefixed/typed ids. Every entity carries organization_id, which is the tenancy boundary.
+tenancy:
+  model: organization
+  note: >-
+    organization_id is required on every read schema and available as a query filter on every list operation. The
+    docs state an Organization Admin "cannot see other Organizations' data".
+cross_links:
+  authentication: authentication/switstack-authentication.yml
+  errors: errors/switstack-problem-types.yml
+  lifecycle: lifecycle/switstack-lifecycle.yml
+  rate_limits: rate-limits/switstack-rate-limits.yml
+  data_model: data-model/switstack-data-model.yml

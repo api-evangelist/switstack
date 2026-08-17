@@ -1,0 +1,49 @@
+generated: '2026-08-17'
+method: probed
+source: live GET of /.well-known/* on every Switstack host in apis.yml
+summary:
+  hosts_probed: 4
+  paths_probed: 20
+  documents_found: 0
+  note: >-
+    Nothing is served. Every /.well-known/* path on every reachable Switstack host returns 404 with an HTML body
+    (the Webflow 404 on www.switstack.io, the MkDocs Material 404 on docs.switstack.io). No WellKnown, SecurityTxt,
+    APICatalog or AgentCard pointer is emitted from this probe, and none should be: this file records an absence.
+hosts:
+- host: https://www.switstack.io
+  reachable: true
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /security.txt, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /robots.txt, status: 200, note: 'served but zero bytes — no directives, no sitemap reference'}
+  - {path: /sitemap.xml, status: 404}
+- host: https://docs.switstack.io
+  reachable: true
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /robots.txt, status: 404}
+  - {path: /sitemap.xml, status: 200, note: 'served but the urlset is empty'}
+- host: https://switcloud.switstack.io
+  reachable: false
+  note: >-
+    NXDOMAIN — the host the Switcloud auth docs name as the API base does not resolve in public DNS, so no
+    /.well-known/* probe could run. Recorded, not inferred.
+- host: https://api.switstack.io
+  reachable: false
+  note: NXDOMAIN — probed because it is the conventional API host for this domain; it does not exist.

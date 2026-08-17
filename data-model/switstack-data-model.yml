@@ -1,0 +1,195 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/switstack-switcloud-openapi.yml, openapi/switstack-swittest-openapi.yml
+docs: https://docs.switstack.io/switcloud/key_concepts/
+summary:
+  entities: 16
+  relationships: 22
+  id_style: uuid
+  tenancy_field: organization_id
+  note: >-
+    Derived from schema $ref links and *_id reference fields. Switcloud has three clean domains — estate (BOM), EMV
+    configuration, and payment — joined at POIConfig, which is the object a terminal fetches at runtime. Every entity
+    carries organization_id; there is no Organization resource in the API (organizations are provisioned out of band),
+    so it is modelled here as an implicit root.
+entities:
+- name: Organization
+  domain: estate
+  implicit: true
+  api: null
+  note: >-
+    The tenancy root. Required on every read schema and available as a query filter on all 16 list operations, but
+    there is no /organizations path — organizations are created by Switstack, not through the API. The docs describe
+    the hierarchy as "devices (POIs) are organized hierarchically under stores, merchants, and organizations".
+- name: Merchant
+  domain: estate
+  schema: MerchantReadSchema
+  path: /api/bom/merchants
+  operations: [list_merchants, create_merchant, get_merchant, update_merchant, partial_update_merchant, delete_merchant]
+  fields: [id, name, organization_id]
+- name: Store
+  domain: estate
+  schema: StoreReadSchema
+  path: /api/bom/stores
+  operations: [list_stores, create_store, get_store, update_store, partial_update_store, delete_store]
+  fields: [id, name, address, merchant_id, organization_id]
+- name: POI
+  domain: estate
+  schema: POIReadSchema
+  path: /api/bom/pois
+  operations: [list_pois, create_poi, get_poi, update_poi, partial_update_poi, delete_poi]
+  fields: [id, name, description, identifier, serial_number, brand, state, store_id, organization_id]
+  enums:
+    brand: [UNDEFINED, SUNMI, CASTLES, PAX, SAMSUNG, GOOGLE]
+    state: [UNDEFINED, PROVISIONED, OPERATED, SUSPENDED, PHASED_OUT]
+  note: Point of Interaction — the terminal or COTS device. `state` is the device lifecycle.
+- name: BIN
+  domain: emv-config
+  schema: BINReadSchema
+  path: /api/config/bins
+  operations: [list_bins, create_bin, get_bin, update_bin, partial_update_bin, delete_bin]
+- name: BINList
+  domain: emv-config
+  schema: BINListReadSchema
+  path: /api/config/bin-lists
+  operations: [list_bin_lists, create_bin_list, get_bin_list, update_bin_list, partial_update_bin_list,
+    delete_bin_list, add_bin_to_bin_list, remove_bin_from_bin_list]
+- name: BINConfig
+  domain: emv-config
+  schema: BINConfigReadSchema
+  path: /api/config/bin-configs
+  operations: [list_bin_configs, create_bin_config, get_bin_config, update_bin_config, partial_update_bin_config,
+    delete_bin_config, add_bin_list_to_bin_config, remove_bin_list_from_bin_config]
+- name: CAPK
+  domain: emv-config
+  schema: CAPKReadSchema
+  path: /api/config/capks
+  operations: [list_capks, create_capk, get_capk, update_capk, partial_update_capk, delete_capk]
+  enums:
+    hash_type: [UNDEFINED, SHA1, SHA256]
+    algorithm_type: [RSA]
+  note: Certification Authority Public Key — the EMV offline-data-authentication key material.
+- name: CAPKList
+  domain: emv-config
+  schema: CAPKListReadSchema
+  path: /api/config/capk-lists
+  operations: [list_capk_lists, create_capk_list, get_capk_list, update_capk_list, partial_update_capk_list,
+    delete_capk_list, add_capk_to_capk_list, remove_capk_from_capk_list]
+- name: CR
+  domain: emv-config
+  schema: CRReadSchema
+  path: /api/config/crs
+  operations: [list_crs, create_cr, get_cr, update_cr, partial_update_cr, delete_cr]
+  note: Certificate Revocation entry (EMV CRL).
+- name: CRList
+  domain: emv-config
+  schema: CRListReadSchema
+  path: /api/config/cr-lists
+  operations: [list_cr_lists, create_cr_list, get_cr_list, update_cr_list, partial_update_cr_list, delete_cr_list,
+    add_cr_to_cr_list, remove_cr_from_cr_list]
+- name: EMV
+  domain: emv-config
+  schema: EMVReadSchema
+  path: /api/config/emvs
+  operations: [list_emvs, create_emv, get_emv, update_emv, partial_update_emv, delete_emv]
+  enums:
+    technology_type: [CONTACT, CONTACTLESS]
+    transaction_type: ['00', '01', '02', '09', '17', '20', '21', '93']
+  note: A kernel parameter set, scoped by technology and EMV transaction type.
+- name: EMVList
+  domain: emv-config
+  schema: EMVListReadSchema
+  path: /api/config/emv-lists
+  operations: [list_emv_lists, create_emv_list, get_emv_list, update_emv_list, partial_update_emv_list,
+    delete_emv_list, add_emv_to_emv_list, remove_emv_from_emv_list]
+- name: EMVConfig
+  domain: emv-config
+  schema: EMVConfigReadSchema
+  path: /api/config/emv-configs
+  operations: [list_emv_configs, create_emv_config, get_emv_config, update_emv_config, partial_update_emv_config,
+    delete_emv_config]
+  fields: [id, name, organization_id, emv_nominal_list_id, emv_failsafe_list_id]
+  note: Pairs a nominal EMVList with a failsafe EMVList — the fallback parameter set.
+- name: POIConfig
+  domain: emv-config
+  schema: POIConfigReadSchema
+  path: /api/config/poi-configs
+  operations: [list_poi_configs, create_poi_config, get_poi_config, update_poi_config, partial_update_poi_config,
+    delete_poi_config]
+  fields: [id, name, organization_id, bin_config_id, capk_list_id, cr_list_id, emv_config_id]
+  note: >-
+    The join object and the centre of the model. A terminal fetches its POIConfig at runtime; the docs require it to
+    contain at least an EMVConfig, with CAPKs, CRs and BINs optional and configurable later.
+- name: Payment
+  domain: payment
+  schema: PaymentReadSchema
+  path: /api/payment/payments
+  operations: [list_payments, create_payment, get_payment, update_payment, partial_update_payment]
+  fields: [id, organization_id, poi_id, poi_config_id, log_data_set_id, state, outcome_status, trd, authorization,
+    completion, pin_block]
+  enums:
+    state: [UNDEFINED, CREATED, READY, INITIATED, REQUESTED, COMPLETED]
+    outcome_status: [UNDEFINED, APPROVED, DECLINED, ONLINE_REQUEST, END_APPLICATION, SELECT_NEXT,
+      TRY_ANOTHER_INTERFACE, TRY_AGAIN, NA]
+  note: >-
+    No delete operation — payments are append-only. trd/authorization/completion carry EMV TLV blobs; pin_block is
+    present but nullable. The payment ID is the coordination token between backend, device app and Switcloud Client.
+- name: LogDataSet
+  domain: payment
+  schema: LogDataSetReadSchema
+  path: /api/payment/logs
+  operations: [list_log_data_sets, get_log_data_set, update_log_data_set, partial_update_log_data_set]
+  fields: [id, organization_id, meta_data, telemetry, config, trd, all_tags, apdus, trace, signals]
+  note: >-
+    No create and no delete — created implicitly with the Payment. This is the transaction-level debugging surface.
+relationships:
+- {from: Merchant, to: Organization, kind: belongs_to, via: organization_id}
+- {from: Store, to: Merchant, kind: belongs_to, via: merchant_id}
+- {from: Merchant, to: Store, kind: has_many, via: merchant_id}
+- {from: Store, to: Organization, kind: belongs_to, via: organization_id}
+- {from: POI, to: Store, kind: belongs_to, via: store_id}
+- {from: Store, to: POI, kind: has_many, via: store_id}
+- {from: POI, to: Organization, kind: belongs_to, via: organization_id}
+- {from: BINList, to: BIN, kind: has_many, via: bins, join_operation: add_bin_to_bin_list}
+- {from: BINConfig, to: BINList, kind: has_many, via: bin_lists, join_operation: add_bin_list_to_bin_config}
+- {from: CAPKList, to: CAPK, kind: has_many, via: capks, join_operation: add_capk_to_capk_list}
+- {from: CRList, to: CR, kind: has_many, via: crs, join_operation: add_cr_to_cr_list}
+- {from: EMVList, to: EMV, kind: has_many, via: emvs, join_operation: add_emv_to_emv_list}
+- {from: EMVConfig, to: EMVList, kind: has_one, via: emv_nominal_list_id, role: nominal}
+- {from: EMVConfig, to: EMVList, kind: has_one, via: emv_failsafe_list_id, role: failsafe}
+- {from: POIConfig, to: BINConfig, kind: has_one, via: bin_config_id}
+- {from: POIConfig, to: CAPKList, kind: has_one, via: capk_list_id}
+- {from: POIConfig, to: CRList, kind: has_one, via: cr_list_id}
+- {from: POIConfig, to: EMVConfig, kind: has_one, via: emv_config_id}
+- {from: Payment, to: POI, kind: belongs_to, via: poi_id}
+- {from: Payment, to: POIConfig, kind: belongs_to, via: poi_config_id}
+- {from: Payment, to: LogDataSet, kind: has_one, via: log_data_set_id}
+- {from: LogDataSet, to: Organization, kind: belongs_to, via: organization_id}
+expansion:
+  mechanism: with_related query parameter
+  note: >-
+    `with_related=true` inlines the nested read schemas on 14 operations — a POIConfig read returns bin_config,
+    capk_list, cr_list and emv_config objects alongside their *_id fields, and a BINConfig read returns its bin_lists
+    with their bins.
+swittest_model:
+  note: >-
+    Swittest is a separate, mostly non-relational model — documents rather than linked entities — and it re-declares
+    the Switcloud EMV config shapes so a test can carry its own scope.
+  entities: [TestSuiteSchema, TestSchema, TestListSchema, TestResultSchema, CustomTestSchema, RunTestSchema,
+    RunCustomTestSchema, ConfigSchema, EnvironmentSchema, CustomEnvironmentSchema, ExpectationsSchema,
+    ExpectationsPartSchema, ExpectationsDataSchema, OutcomeParameterSetSchema, POIConfigSchema, EMVConfigSchema,
+    EMVListSchema, EMVSchema, EMVScopeSchema, BINConfigSchema, BINListSchema, BINSchema, BINScopeSchema,
+    CAPKListSchema, CAPKSchema, CAPKScopeSchema, CRListSchema, CRSchema, CRScopeSchema, PaymentSchema,
+    ParsedTag, TagDescription, BitBlock, BitSection, ByteBlock, IntermediateSignalSchema,
+    UserInterfaceRequestDataSchema, ErrorIndicationSchema, RestartSchema, SettingsSchema, ListDirectorySchema]
+  relationships:
+  - {from: TestSuiteSchema, to: TestSchema, kind: has_many, via: tests}
+  - {from: TestSchema, to: ExpectationsSchema, kind: has_one, via: expectations}
+  - {from: TestSchema, to: ConfigSchema, kind: has_one, via: config}
+  - {from: ConfigSchema, to: POIConfigSchema, kind: has_one, via: poi_config}
+  - {from: TestResultSchema, to: PaymentSchema, kind: has_one, via: payment}
+  cross_product_note: >-
+    "Swittest relies on Switcloud to handle card processing data (configuration and payments)" —
+    https://docs.switstack.io/swittest/architecture/. The duplicated config schemas are the seam between the two
+    products.
+render: null

@@ -1,0 +1,74 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.switstack.io/swittest/cli/
+docs: https://docs.switstack.io/swittest/cli/
+clis:
+- name: swittest
+  package: swittest-cli
+  binary: swittest
+  language: python
+  framework: Typer
+  api: Swittest API
+  version: null
+  note: >-
+    Version is not published. The CLI is distributed from the Switstack Nexus repository, not PyPI, and the docs say
+    "Please contact our support team to get your Nexus access details" — so no unauthenticated metadata endpoint
+    exists to read a version from.
+  install:
+  - method: pip
+    command: pip install swittest-cli
+    requires: 'an additional package source pointing at the Switstack Nexus repository (credentials from support)'
+  - method: other
+    command: 'pipx / poetry / pipenv / uv'
+    requires: 'same additional Nexus source; the docs state any of these tools work'
+  help: swittest --help
+  global_options:
+  - {flag: --install-completion, description: Install shell completion for the current shell}
+  - {flag: --show-completion, description: Show shell completion for the current shell}
+  - {flag: --help, description: Show the help message and exit}
+  behavior_notes:
+  - 'Invoking a group with no sub-command prints its help (swittest suites == swittest suites --help).'
+  - 'The run sub-commands accept three verbosity levels: -v, -vv, -vvv.'
+  - 'Verbose mode is available on suites show, suites run, tests show and tests run.'
+  commands:
+  - group: settings
+    description: Load, clear or show your setup settings.
+    note: Settings must be configured before the rest of the CLI can reach a Swittest instance.
+  - group: log
+    description: Parse supported log files from Eval+.
+    backing_operation: openapi/switstack-swittest-openapi.yml#parse_log
+  - group: tlv
+    description: Parse a TLV string and name tags.
+    backing_operation: openapi/switstack-swittest-openapi.yml#parse_tlv
+  - group: tag
+    description: List and parse supported tags.
+    backing_operation: openapi/switstack-swittest-openapi.yml#parse_tag, openapi/switstack-swittest-openapi.yml#list_tags
+  - group: verify
+    description: Verify your custom test suites and test files content/format.
+    backing_operation: openapi/switstack-swittest-openapi.yml#verify_test_suite, openapi/switstack-swittest-openapi.yml#verify_test
+  - group: configs
+    description: Explore switstack's config files.
+    backing_operation: openapi/switstack-swittest-openapi.yml#list_config_files, openapi/switstack-swittest-openapi.yml#load_config_file
+  - group: suites
+    description: List, show or select a test suite.
+    backing_operation: openapi/switstack-swittest-openapi.yml#list_test_suites, openapi/switstack-swittest-openapi.yml#get_test_suite
+  - group: tests
+    description: List, show or run a (set of) test(s).
+    backing_operation: openapi/switstack-swittest-openapi.yml#get_test, openapi/switstack-swittest-openapi.yml#run_tests
+  - group: probe
+    description: Paytest probe management commands.
+    note: >-
+      Listed in the CLI's own --help output but not described in the numbered docs sections; the corresponding Python
+      package reference is published at https://docs.switstack.io/api/swittest/swittest-probe/.
+  command_group_count: 9
+  key_flows:
+  - name: Configure and select a suite
+    steps: ['swittest settings load', 'swittest suites list', 'swittest suites select <suite>']
+  - name: Validate a custom test suite before running it
+    steps: ['swittest verify ...', 'swittest tests run <selection> -vv']
+  - name: Post-mortem an EMV transaction
+    steps: ['swittest log parse <evalplus-log>', 'swittest tlv parse <tlv-string>', 'swittest tag list']
+cli_count: 1
+note: >-
+  No CLI is published for Switcloud or moka — only Swittest ships one. The moka side is a C library plus Gradle
+  templates, driven from the build rather than a command line.

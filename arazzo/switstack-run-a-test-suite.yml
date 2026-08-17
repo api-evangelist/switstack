@@ -1,0 +1,205 @@
+arazzo: 1.0.1
+info:
+  title: Verify and run a Swittest EMV test suite
+  version: 1.0.0
+  description: >-
+    Authenticate, discover a suite, inspect a test and its scope, validate a custom suite, then run a selection and
+    consume the Server-Sent Events stream. Every operationId is verified verbatim against
+    openapi/switstack-swittest-openapi.yml.
+sourceDescriptions:
+- name: swittest
+  url: ../openapi/switstack-swittest-openapi.yml
+  type: openapi
+workflows:
+- workflowId: verify-and-run-a-test-suite
+  summary: Pre-flight a suite, then run a test selection with streaming results.
+  description: >-
+    Requires the Full role — the Data role can read suites/tests/configs/vcards but cannot run. The Swittest host is
+    per-customer; supply it as the server variable, do not guess one. A device with the Swittest L3 app installed and
+    connected must be present.
+  inputs:
+    type: object
+    required: [username, password, suite, test_selection]
+    properties:
+      username: {type: string}
+      password: {type: string}
+      suite:
+        type: string
+        description: Test suite name or index.
+      test:
+        type: string
+        description: Test name or index, for the inspection steps.
+      test_selection:
+        type: string
+        description: >-
+          A single name, an index (1036), a comma list (0, 99, 1036), a range (0-5), a list of ranges (0-5, 15-40), a mix
+          (0-5, 8, 9, 15-40), or `all`.
+      verbose:
+        type: integer
+        description: '0 status/errors, 1 + payment and log data sets, 2 + parsed authorization TLV, 3 + parsed DF8129/DF8115/DF8116.'
+  steps:
+  - stepId: authenticate
+    operationId: token
+    requestBody:
+      contentType: application/x-www-form-urlencoded
+      payload:
+        grant_type: password
+        username: $inputs.username
+        password: $inputs.password
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      access_token: $response.body#/access_token
+  - stepId: list-suites
+    operationId: list_test_suites
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: get-suite
+    description: Suites and tests are addressable by name or index interchangeably.
+    operationId: get_test_suite
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: test_suite_name_or_index
+      in: path
+      value: $inputs.suite
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: get-test
+    operationId: get_test
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: test_suite_name_or_index
+      in: path
+      value: $inputs.suite
+    - name: test_name_or_index
+      in: path
+      value: $inputs.test
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: get-test-config
+    description: Read the test's configuration before running — this is what tells you whether its pre-conditions match the device.
+    operationId: get_test_config
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: test_suite_name_or_index
+      in: path
+      value: $inputs.suite
+    - name: test_name_or_index
+      in: path
+      value: $inputs.test
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: get-test-vcard
+    description: The virtual card the test presents.
+    operationId: get_test_vcard
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: test_suite_name_or_index
+      in: path
+      value: $inputs.suite
+    - name: test_name_or_index
+      in: path
+      value: $inputs.test
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: verify-suite
+    description: >-
+      Validate content and format before committing bench time. A malformed suite that fails mid-run wastes a session;
+      verification is cheap.
+    operationId: verify_test_suite
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: run-tests
+    description: >-
+      The 200 response is text/event-stream (SSE with data/event/id/retry). Read pass/fail from TestStatusEnum in the
+      streamed TestResultSchema and failure detail from ErrorIndicationSchema — the HTTP 200 is not a pass.
+    operationId: run_tests
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: Accept
+      in: header
+      value: text/event-stream
+    - name: test_suite_name_or_index
+      in: path
+      value: $inputs.suite
+    - name: test_selection
+      in: path
+      value: $inputs.test_selection
+    requestBody:
+      contentType: application/json
+      payload:
+        verbose: $inputs.verbose
+    successCriteria:
+    - condition: $statusCode == 200
+  outputs:
+    suite: $inputs.suite
+    selection: $inputs.test_selection
+- workflowId: parse-an-emv-transaction
+  summary: Turn a raw EMV TLV blob or an Eval+ log into named tags.
+  description: >-
+    The post-mortem path. Also the way to make sense of a Switcloud Payment's trd / authorization / completion blobs, or
+    a LogDataSet's all_tags / apdus.
+  inputs:
+    type: object
+    required: [username, password]
+    properties:
+      username: {type: string}
+      password: {type: string}
+      tlv:
+        type: string
+        description: A TLV string, e.g. the value of Payment.authorization.
+  steps:
+  - stepId: authenticate
+    operationId: token
+    requestBody:
+      contentType: application/x-www-form-urlencoded
+      payload:
+        grant_type: password
+        username: $inputs.username
+        password: $inputs.password
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      access_token: $response.body#/access_token
+  - stepId: list-supported-tags
+    operationId: list_tags
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: parse-tlv
+    operationId: parse_tlv
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    successCriteria:
+    - condition: $statusCode == 200
+  outputs:
+    parsed: $steps.parse-tlv.outputs
+x-provenance:
+  generated: '2026-08-17'
+  method: generated
+  source: >-
+    openapi/switstack-swittest-openapi.yml (every operationId grepped verbatim),
+    https://docs.switstack.io/swittest/setup/, https://docs.switstack.io/swittest/cli/

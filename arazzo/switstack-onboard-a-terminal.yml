@@ -1,0 +1,222 @@
+arazzo: 1.0.1
+info:
+  title: Onboard a Switcloud terminal
+  version: 1.0.0
+  description: >-
+    Authenticate, build the Merchant -> Store -> POI estate, assemble a minimum EMV configuration, and bundle it into
+    the POIConfig a terminal fetches at runtime. This is steps 1 and 2 of the Switcloud getting-started guide as a
+    single runnable workflow. Every operationId is verified verbatim against openapi/switstack-switcloud-openapi.yml.
+sourceDescriptions:
+- name: switcloud
+  url: ../openapi/switstack-switcloud-openapi.yml
+  type: openapi
+workflows:
+- workflowId: onboard-a-terminal
+  summary: Create an estate, a minimum EMV configuration, and the POIConfig that binds them to a terminal.
+  description: >-
+    Requires an Organization Admin identity. Note that no idempotency key exists on this API — re-running this workflow
+    creates duplicate objects rather than converging.
+  inputs:
+    type: object
+    required: [username, password, merchant_name, store_name, store_address, poi_name, poi_identifier, poi_serial_number]
+    properties:
+      username:
+        type: string
+        description: Organization Admin email address.
+      password:
+        type: string
+      merchant_name:
+        type: string
+      store_name:
+        type: string
+      store_address:
+        type: string
+      poi_name:
+        type: string
+      poi_identifier:
+        type: string
+      poi_serial_number:
+        type: string
+      poi_brand:
+        type: string
+        description: 'One of UNDEFINED, SUNMI, CASTLES, PAX, SAMSUNG, GOOGLE.'
+      emv_technology_type:
+        type: string
+        description: CONTACT or CONTACTLESS.
+  steps:
+  - stepId: authenticate
+    description: Password-grant token. Returns access_token, token_type bearer, expires_in 3600.
+    operationId: token
+    requestBody:
+      contentType: application/x-www-form-urlencoded
+      payload:
+        grant_type: password
+        username: $inputs.username
+        password: $inputs.password
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      access_token: $response.body#/access_token
+  - stepId: create-merchant
+    operationId: create_merchant
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.merchant_name
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      merchant_id: $response.body#/id
+      organization_id: $response.body#/organization_id
+  - stepId: create-store
+    description: merchant_id is required — omitting it is the most common 422 in this flow.
+    operationId: create_store
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.store_name
+        address: $inputs.store_address
+        merchant_id: $steps.create-merchant.outputs.merchant_id
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      store_id: $response.body#/id
+  - stepId: create-poi
+    description: The terminal or COTS device. identifier and serial_number are both required and distinct.
+    operationId: create_poi
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.poi_name
+        identifier: $inputs.poi_identifier
+        serial_number: $inputs.poi_serial_number
+        brand: $inputs.poi_brand
+        state: PROVISIONED
+        store_id: $steps.create-store.outputs.store_id
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      poi_id: $response.body#/id
+  - stepId: create-emv
+    description: A kernel parameter set. kernel, aid and tlv are shown in the provider's own Python sample.
+    operationId: create_emv
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        name: Baseline EMV parameter set
+        technology_type: $inputs.emv_technology_type
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      emv_id: $response.body#/id
+  - stepId: create-emv-list
+    operationId: create_emv_list
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        name: Baseline EMV nominal list
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      emv_list_id: $response.body#/id
+  - stepId: attach-emv-to-list
+    description: Join endpoint — two path ids, in order (list id then emv id).
+    operationId: add_emv_to_emv_list
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: id
+      in: path
+      value: $steps.create-emv-list.outputs.emv_list_id
+    - name: emv_id
+      in: path
+      value: $steps.create-emv.outputs.emv_id
+    successCriteria:
+    - condition: $statusCode == 201
+  - stepId: create-emv-config
+    description: >-
+      emv_nominal_list_id is the working parameter set; emv_failsafe_list_id is the fallback and should be populated in
+      production. This workflow sets only the nominal list, matching the provider's minimum example.
+    operationId: create_emv_config
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        name: Baseline EMV config
+        emv_nominal_list_id: $steps.create-emv-list.outputs.emv_list_id
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      emv_config_id: $response.body#/id
+  - stepId: create-poi-config
+    description: >-
+      The join object a terminal fetches at runtime. The docs require at least an EMVConfig; bin_config_id, capk_list_id
+      and cr_list_id are optional and can be added later (CAPKs are required in practice for offline data
+      authentication).
+    operationId: create_poi_config
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    requestBody:
+      contentType: application/json
+      payload:
+        name: Baseline POI config
+        emv_config_id: $steps.create-emv-config.outputs.emv_config_id
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      poi_config_id: $response.body#/id
+  - stepId: verify-poi-config
+    description: >-
+      Read the bundle back with expansion on. Without with_related=true a POIConfig holding a dangling reference looks
+      fine; with it, bin_config / capk_list / cr_list / emv_config are inlined.
+    operationId: get_poi_config
+    parameters:
+    - name: Authorization
+      in: header
+      value: Bearer $steps.authenticate.outputs.access_token
+    - name: id
+      in: path
+      value: $steps.create-poi-config.outputs.poi_config_id
+    - name: with_related
+      in: query
+      value: true
+    successCriteria:
+    - condition: $statusCode == 200
+  outputs:
+    organization_id: $steps.create-merchant.outputs.organization_id
+    merchant_id: $steps.create-merchant.outputs.merchant_id
+    store_id: $steps.create-store.outputs.store_id
+    poi_id: $steps.create-poi.outputs.poi_id
+    poi_config_id: $steps.create-poi-config.outputs.poi_config_id
+x-provenance:
+  generated: '2026-08-17'
+  method: generated
+  source: >-
+    openapi/switstack-switcloud-openapi.yml (every operationId grepped verbatim),
+    https://docs.switstack.io/switcloud/getting_started/, https://docs.switstack.io/switcloud/examples/

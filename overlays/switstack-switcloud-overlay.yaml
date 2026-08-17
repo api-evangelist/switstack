@@ -1,0 +1,99 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Switstack Switcloud API
+  version: 1.0.0
+extends: openapi/switstack-switcloud-openapi.yml
+x-provenance:
+  generated: '2026-08-17'
+  method: generated
+  source: >-
+    Derived from the verbatim spec at openapi/_original/switstack-switcloud-openapi.json, harvested from the Redoc
+    state embedded in https://docs.switstack.io/api/switcloud/api/switcloud-srv/ on 2026-08-17, plus the Switstack
+    docs cited in each action. The harvested document is never mutated; every enhancement lives here.
+actions:
+- target: $.info
+  description: >-
+    Record where the document came from and its rating context. The published spec has no contact, license or
+    termsOfService — the only contact channel is contact@switstack.io, stated in info.description prose.
+  update:
+    x-apievangelist-source: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+    x-apievangelist-harvested: '2026-08-17'
+    x-apievangelist-provider: Switstack
+    x-apievangelist-product: Switcloud
+    x-apievangelist-operations: 106
+- target: $.info
+  description: >-
+    Add the contact block the spec omits, using only the address Switstack publishes in info.description and in the
+    moka Doxygen copyright header.
+  update:
+    contact:
+      name: Switstack
+      email: contact@switstack.io
+      url: https://docs.switstack.io/switcloud/
+- target: $
+  description: >-
+    The published document declares NO servers[] block, so a generated client has no host. Add the base URL exactly as
+    the provider documents it on the Switcloud security & authentication page, flagged with the reachability finding —
+    the host did not resolve in public DNS when probed, and the Switcloud sandbox is provisioned per customer.
+  update:
+    servers:
+    - url: https://switcloud.switstack.io
+      description: >-
+        Base URL as documented at https://docs.switstack.io/switcloud/security_authentication/. Per-tenant: the
+        Switcloud sandbox is granted by Switstack sales/support and this host returned NXDOMAIN on 2026-08-17.
+      x-apievangelist-verified: false
+      x-apievangelist-probe: {url: 'https://switcloud.switstack.io/', status: 0, note: NXDOMAIN, checked: '2026-08-17'}
+- target: $
+  description: >-
+    Apply the security scheme at the document root. It is declared per operation on 103 of 106 operations but there is
+    no root-level security block, so tooling that reads only the root sees an unauthenticated API.
+  update:
+    security:
+    - OAuth2PasswordBearer: []
+- target: $
+  description: >-
+    The document declares no tags[] block even though every operation is tagged. Name and describe the four tag groups
+    so the spec is navigable, using the surface names from https://docs.switstack.io/switcloud/architecture/.
+  update:
+    tags:
+    - name: Auth
+      description: OAuth 2.0 token issue, refresh and revoke.
+    - name: BOM
+      description: >-
+        Business Object Model / Estate API — merchants, stores and points of interaction (switcloud-bom).
+    - name: Config
+      description: >-
+        EMV L2 Configuration API — BINs, CAPKs, CRs, EMV kernel parameter sets, and the list/config objects that bundle
+        them into a POIConfig a terminal fetches at runtime (switcloud-config).
+    - name: Payment
+      description: >-
+        Payment API — transaction lifecycle plus the log data sets carrying trace, APDU and telemetry detail
+        (switcloud-payment).
+- target: $.components.schemas.HTTPValidationError
+  description: Name the error envelope so error handling is discoverable from the schema itself.
+  update:
+    description: >-
+      The only error envelope this API declares. Returned with HTTP 422 on all 106 operations. `detail[]` carries one
+      ValidationError per rejected input. 401, 403, 404, 409, 429 and 5xx are not declared anywhere in the document —
+      see errors/switstack-problem-types.yml.
+- target: $.components.securitySchemes.OAuth2PasswordBearer
+  description: >-
+    Record the client-credentials grant and the token TTL that the docs publish but the spec omits, and the
+    disagreement between the documented token URL and the spec's tokenUrl.
+  update:
+    description: >-
+      OAuth 2.0 bearer tokens. The spec declares only the password flow; the docs at
+      https://docs.switstack.io/switcloud/security_authentication/ also document a client_credentials grant for machine
+      users (Oauth2GrantType enum = password, client_credentials) and an expires_in of 3600 seconds. Note the docs post
+      to https://switcloud.switstack.io/api/oauth/token while this document declares tokenUrl `auth/token`; the two
+      disagree and API Evangelist did not reconcile them.
+    x-apievangelist-authorization-model: role-based
+    x-apievangelist-roles: [Super Admin, Organization Admin, Simple User]
+- target: $.paths['/api/payment/payments'].post
+  description: >-
+    Flag the idempotency gap on the one operation where it matters most. create_payment is the write an integrator
+    retries, and no idempotency key is available.
+  update:
+    x-apievangelist-idempotent: false
+    x-apievangelist-note: >-
+      No Idempotency-Key parameter is published on this API. A retried create_payment will create a second Payment.

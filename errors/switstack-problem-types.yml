@@ -1,0 +1,92 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/switstack-switcloud-openapi.yml, openapi/switstack-swittest-openapi.yml
+format: fastapi-validation
+rfc9457: false
+docs: null
+summary:
+  declared_status_codes: [200, 201, 204, 422]
+  error_status_codes: [422]
+  error_responses_total: 128
+  problem_types: 1
+  note: >-
+    This is a thin error contract, and the thinness is the finding. Across 128 operations (106 Switcloud + 22
+    Swittest) the ONLY declared failure is 422 Validation Error. 401 and 403 are not declared even though every
+    non-auth operation requires a bearer token; 404 is not declared even though 72 Switcloud operations take a path
+    id; 409, 429 and 5xx are absent entirely. No docs error reference exists to enrich these from — the Switstack
+    knowledge base has no error page. An agent calling this API cannot learn the failure modes from the contract.
+envelope:
+  media_type: application/json
+  schema: HTTPValidationError
+  shape: '{"detail": [ValidationError, ...]}'
+  member_schema: ValidationError
+  member_fields:
+  - {name: loc, type: 'array<string|integer>', required: true, description: 'JSON path to the offending input'}
+  - {name: msg, type: string, required: true, description: Human-readable message}
+  - {name: type, type: string, required: true, description: 'Machine-readable error type (Pydantic error code)'}
+  - {name: input, type: any, required: false, description: 'The rejected input value (Swittest only)'}
+  - {name: ctx, type: object, required: false, description: 'Error context (Swittest only)'}
+  note: >-
+    Standard FastAPI/Pydantic validation envelope. `type` carries the Pydantic error code (e.g. missing,
+    string_too_short, uuid_parsing) but the set is not enumerated in either document, so the vocabulary an agent
+    would branch on is not published.
+problems:
+- status: 422
+  type: null
+  title: Validation Error
+  schema: HTTPValidationError
+  media_type: application/json
+  applies_to: all 106 Switcloud operations
+  source_operation: openapi/switstack-switcloud-openapi.yml
+  remediation: >-
+    Read `detail[].loc` to find the rejected field and `detail[].type` for the Pydantic reason; correct the request
+    body or query/path parameter. Common causes on this API are a missing required foreign key (create_store requires
+    merchant_id, create_poi requires store_id, create_payment requires poi_id and poi_config_id) and a malformed uuid
+    in a *_id field.
+- status: 422
+  type: null
+  title: Validation Error
+  schema: HTTPValidationError
+  media_type: application/json
+  applies_to: all 22 Swittest operations
+  source_operation: openapi/switstack-swittest-openapi.yml
+  remediation: >-
+    Same envelope, with `input` and `ctx` additionally populated. For run_tests, verify the test_selection expression
+    (single name, index, comma list, range, range list, or `all`) and validate custom suites with verify_test_suite /
+    verify_test before running them.
+in_band_failure_signals:
+  note: >-
+    Some failure information on this API is carried in 200 responses rather than HTTP status codes. These are not
+    errors in the RFC 9457 sense but an agent must read them to know a call failed.
+  signals:
+  - api: Switcloud API
+    field: PaymentReadSchema.outcome_status
+    schema: OutcomeStatus
+    values: [UNDEFINED, APPROVED, DECLINED, ONLINE_REQUEST, END_APPLICATION, SELECT_NEXT, TRY_ANOTHER_INTERFACE, TRY_AGAIN, NA]
+    note: >-
+      The EMV terminal outcome. DECLINED, END_APPLICATION, TRY_AGAIN and TRY_ANOTHER_INTERFACE are transaction
+      failures returned on a successful HTTP call. These are EMV Book B outcomes, not card-issuer decline codes —
+      Switstack is card-present infrastructure, not an acquirer, and publishes no ISO 8583 / scheme decline-code
+      reference, so errors/switstack-decline-codes.yml is intentionally absent.
+  - api: Switcloud API
+    field: PaymentReadSchema.state
+    schema: State
+    values: [UNDEFINED, CREATED, READY, INITIATED, REQUESTED, COMPLETED]
+    note: A payment stuck short of COMPLETED indicates the on-device leg did not finish.
+  - api: Swittest API
+    field: ErrorIndicationSchema
+    note: >-
+      Swittest carries an ErrorIndicationSchema component used inside test-result payloads to report per-test failure
+      detail rather than as an HTTP error body.
+  - api: Swittest API
+    field: TestStatusEnum
+    note: Per-test pass/fail status returned inside TestResultSchema and streamed over run_tests SSE events.
+undeclared_statuses:
+  note: >-
+    Statuses an integrator will encounter that the contract does not describe. Listed as gaps, not as fabricated
+    entries — nothing below is asserted to exist in a published document.
+  gaps:
+  - {status: 401, reason: 'Missing/expired bearer token on any of the 125 secured operations; not declared'}
+  - {status: 403, reason: 'Role boundary — Organization Admin cannot create payments, Basic user cannot manage estate; documented as roles but never as a response'}
+  - {status: 404, reason: 'Unknown {id} on any of the 72 path-id operations; not declared'}
+  - {status: 429, reason: 'No rate limits documented and no 429 declared'}

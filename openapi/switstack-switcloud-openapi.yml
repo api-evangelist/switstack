@@ -1,0 +1,6989 @@
+openapi: 3.1.0
+info:
+  title: Switcloud API 🚀
+  description: '
+
+    ### Prerequisites
+
+    To use this API, you must have an active organization, an active admin user, and either a basic user
+    or a machine user. If you don''t have an account yet, please contact us at [contact@switstack.io](mailto:contact@switstack.io).
+
+
+    ### Roles
+
+    - **Admin user**: Can manage users, merchants, stores, and POI configurations but cannot create payments.
+
+    - **Basic user**: Can only manage payments.
+
+
+    ### Authentication
+
+    To make authenticated requests, call `/auth/token` with your credentials and the appropriate grant
+    type. An access token will be returned, which must be included in the request''s Authorization header
+    using the Bearer prefix (`Authorization: Bearer <access_token>`).
+
+
+    ### Before Creating a Payment
+
+
+    1. Log in as an admin user.
+
+    2. Using the BOM sub-API, create a merchant, store, and POI, if applicable.
+
+    3. Using the config sub-API, create a POI configuration, if applicable.
+
+
+    The minimum required POI configuration includes:
+
+    - An EMV.
+
+    - An EMV list containing the previously created EMV.
+
+    - An EMV config using the EMV list as the nominal list.
+
+    - A POI config containing the EMV config.
+
+
+    ### Creating a Payment
+
+    1. Log in as a basic or machine user.
+
+    2. Create a payment with at least a POI ID and a POI config ID.
+
+    '
+  version: 2.28.0
+paths:
+  /auth/token:
+    post:
+      tags:
+      - Auth
+      summary: Token
+      operationId: token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OAuth2Form'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/refresh-token:
+    post:
+      tags:
+      - Auth
+      summary: Refresh Token
+      operationId: refresh_token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_refresh_token_auth_refresh_token_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/revoke-token:
+    post:
+      tags:
+      - Auth
+      summary: Revoke Token
+      operationId: revoke_token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_revoke_token_auth_revoke_token_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/merchants:
+    get:
+      tags:
+      - BOM
+      summary: List Merchants
+      operationId: list_merchants
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_MerchantReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - BOM
+      summary: Create Merchant
+      operationId: create_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/merchants/{id}:
+    get:
+      tags:
+      - BOM
+      summary: Get Merchant
+      operationId: get_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - BOM
+      summary: Update Merchant
+      operationId: update_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - BOM
+      summary: Partial Update Merchant
+      operationId: partial_update_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - BOM
+      summary: Delete Merchant
+      operationId: delete_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/stores:
+    get:
+      tags:
+      - BOM
+      summary: List Stores
+      operationId: list_stores
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_StoreReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - BOM
+      summary: Create Store
+      operationId: create_store
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/stores/{id}:
+    get:
+      tags:
+      - BOM
+      summary: Get Store
+      operationId: get_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - BOM
+      summary: Update Store
+      operationId: update_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - BOM
+      summary: Partial Update Store
+      operationId: partial_update_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorePartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - BOM
+      summary: Delete Store
+      operationId: delete_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/pois:
+    get:
+      tags:
+      - BOM
+      summary: List Pois
+      operationId: list_pois
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: store_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Store Id
+      - name: brand
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/POIBrandType'
+          - type: 'null'
+          title: Brand
+      - name: state
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/POIStateType'
+          - type: 'null'
+          title: State
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_POIReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - BOM
+      summary: Create Poi
+      operationId: create_poi
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POICreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/pois/{id}:
+    get:
+      tags:
+      - BOM
+      summary: Get Poi
+      operationId: get_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - BOM
+      summary: Update Poi
+      operationId: update_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POIUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - BOM
+      summary: Partial Update Poi
+      operationId: partial_update_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POIPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - BOM
+      summary: Delete Poi
+      operationId: delete_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bins:
+    get:
+      tags:
+      - Config
+      summary: List Bins
+      operationId: list_bins
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_BINReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Bin
+      operationId: create_bin
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bins/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Bin
+      operationId: get_bin
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Bin
+      operationId: update_bin
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Bin
+      operationId: partial_update_bin
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Bin
+      operationId: delete_bin
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bin-lists:
+    get:
+      tags:
+      - Config
+      summary: List Bin Lists
+      operationId: list_bin_lists
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_BINListReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Bin List
+      operationId: create_bin_list
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINListCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bin-lists/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Bin List
+      operationId: get_bin_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Bin List
+      operationId: update_bin_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINListUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Bin List
+      operationId: partial_update_bin_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINListPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Bin List
+      operationId: delete_bin_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cascade_delete
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Cascade Delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bin-lists/{id}/bin/{bin_id}:
+    post:
+      tags:
+      - Config
+      summary: Add Bin To Bin List
+      operationId: add_bin_to_bin_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: bin_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Bin Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Remove Bin From Bin List
+      operationId: remove_bin_from_bin_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: bin_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Bin Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bin-configs:
+    get:
+      tags:
+      - Config
+      summary: List Bin Configs
+      operationId: list_bin_configs
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_BINConfigReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Bin Config
+      operationId: create_bin_config
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINConfigCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bin-configs/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Bin Config
+      operationId: get_bin_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Bin Config
+      operationId: update_bin_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINConfigUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Bin Config
+      operationId: partial_update_bin_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BINConfigPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BINConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Bin Config
+      operationId: delete_bin_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cascade_delete
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Cascade Delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/bin-configs/{id}/bin-list/{bin_list_id}:
+    post:
+      tags:
+      - Config
+      summary: Add Bin List To Bin Config
+      operationId: add_bin_list_to_bin_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: bin_list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Bin List Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Remove Bin List From Bin Config
+      operationId: remove_bin_list_from_bin_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: bin_list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Bin List Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/capks:
+    get:
+      tags:
+      - Config
+      summary: List Capks
+      operationId: list_capks
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: hash_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/CAPKHashType'
+          - type: 'null'
+          title: Hash Type
+      - name: algorithm_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/CAPKAlgorithmType'
+          - type: 'null'
+          title: Algorithm Type
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_CAPKReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Capk
+      operationId: create_capk
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CAPKCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/capks/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Capk
+      operationId: get_capk
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Capk
+      operationId: update_capk
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CAPKUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Capk
+      operationId: partial_update_capk
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CAPKPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Capk
+      operationId: delete_capk
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/capk-lists:
+    get:
+      tags:
+      - Config
+      summary: List Capk Lists
+      operationId: list_capk_lists
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_CAPKListReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Capk List
+      operationId: create_capk_list
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CAPKListCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/capk-lists/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Capk List
+      operationId: get_capk_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Capk List
+      operationId: update_capk_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CAPKListUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Capk List
+      operationId: partial_update_capk_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CAPKListPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CAPKListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Capk List
+      operationId: delete_capk_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cascade_delete
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Cascade Delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/capk-lists/{id}/capk/{capk_id}:
+    post:
+      tags:
+      - Config
+      summary: Add Capk To Capk List
+      operationId: add_capk_to_capk_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: capk_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Capk Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Remove Capk From Capk List
+      operationId: remove_capk_from_capk_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: capk_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Capk Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/crs:
+    get:
+      tags:
+      - Config
+      summary: List Crs
+      operationId: list_crs
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_CRReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Cr
+      operationId: create_cr
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CRCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/crs/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Cr
+      operationId: get_cr
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Cr
+      operationId: update_cr
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CRUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Cr
+      operationId: partial_update_cr
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CRPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Cr
+      operationId: delete_cr
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/cr-lists:
+    get:
+      tags:
+      - Config
+      summary: List Cr Lists
+      operationId: list_cr_lists
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_CRListReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Cr List
+      operationId: create_cr_list
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CRListCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/cr-lists/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Cr List
+      operationId: get_cr_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Cr List
+      operationId: update_cr_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CRListUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Cr List
+      operationId: partial_update_cr_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CRListPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CRListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Cr List
+      operationId: delete_cr_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cascade_delete
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Cascade Delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/cr-lists/{id}/cr/{cr_id}:
+    post:
+      tags:
+      - Config
+      summary: Add Cr To Cr List
+      operationId: add_cr_to_cr_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cr_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Cr Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Remove Cr From Cr List
+      operationId: remove_cr_from_cr_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cr_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Cr Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/emvs:
+    get:
+      tags:
+      - Config
+      summary: List Emvs
+      operationId: list_emvs
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: technology_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/EMVTechnologyType'
+          - type: 'null'
+          title: Technology Type
+      - name: transaction_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/EMVTransactionType'
+          - type: 'null'
+          title: Transaction Type
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_EMVReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Emv
+      operationId: create_emv
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/emvs/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Emv
+      operationId: get_emv
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Emv
+      operationId: update_emv
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Emv
+      operationId: partial_update_emv
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Emv
+      operationId: delete_emv
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/emv-lists:
+    get:
+      tags:
+      - Config
+      summary: List Emv Lists
+      operationId: list_emv_lists
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_EMVListReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Emv List
+      operationId: create_emv_list
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVListCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/emv-lists/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Emv List
+      operationId: get_emv_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Emv List
+      operationId: update_emv_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVListUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Emv List
+      operationId: partial_update_emv_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVListPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVListReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Emv List
+      operationId: delete_emv_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cascade_delete
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Cascade Delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/emv-lists/{id}/emv/{emv_id}:
+    post:
+      tags:
+      - Config
+      summary: Add Emv To Emv List
+      operationId: add_emv_to_emv_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: emv_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Emv Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Remove Emv From Emv List
+      operationId: remove_emv_from_emv_list
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: emv_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Emv Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/emv-configs:
+    get:
+      tags:
+      - Config
+      summary: List Emv Configs
+      operationId: list_emv_configs
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_EMVConfigReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Emv Config
+      operationId: create_emv_config
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVConfigCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/emv-configs/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Emv Config
+      operationId: get_emv_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Emv Config
+      operationId: update_emv_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVConfigUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Emv Config
+      operationId: partial_update_emv_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EMVConfigPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EMVConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Emv Config
+      operationId: delete_emv_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cascade_delete
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Cascade Delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/poi-configs:
+    get:
+      tags:
+      - Config
+      summary: List Poi Configs
+      operationId: list_poi_configs
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_POIConfigReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Config
+      summary: Create Poi Config
+      operationId: create_poi_config
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POIConfigCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/config/poi-configs/{id}:
+    get:
+      tags:
+      - Config
+      summary: Get Poi Config
+      operationId: get_poi_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: with_related
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: With Related
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Config
+      summary: Update Poi Config
+      operationId: update_poi_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POIConfigUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Config
+      summary: Partial Update Poi Config
+      operationId: partial_update_poi_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POIConfigPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIConfigReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Config
+      summary: Delete Poi Config
+      operationId: delete_poi_config
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      - name: cascade_delete
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Cascade Delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/payment/payments:
+    get:
+      tags:
+      - Payment
+      summary: List Payments
+      operationId: list_payments
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: poi_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Poi Id
+      - name: state
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/State'
+          - type: 'null'
+          title: State
+      - name: outcome_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeStatus'
+          - type: 'null'
+          title: Outcome Status
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_PaymentReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Payment
+      summary: Create Payment
+      operationId: create_payment
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/payment/payments/{id}:
+    get:
+      tags:
+      - Payment
+      summary: Get Payment
+      operationId: get_payment
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Payment
+      summary: Update Payment
+      operationId: update_payment
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Payment
+      summary: Partial Update Payment
+      operationId: partial_update_payment
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/payment/logs:
+    get:
+      tags:
+      - Payment
+      summary: List Log Data Sets
+      operationId: list_log_data_sets
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_LogDataSetReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/payment/logs/{id}:
+    get:
+      tags:
+      - Payment
+      summary: Get Log Data Set
+      operationId: get_log_data_set
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogDataSetReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Payment
+      summary: Update Log Data Set
+      operationId: update_log_data_set
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogDataSetUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogDataSetReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Payment
+      summary: Partial Update Log Data Set
+      operationId: partial_update_log_data_set
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogDataSetPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogDataSetReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    BINConfigCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN config name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: BINConfigCreateSchema
+    BINConfigPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN config name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: BINConfigPartialUpdateSchema
+    BINConfigReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN config name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        bin_lists:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/BINListReadSchema'
+            type: array
+          - type: 'null'
+          title: Bin Lists
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: BINConfigReadSchema
+    BINConfigUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN config name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: BINConfigUpdateSchema
+    BINCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
+          title: Name
+        min_range:
+          type: integer
+          title: Min Range
+          examples:
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
+          examples:
+          - 99999999
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - min_range
+      - max_range
+      title: BINCreateSchema
+    BINListCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN list name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: BINListCreateSchema
+    BINListPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN list name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: BINListPartialUpdateSchema
+    BINListReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        bins:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/BINReadSchema'
+            type: array
+          - type: 'null'
+          title: Bins
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: BINListReadSchema
+    BINListUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN list name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: BINListUpdateSchema
+    BINPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
+          title: Name
+        min_range:
+          anyOf:
+          - type: integer
+            examples:
+            - 0
+          - type: 'null'
+          title: Min Range
+        max_range:
+          anyOf:
+          - type: integer
+            examples:
+            - 99999999
+          - type: 'null'
+          title: Max Range
+      additionalProperties: false
+      type: object
+      title: BINPartialUpdateSchema
+    BINReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
+          title: Name
+        min_range:
+          type: integer
+          title: Min Range
+          examples:
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
+          examples:
+          - 99999999
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - min_range
+      - max_range
+      - id
+      - organization_id
+      title: BINReadSchema
+    BINUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
+          title: Name
+        min_range:
+          type: integer
+          title: Min Range
+          examples:
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
+          examples:
+          - 99999999
+      additionalProperties: false
+      type: object
+      required:
+      - min_range
+      - max_range
+      title: BINUpdateSchema
+    Body_refresh_token_auth_refresh_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_refresh_token_auth_refresh_token_post
+    Body_revoke_token_auth_revoke_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_revoke_token_auth_revoke_token_post
+    CAPKAlgorithmType:
+      type: string
+      enum:
+      - RSA
+      title: CAPKAlgorithmType
+    CAPKCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - EF
+        hash_type:
+          $ref: '#/components/schemas/CAPKHashType'
+          default: UNDEFINED
+        algorithm_type:
+          $ref: '#/components/schemas/CAPKAlgorithmType'
+          default: RSA
+        modulus:
+          type: string
+          maxLength: 1024
+          minLength: 1
+          title: Modulus
+          examples:
+          - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
+        exponent:
+          type: string
+          maxLength: 6
+          minLength: 2
+          title: Exponent
+          examples:
+          - '03'
+        hash:
+          type: string
+          minLength: 1
+          title: Hash
+        expires_at:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expires At
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - modulus
+      - exponent
+      - hash
+      title: CAPKCreateSchema
+    CAPKHashType:
+      type: string
+      enum:
+      - UNDEFINED
+      - SHA1
+      - SHA256
+      title: CAPKHashType
+    CAPKListCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CAPK list name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CAPKListCreateSchema
+    CAPKListPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK list name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CAPKListPartialUpdateSchema
+    CAPKListReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CAPK list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        capks:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CAPKReadSchema'
+            type: array
+          - type: 'null'
+          title: Capks
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: CAPKListReadSchema
+    CAPKListUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CAPK list name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CAPKListUpdateSchema
+    CAPKPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK name
+          - type: 'null'
+          title: Name
+        rid:
+          anyOf:
+          - type: string
+            maxLength: 10
+            minLength: 10
+            examples:
+            - A000000004
+          - type: 'null'
+          title: Rid
+        index:
+          anyOf:
+          - type: string
+            maxLength: 2
+            minLength: 2
+            examples:
+            - EF
+          - type: 'null'
+          title: Index
+        hash_type:
+          anyOf:
+          - $ref: '#/components/schemas/CAPKHashType'
+          - type: 'null'
+        algorithm_type:
+          anyOf:
+          - $ref: '#/components/schemas/CAPKAlgorithmType'
+          - type: 'null'
+        modulus:
+          anyOf:
+          - type: string
+            maxLength: 1024
+            minLength: 1
+            examples:
+            - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
+          - type: 'null'
+          title: Modulus
+        exponent:
+          anyOf:
+          - type: string
+            maxLength: 6
+            minLength: 2
+            examples:
+            - '03'
+          - type: 'null'
+          title: Exponent
+        hash:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Hash
+        expires_at:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expires At
+      additionalProperties: false
+      type: object
+      title: CAPKPartialUpdateSchema
+    CAPKReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - EF
+        hash_type:
+          $ref: '#/components/schemas/CAPKHashType'
+          default: UNDEFINED
+        algorithm_type:
+          $ref: '#/components/schemas/CAPKAlgorithmType'
+          default: RSA
+        modulus:
+          type: string
+          maxLength: 1024
+          minLength: 1
+          title: Modulus
+          examples:
+          - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
+        exponent:
+          type: string
+          maxLength: 6
+          minLength: 2
+          title: Exponent
+          examples:
+          - '03'
+        hash:
+          type: string
+          minLength: 1
+          title: Hash
+        expires_at:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expires At
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - rid
+      - index
+      - modulus
+      - exponent
+      - hash
+      - id
+      - organization_id
+      title: CAPKReadSchema
+    CAPKUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - EF
+        hash_type:
+          $ref: '#/components/schemas/CAPKHashType'
+          default: UNDEFINED
+        algorithm_type:
+          $ref: '#/components/schemas/CAPKAlgorithmType'
+          default: RSA
+        modulus:
+          type: string
+          maxLength: 1024
+          minLength: 1
+          title: Modulus
+          examples:
+          - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
+        exponent:
+          type: string
+          maxLength: 6
+          minLength: 2
+          title: Exponent
+          examples:
+          - '03'
+        hash:
+          type: string
+          minLength: 1
+          title: Hash
+        expires_at:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expires At
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - modulus
+      - exponent
+      - hash
+      title: CAPKUpdateSchema
+    CRCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - '00'
+        serial_number:
+          type: string
+          maxLength: 6
+          minLength: 6
+          title: Serial Number
+          examples:
+          - 3F70D8
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - serial_number
+      title: CRCreateSchema
+    CRListCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CR list name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CRListCreateSchema
+    CRListPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR list name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: CRListPartialUpdateSchema
+    CRListReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CR list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        crs:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CRReadSchema'
+            type: array
+          - type: 'null'
+          title: Crs
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: CRListReadSchema
+    CRListUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CR list name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CRListUpdateSchema
+    CRPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR name
+          - type: 'null'
+          title: Name
+        rid:
+          anyOf:
+          - type: string
+            maxLength: 10
+            minLength: 10
+            examples:
+            - A000000004
+          - type: 'null'
+          title: Rid
+        index:
+          anyOf:
+          - type: string
+            maxLength: 2
+            minLength: 2
+            examples:
+            - '00'
+          - type: 'null'
+          title: Index
+        serial_number:
+          anyOf:
+          - type: string
+            maxLength: 6
+            minLength: 6
+            examples:
+            - 3F70D8
+          - type: 'null'
+          title: Serial Number
+      additionalProperties: false
+      type: object
+      title: CRPartialUpdateSchema
+    CRReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - '00'
+        serial_number:
+          type: string
+          maxLength: 6
+          minLength: 6
+          title: Serial Number
+          examples:
+          - 3F70D8
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - rid
+      - index
+      - serial_number
+      - id
+      - organization_id
+      title: CRReadSchema
+    CRUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - '00'
+        serial_number:
+          type: string
+          maxLength: 6
+          minLength: 6
+          title: Serial Number
+          examples:
+          - 3F70D8
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - serial_number
+      title: CRUpdateSchema
+    EMVConfigCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV config name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+        emv_nominal_list_id:
+          type: string
+          format: uuid
+          title: Emv Nominal List Id
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emv_nominal_list_id
+      title: EMVConfigCreateSchema
+    EMVConfigPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV config name
+          - type: 'null'
+          title: Name
+        emv_nominal_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Nominal List Id
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
+      additionalProperties: false
+      type: object
+      title: EMVConfigPartialUpdateSchema
+    EMVConfigReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV config name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        emv_nominal_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Nominal List Id
+        emv_nominal_list:
+          anyOf:
+          - $ref: '#/components/schemas/EMVListReadSchema'
+          - type: 'null'
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
+        emv_failsafe_list:
+          anyOf:
+          - $ref: '#/components/schemas/EMVListReadSchema'
+          - type: 'null'
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: EMVConfigReadSchema
+    EMVConfigUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV config name
+        emv_nominal_list_id:
+          type: string
+          format: uuid
+          title: Emv Nominal List Id
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emv_nominal_list_id
+      title: EMVConfigUpdateSchema
+    EMVCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV name
+          - type: 'null'
+          title: Name
+        technology_type:
+          $ref: '#/components/schemas/EMVTechnologyType'
+          default: CONTACTLESS
+        kernel:
+          type: string
+          maxLength: 2
+          minLength: 1
+          title: Kernel
+          examples:
+          - 0F
+        aid:
+          type: string
+          maxLength: 32
+          minLength: 1
+          title: Aid
+          examples:
+          - A0000000041010
+        transaction_type:
+          $ref: '#/components/schemas/EMVTransactionType'
+          default: '00'
+        asf:
+          type: boolean
+          title: Asf
+          default: true
+        tlv:
+          type: string
+          minLength: 1
+          title: Tlv
+          examples:
+          - 5F20 0F 4D696B65204A6F686E20536D697468
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - kernel
+      - aid
+      - tlv
+      title: EMVCreateSchema
+    EMVListCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV list name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: EMVListCreateSchema
+    EMVListPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV list name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: EMVListPartialUpdateSchema
+    EMVListReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        emvs:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EMVReadSchema'
+            type: array
+          - type: 'null'
+          title: Emvs
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: EMVListReadSchema
+    EMVListUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV list name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: EMVListUpdateSchema
+    EMVPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV name
+          - type: 'null'
+          title: Name
+        technology_type:
+          anyOf:
+          - $ref: '#/components/schemas/EMVTechnologyType'
+          - type: 'null'
+        kernel:
+          anyOf:
+          - type: string
+            maxLength: 2
+            minLength: 1
+            examples:
+            - 0F
+          - type: 'null'
+          title: Kernel
+        aid:
+          anyOf:
+          - type: string
+            maxLength: 32
+            minLength: 1
+            examples:
+            - A0000000041010
+          - type: 'null'
+          title: Aid
+        transaction_type:
+          anyOf:
+          - $ref: '#/components/schemas/EMVTransactionType'
+          - type: 'null'
+        asf:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Asf
+        tlv:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Tlv
+      additionalProperties: false
+      type: object
+      title: EMVPartialUpdateSchema
+    EMVReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV name
+          - type: 'null'
+          title: Name
+        technology_type:
+          $ref: '#/components/schemas/EMVTechnologyType'
+          default: CONTACTLESS
+        kernel:
+          type: string
+          maxLength: 2
+          minLength: 1
+          title: Kernel
+          examples:
+          - 0F
+        aid:
+          type: string
+          maxLength: 32
+          minLength: 1
+          title: Aid
+          examples:
+          - A0000000041010
+        transaction_type:
+          $ref: '#/components/schemas/EMVTransactionType'
+          default: '00'
+        asf:
+          type: boolean
+          title: Asf
+          default: true
+        tlv:
+          type: string
+          minLength: 1
+          title: Tlv
+          examples:
+          - 5F20 0F 4D696B65204A6F686E20536D697468
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - kernel
+      - aid
+      - tlv
+      - id
+      - organization_id
+      title: EMVReadSchema
+    EMVTechnologyType:
+      type: string
+      enum:
+      - CONTACT
+      - CONTACTLESS
+      title: EMVTechnologyType
+    EMVTransactionType:
+      type: string
+      enum:
+      - '00'
+      - '01'
+      - '02'
+      - 09
+      - '17'
+      - '20'
+      - '21'
+      - '93'
+      title: EMVTransactionType
+    EMVUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV name
+          - type: 'null'
+          title: Name
+        technology_type:
+          $ref: '#/components/schemas/EMVTechnologyType'
+          default: CONTACTLESS
+        kernel:
+          type: string
+          maxLength: 2
+          minLength: 1
+          title: Kernel
+          examples:
+          - 0F
+        aid:
+          type: string
+          maxLength: 32
+          minLength: 1
+          title: Aid
+          examples:
+          - A0000000041010
+        transaction_type:
+          $ref: '#/components/schemas/EMVTransactionType'
+          default: '00'
+        asf:
+          type: boolean
+          title: Asf
+          default: true
+        tlv:
+          type: string
+          minLength: 1
+          title: Tlv
+          examples:
+          - 5F20 0F 4D696B65204A6F686E20536D697468
+      additionalProperties: false
+      type: object
+      required:
+      - kernel
+      - aid
+      - tlv
+      title: EMVUpdateSchema
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LogDataSetPartialUpdateSchema:
+      properties:
+        meta_data:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Meta Data
+        telemetry:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Telemetry
+        config:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Config
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trd
+        all_tags:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: All Tags
+        apdus:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Apdus
+        trace:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trace
+        signals:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Signals
+      additionalProperties: false
+      type: object
+      title: LogDataSetPartialUpdateSchema
+    LogDataSetReadSchema:
+      properties:
+        meta_data:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Meta Data
+        telemetry:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Telemetry
+        config:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Config
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trd
+        all_tags:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: All Tags
+        apdus:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Apdus
+        trace:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trace
+        signals:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Signals
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - id
+      - organization_id
+      title: LogDataSetReadSchema
+    LogDataSetUpdateSchema:
+      properties:
+        meta_data:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Meta Data
+        telemetry:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Telemetry
+        config:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Config
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trd
+        all_tags:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: All Tags
+        apdus:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Apdus
+        trace:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trace
+        signals:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Signals
+      additionalProperties: false
+      type: object
+      title: LogDataSetUpdateSchema
+    MerchantCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: MerchantCreateSchema
+    MerchantPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: MerchantPartialUpdateSchema
+    MerchantReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: MerchantReadSchema
+    MerchantUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: MerchantUpdateSchema
+    OAuth2Form:
+      properties:
+        grant_type:
+          $ref: '#/components/schemas/Oauth2GrantType'
+        username:
+          anyOf:
+          - type: string
+            maxLength: 255
+            format: email
+            examples:
+            - email@example.io
+          - type: 'null'
+          title: Username
+        password:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - gha3d%Loin6%6b$DPHH8
+          - type: 'null'
+          title: Password
+        client_id:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - client_id_OmwkXY21oxg_ZpHBKYdvm-22BCOR4GURohBxnbCSNSeypSa0Dozstr5uOyO67O79P8bSjwWpx5biSm_Aoqqaew
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - client_secret_OcEl4AUv3abh-OuYalDQk0L1pAr0Dqvqb4FUs5d9HOw89bGPTZYVRGf-wOjjyHRoabx21tWcwlVjyWz8x90AtQ
+          - type: 'null'
+          title: Client Secret
+      additionalProperties: false
+      type: object
+      required:
+      - grant_type
+      title: OAuth2Form
+    Oauth2GrantType:
+      type: string
+      enum:
+      - password
+      - client_credentials
+      title: Oauth2GrantType
+    OutcomeStatus:
+      type: string
+      enum:
+      - UNDEFINED
+      - APPROVED
+      - DECLINED
+      - ONLINE_REQUEST
+      - END_APPLICATION
+      - SELECT_NEXT
+      - TRY_ANOTHER_INTERFACE
+      - TRY_AGAIN
+      - NA
+      title: OutcomeStatus
+    POIBrandType:
+      type: string
+      enum:
+      - UNDEFINED
+      - SUNMI
+      - CASTLES
+      - PAX
+      - SAMSUNG
+      - GOOGLE
+      title: POIBrandType
+    POIConfigCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI config name
+        emv_config_id:
+          type: string
+          format: uuid
+          title: Emv Config Id
+        capk_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Capk List Id
+        cr_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Cr List Id
+        bin_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Bin Config Id
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emv_config_id
+      title: POIConfigCreateSchema
+    POIConfigPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI config name
+          - type: 'null'
+          title: Name
+        emv_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Config Id
+        capk_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Capk List Id
+        cr_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Cr List Id
+        bin_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Bin Config Id
+      additionalProperties: false
+      type: object
+      title: POIConfigPartialUpdateSchema
+    POIConfigReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI config name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        bin_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Bin Config Id
+        bin_config:
+          anyOf:
+          - $ref: '#/components/schemas/BINConfigReadSchema'
+          - type: 'null'
+        capk_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Capk List Id
+        capk_list:
+          anyOf:
+          - $ref: '#/components/schemas/CAPKListReadSchema'
+          - type: 'null'
+        cr_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Cr List Id
+        cr_list:
+          anyOf:
+          - $ref: '#/components/schemas/CRListReadSchema'
+          - type: 'null'
+        emv_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Config Id
+        emv_config:
+          anyOf:
+          - $ref: '#/components/schemas/EMVConfigReadSchema'
+          - type: 'null'
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: POIConfigReadSchema
+    POIConfigUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI config name
+        emv_config_id:
+          type: string
+          format: uuid
+          title: Emv Config Id
+        capk_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Capk List Id
+        cr_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Cr List Id
+        bin_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Bin Config Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emv_config_id
+      title: POIConfigUpdateSchema
+    POICreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      title: POICreateSchema
+    POIPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI name
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          anyOf:
+          - type: string
+            maxLength: 16
+            minLength: 1
+            examples:
+            - '00000003'
+          - type: 'null'
+          title: Identifier
+        serial_number:
+          anyOf:
+          - type: string
+            maxLength: 25
+            minLength: 1
+            examples:
+            - SN-DF2948A38DC
+          - type: 'null'
+          title: Serial Number
+        brand:
+          anyOf:
+          - $ref: '#/components/schemas/POIBrandType'
+          - type: 'null'
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/POIStateType'
+          - type: 'null'
+        store_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Store Id
+      additionalProperties: false
+      type: object
+      title: POIPartialUpdateSchema
+    POIReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      - id
+      - organization_id
+      title: POIReadSchema
+    POIStateType:
+      type: string
+      enum:
+      - UNDEFINED
+      - PROVISIONED
+      - OPERATED
+      - SUSPENDED
+      - PHASED_OUT
+      title: POIStateType
+    POIUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      title: POIUpdateSchema
+    Page_TypeVar_Customized_BINConfigReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BINConfigReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[BINConfigReadSchema]
+    Page_TypeVar_Customized_BINListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BINListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[BINListReadSchema]
+    Page_TypeVar_Customized_BINReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BINReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[BINReadSchema]
+    Page_TypeVar_Customized_CAPKListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CAPKListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CAPKListReadSchema]
+    Page_TypeVar_Customized_CAPKReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CAPKReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CAPKReadSchema]
+    Page_TypeVar_Customized_CRListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CRListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CRListReadSchema]
+    Page_TypeVar_Customized_CRReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CRReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CRReadSchema]
+    Page_TypeVar_Customized_EMVConfigReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EMVConfigReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[EMVConfigReadSchema]
+    Page_TypeVar_Customized_EMVListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EMVListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[EMVListReadSchema]
+    Page_TypeVar_Customized_EMVReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EMVReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[EMVReadSchema]
+    Page_TypeVar_Customized_LogDataSetReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/LogDataSetReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[LogDataSetReadSchema]
+    Page_TypeVar_Customized_MerchantReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/MerchantReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[MerchantReadSchema]
+    Page_TypeVar_Customized_POIConfigReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/POIConfigReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[POIConfigReadSchema]
+    Page_TypeVar_Customized_POIReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/POIReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[POIReadSchema]
+    Page_TypeVar_Customized_PaymentReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PaymentReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[PaymentReadSchema]
+    Page_TypeVar_Customized_StoreReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/StoreReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[StoreReadSchema]
+    PaymentCreateSchema:
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+          default: UNDEFINED
+        outcome_status:
+          $ref: '#/components/schemas/OutcomeStatus'
+          default: UNDEFINED
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+        poi_id:
+          type: string
+          format: uuid
+          title: Poi Id
+        poi_config_id:
+          type: string
+          format: uuid
+          title: Poi Config Id
+      additionalProperties: false
+      type: object
+      required:
+      - poi_id
+      - poi_config_id
+      title: PaymentCreateSchema
+    PaymentPartialUpdateSchema:
+      properties:
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/State'
+          - type: 'null'
+        outcome_status:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeStatus'
+          - type: 'null'
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+      additionalProperties: false
+      type: object
+      title: PaymentPartialUpdateSchema
+    PaymentReadSchema:
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+          default: UNDEFINED
+        outcome_status:
+          $ref: '#/components/schemas/OutcomeStatus'
+          default: UNDEFINED
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        poi_id:
+          type: string
+          format: uuid
+          title: Poi Id
+        poi_config_id:
+          type: string
+          format: uuid
+          title: Poi Config Id
+        log_data_set_id:
+          type: string
+          format: uuid
+          title: Log Data Set Id
+      type: object
+      required:
+      - id
+      - organization_id
+      - poi_id
+      - poi_config_id
+      - log_data_set_id
+      title: PaymentReadSchema
+    PaymentUpdateSchema:
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+          default: UNDEFINED
+        outcome_status:
+          $ref: '#/components/schemas/OutcomeStatus'
+          default: UNDEFINED
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+      additionalProperties: false
+      type: object
+      title: PaymentUpdateSchema
+    State:
+      type: string
+      enum:
+      - UNDEFINED
+      - CREATED
+      - READY
+      - INITIATED
+      - REQUESTED
+      - COMPLETED
+      title: State
+    StoreCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - merchant_id
+      title: StoreCreateSchema
+    StorePartialUpdateSchema:
+      properties:
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Merchant Id
+      additionalProperties: false
+      type: object
+      title: StorePartialUpdateSchema
+    StoreReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+      type: object
+      required:
+      - name
+      - merchant_id
+      - id
+      - organization_id
+      - address
+      title: StoreReadSchema
+    StoreUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - merchant_id
+      title: StoreUpdateSchema
+    TokenSchema:
+      properties:
+        token_type:
+          type: string
+          const: Bearer
+          title: Token Type
+        access_token:
+          type: string
+          pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
+          title: Access Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+        expires_in:
+          type: integer
+          title: Expires In
+          default: 300
+        refresh_token:
+          anyOf:
+          - type: string
+            pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
+            examples:
+            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+          - type: 'null'
+          title: Refresh Token
+        refresh_expires_in:
+          type: integer
+          title: Refresh Expires In
+          default: 1800
+      type: object
+      required:
+      - token_type
+      - access_token
+      title: TokenSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: auth/token

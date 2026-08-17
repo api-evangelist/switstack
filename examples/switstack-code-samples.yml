@@ -1,0 +1,68 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.switstack.io/switcloud/examples/
+docs: https://docs.switstack.io/switcloud/examples/
+note: >-
+  Switstack publishes three runnable end-to-end code samples on one page, covering the whole Switcloud happy path. They
+  are worth cataloguing precisely because they are the ONLY place the provider shows an authenticated call: neither
+  OpenAPI document carries a per-operation example or code-sample block, and the docs' own framing is "code samples in
+  different languages for the different elements that -could- compose your payment application". The samples also
+  confirm two facts the specs omit — the base host (https://switcloud.switstack.io, used verbatim in all three) and the
+  Python package's import name (switcloudapi).
+sample_count: 3
+languages: [python, kotlin]
+samples:
+- name: Create a basic estate
+  language: python
+  package: switcloudapi
+  imports: [SwitcloudApi, MerchantCreateSchema, StoreCreateSchema, POICreateSchema]
+  base_url: https://switcloud.switstack.io
+  auth: 'api.oauth.token(grant_type="password", username=..., password=...) then api.update_token(token)'
+  operations: [token, create_merchant, create_store, create_poi]
+  flow: >-
+    Instantiate SwitcloudApi against the base host, get a password-grant token, then create Merchant -> Store (with
+    merchant_id) -> POI (with identifier, serial_number, store_id).
+  caveat: >-
+    Switstack's own note on the sample: "This code does not catch exceptions and errors!" Treat it as a shape, not a
+    production pattern — and see errors/switstack-problem-types.yml for what is actually declared.
+- name: Create a basic EMV configuration
+  language: python
+  package: switcloudapi
+  imports: [SwitcloudApi, EMVCreateSchema, EMVTechnologyType, EMVListCreateSchema, EMVConfigCreateSchema,
+    POIConfigCreateSchema]
+  operations: [token, create_emv, create_emv_list, add_emv_to_emv_list, create_emv_config, create_poi_config]
+  flow: >-
+    Create an EMV parameter set (technology_type CONTACTLESS, a kernel id, an AID and a TLV parameter blob) -> EMVList
+    -> attach EMV to list -> EMVConfig with emv_nominal_list_id -> POIConfig with emv_config_id.
+  fields_revealed:
+  - 'kernel — a kernel identifier on EMVCreateSchema (the sample uses Mastercard contactless)'
+  - 'aid — the EMV Application Identifier'
+  - 'tlv — the packed kernel parameter TLV string'
+  note: >-
+    Useful because it names three EMVCreateSchema fields (kernel, aid, tlv) whose meaning the OpenAPI does not describe.
+    Switstack's closing line: "A very simple POIConfig capable of handling Mastercard contactless transaction."
+- name: Make a payment
+  language: kotlin
+  packages: [io.switstack.switcloud.switcloudapi, io.switstack.switcloud.switcloudclt]
+  imports: [SwitcloudApi, PaymentCreateSchema, PaymentReadSchema, SwitcloudClt]
+  operations: [token, create_payment]
+  flow: >-
+    Backend side: SwitcloudApi against the base host, client_credentials token, PaymentCreateSchema(poiConfigId, poiId),
+    createPayment -> paymentID. Terminal side: SwitcloudClt.setup(activity, baseUrl) -> initialize(login, password) ->
+    configure(poiID, paymentID, trd) -> initiate(paymentID) for card processing.
+  significance: >-
+    The only published example of the two-sided split — it is the sample that shows the backend and on-device halves as
+    one flow, and the only place the client_credentials grant appears in code. Note the Kotlin method name in the sample
+    (`tokenApiOauth2TokenPost`) implies a generated client built against an /api/oauth2/token path, which matches neither
+    the docs' /api/oauth/token nor the spec's /auth/token — a third spelling. Recorded, not reconciled.
+  caveat: >-
+    The Kotlin snippet contains obvious typos in the published page (`val trd = = byteArrayOf`, `/* ... device in use *.`)
+    and placeholder credentials. Do not copy it verbatim.
+in_spec_examples:
+  present: true
+  kind: schema-level only
+  note: >-
+    Both OpenAPI documents carry `examples` on individual schema properties (Merchant "Merchant name", Store address
+    "2 Bd Léon Bureau, 44200 Nantes", Payment trd/authorization/completion TLV blobs, OAuth2Form client_id/client_secret
+    placeholders). There are no operation-level `examples`, no `requestBody` examples and no `x-codeSamples` block, so a
+    reference reader sees field hints but never a whole call.

@@ -1,0 +1,46 @@
+generated: '2026-08-17'
+method: generated
+source: arazzo/*.yml
+note: >-
+  Native Arazzo 1.0.1 workflows authored by API Evangelist over the two published Switstack OpenAPI documents. Every
+  operationId was grepped verbatim from openapi/_original/ before use; none is invented. Switstack publishes no Arazzo
+  of its own.
+workflows:
+- file: switstack-onboard-a-terminal.yml
+  workflowId: onboard-a-terminal
+  title: Onboard a Switcloud terminal
+  summary: >-
+    Authenticate, create Merchant -> Store -> POI, build a minimum EMV parameter set / list / config, bundle it into a
+    POIConfig, then verify the bundle with with_related=true.
+  api: openapi/switstack-switcloud-openapi.yml
+  operations: 10
+- file: switstack-take-a-payment.yml
+  workflowId: take-a-payment
+  title: Take a Switcloud payment and reconcile it
+  summary: >-
+    Machine-user token, create_payment against a POI and POIConfig, poll to state COMPLETED, read outcome_status and the
+    EMV TLV blobs, then pull the log data set for diagnostics.
+  api: openapi/switstack-switcloud-openapi.yml
+  operations: 5
+- file: switstack-take-a-payment.yml
+  workflowId: reconcile-payments-for-a-terminal
+  title: Reconcile payments for a terminal
+  summary: Page a terminal's payments filtered by outcome_status, using the page/size envelope.
+  api: openapi/switstack-switcloud-openapi.yml
+  operations: 2
+- file: switstack-run-a-test-suite.yml
+  workflowId: verify-and-run-a-test-suite
+  title: Verify and run a Swittest EMV test suite
+  summary: >-
+    Discover a suite, inspect a test with its config and vcard, verify the suite, then run a selection and consume the
+    SSE stream.
+  api: openapi/switstack-swittest-openapi.yml
+  operations: 8
+- file: switstack-run-a-test-suite.yml
+  workflowId: parse-an-emv-transaction
+  title: Parse an EMV transaction
+  summary: List supported tags and parse a TLV blob — the post-mortem path for a Switcloud Payment or LogDataSet.
+  api: openapi/switstack-swittest-openapi.yml
+  operations: 3
+workflow_count: 5
+file_count: 3
