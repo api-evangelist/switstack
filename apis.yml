@@ -13,7 +13,7 @@ url: https://raw.githubusercontent.com/api-evangelist/switstack/refs/heads/main/
 image: https://cdn.prod.website-files.com/677bdd3fa1a7f9a1d8e76d2e/67879a394c57fb7c99783259_switstack_meta.png
 x-type: company
 x-source: serena-portfolio
-specificationVersion: '0.21'
+specificationVersion: '0.23'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
