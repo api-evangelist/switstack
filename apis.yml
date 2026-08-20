@@ -19,6 +19,22 @@ modified: '2026-08-17'
 tags:
 - Company
 - Fintech Insurtech
+- Payments
+- EMV
+- emv-level-2
+- Card Present
+- Point-of-Sale
+- SoftPOS
+- Tap to Pay
+- Payment Terminals
+- In-Store Payments
+- pci-mpoc
+- certification-testing
+- Retail Payments
+- estate-management
+tags_raw:
+- Company
+- Fintech Insurtech
 - payments
 - emv
 - emv-level-2
@@ -43,6 +59,14 @@ apis:
   humanURL: https://docs.switstack.io/switcloud/
   baseURL: https://switcloud.switstack.io/
   tags:
+  - Payments
+  - EMV
+  - emv-level-2
+  - Card Present
+  - estate-management
+  - Point-of-Sale
+  - In-Store Payments
+  tags_raw:
   - payments
   - emv
   - emv-level-2
@@ -75,6 +99,12 @@ apis:
     URL is published.
   humanURL: https://docs.switstack.io/swittest/
   tags:
+  - EMV
+  - emv-level-2
+  - certification-testing
+  - Card Present
+  - Payment Terminals
+  tags_raw:
   - emv
   - emv-level-2
   - certification-testing
