@@ -49,34 +49,16 @@ tags_raw:
 - retail-payments
 - estate-management
 apis:
-- name: Switcloud API
-  description: >-
-    REST API for the Switcloud platform, organized in three surfaces: switcloud-bom (estate — merchants, stores and
-    points of interaction), switcloud-config (EMV L2 configuration — BINs, BIN lists/configs, CAPKs and CAPK lists,
-    CRs and CR lists, EMVs and EMV lists/configs, POI configs) and switcloud-payment (payment lifecycle plus the
-    encrypted transaction log data sets). OAuth 2.0 password / client-credentials grant issues a bearer token from
-    /auth/token. Version 2.28.0 publishes 106 operations across 40 paths as OpenAPI 3.1.0.
+- aid: switstack:switstack-auth-api
+  name: Switstack Auth API
+  description: The Auth API from Switstack — 3 operation(s) for auth.
   humanURL: https://docs.switstack.io/switcloud/
   baseURL: https://switcloud.switstack.io/
   tags:
-  - Payments
-  - EMV
-  - emv-level-2
-  - Card Present
-  - estate-management
-  - Point-of-Sale
-  - In-Store Payments
-  tags_raw:
-  - payments
-  - emv
-  - emv-level-2
-  - card-present
-  - estate-management
-  - point-of-sale
-  - in-store-payments
+  - Auth
   properties:
   - type: OpenAPI
-    url: openapi/switstack-switcloud-openapi.yml
+    url: openapi/switstack-auth-api-openapi.yml
   - type: APIReference
     url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
   - type: Documentation
@@ -85,48 +67,206 @@ apis:
     url: https://docs.switstack.io/switcloud/getting_started/
   - type: Authentication
     url: https://docs.switstack.io/switcloud/security_authentication/
-  - type: Overlay
-    url: overlays/switstack-switcloud-overlay.yaml
   - type: DataModel
     url: data-model/switstack-data-model.yml
-- name: Swittest API
-  description: >-
-    REST API for the Swittest managed EMV test-automation service. Exposes test-suite and test discovery, test
-    execution (including a streaming run channel and ad-hoc custom tests), configuration-file browsing, scope
-    verification for BIN/CAPK/CR/EMV definitions, and TLV/tag/log parsers for Eval+ output. OAuth 2.0 password
-    grant issues a bearer token from /auth/token. Version 0.13.0 publishes 22 operations across 22 paths as
-    OpenAPI 3.1.0. Switstack hosts separate Swittest instances per customer or partner, so no single public base
-    URL is published.
-  humanURL: https://docs.switstack.io/swittest/
-  tags:
-  - EMV
-  - emv-level-2
-  - certification-testing
-  - Card Present
-  - Payment Terminals
-  tags_raw:
-  - emv
-  - emv-level-2
-  - certification-testing
-  - card-present
-  - payment-terminals
-  properties:
-  - type: OpenAPI
-    url: openapi/switstack-swittest-openapi.yml
   - type: APIReference
     url: https://docs.switstack.io/api/swittest/api/swittest-srv/
   - type: Documentation
     url: https://docs.switstack.io/swittest/
   - type: GettingStarted
     url: https://docs.switstack.io/swittest/setup/
-  - type: Overlay
-    url: overlays/switstack-swittest-overlay.yaml
+- aid: switstack:switstack-bom-api
+  name: Switstack BOM API
+  description: The BOM API from Switstack — 6 operation(s) for bom.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - BOM
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-bom-api-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
+- aid: switstack:switstack-config-api
+  name: Switstack Config API
+  description: The Config API from Switstack — 29 operation(s) for config.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - Config
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-config-api-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
+- aid: switstack:switstack-parser-api
+  name: Switstack Parser API
+  description: The Parser API from Switstack — 4 operation(s) for parser.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - Parser
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-parser-api-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
+- aid: switstack:switstack-payment-api
+  name: Switstack Payment API
+  description: The Payment API from Switstack — 4 operation(s) for payment.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - Payment
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-payment-api-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
+- aid: switstack:switstack-suite-api
+  name: Switstack Suite API
+  description: The Suite API from Switstack — 2 operation(s) for suite.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - Suite
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-suite-api-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
+- aid: switstack:switstack-test-api
+  name: Switstack Test API
+  description: The Test API from Switstack — 5 operation(s) for test.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - Test
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-test-api-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
+- aid: switstack:switstack-validation-api
+  name: Switstack Validation API
+  description: The Validation API from Switstack — 6 operation(s) for validation.
+  humanURL: https://docs.switstack.io/switcloud/
+  baseURL: https://switcloud.switstack.io/
+  tags:
+  - Validation
+  properties:
+  - type: OpenAPI
+    url: openapi/switstack-validation-api-openapi.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/switcloud/api/switcloud-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/switcloud/
+  - type: GettingStarted
+    url: https://docs.switstack.io/switcloud/getting_started/
+  - type: Authentication
+    url: https://docs.switstack.io/switcloud/security_authentication/
+  - type: DataModel
+    url: data-model/switstack-data-model.yml
+  - type: APIReference
+    url: https://docs.switstack.io/api/swittest/api/swittest-srv/
+  - type: Documentation
+    url: https://docs.switstack.io/swittest/
+  - type: GettingStarted
+    url: https://docs.switstack.io/swittest/setup/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/switstack-switcloud-overlay.yaml
+- type: Overlay
+  url: overlays/switstack-swittest-overlay.yaml
 - type: AgenticAccess
   url: agentic-access/switstack-agentic-access.yml
 - type: OAuthScopes
