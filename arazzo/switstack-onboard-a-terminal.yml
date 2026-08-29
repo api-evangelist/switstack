@@ -7,8 +7,14 @@ info:
     the POIConfig a terminal fetches at runtime. This is steps 1 and 2 of the Switcloud getting-started guide as a
     single runnable workflow. Every operationId is verified verbatim against openapi/switstack-switcloud-openapi.yml.
 sourceDescriptions:
-- name: switcloud
-  url: ../openapi/switstack-switcloud-openapi.yml
+- name: authApi
+  url: ../openapi/switstack-auth-api-openapi.yml
+  type: openapi
+- name: bomApi
+  url: ../openapi/switstack-bom-api-openapi.yml
+  type: openapi
+- name: configApi
+  url: ../openapi/switstack-config-api-openapi.yml
   type: openapi
 workflows:
 - workflowId: onboard-a-terminal

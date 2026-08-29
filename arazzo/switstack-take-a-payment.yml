@@ -7,8 +7,11 @@ info:
     against a POI and POIConfig, wait for the on-device leg, then read the completed transaction and its log data set.
     Every operationId is verified verbatim against openapi/switstack-switcloud-openapi.yml.
 sourceDescriptions:
-- name: switcloud
-  url: ../openapi/switstack-switcloud-openapi.yml
+- name: authApi
+  url: ../openapi/switstack-auth-api-openapi.yml
+  type: openapi
+- name: paymentApi
+  url: ../openapi/switstack-payment-api-openapi.yml
   type: openapi
 workflows:
 - workflowId: take-a-payment

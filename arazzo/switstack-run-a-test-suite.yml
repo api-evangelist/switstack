@@ -7,8 +7,20 @@ info:
     consume the Server-Sent Events stream. Every operationId is verified verbatim against
     openapi/switstack-swittest-openapi.yml.
 sourceDescriptions:
-- name: swittest
-  url: ../openapi/switstack-swittest-openapi.yml
+- name: authApi
+  url: ../openapi/switstack-auth-api-openapi.yml
+  type: openapi
+- name: parserApi
+  url: ../openapi/switstack-parser-api-openapi.yml
+  type: openapi
+- name: suiteApi
+  url: ../openapi/switstack-suite-api-openapi.yml
+  type: openapi
+- name: testApi
+  url: ../openapi/switstack-test-api-openapi.yml
+  type: openapi
+- name: validationApi
+  url: ../openapi/switstack-validation-api-openapi.yml
   type: openapi
 workflows:
 - workflowId: verify-and-run-a-test-suite

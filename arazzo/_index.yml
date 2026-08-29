@@ -1,7 +1,7 @@
-generated: '2026-08-17'
-method: generated
-source: arazzo/*.yml
-note: >-
+x-generated: '2026-08-17'
+x-method: generated
+x-source: arazzo/*.yml
+x-note: >-
   Native Arazzo 1.0.1 workflows authored by API Evangelist over the two published Switstack OpenAPI documents. Every
   operationId was grepped verbatim from openapi/_original/ before use; none is invented. Switstack publishes no Arazzo
   of its own.
@@ -42,5 +42,5 @@ workflows:
   summary: List supported tags and parse a TLV blob — the post-mortem path for a Switcloud Payment or LogDataSet.
   api: openapi/switstack-swittest-openapi.yml
   operations: 3
-workflow_count: 5
-file_count: 3
+x-workflow_count: 5
+x-file_count: 3
