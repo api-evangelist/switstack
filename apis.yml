@@ -10,6 +10,18 @@ description: >-
   one L3 application runs across Android COTS tap-to-pay devices and PCI-PTS terminals via a GLA adapter layer —
   and Switstack supplies pre-certified PCI MPoC software and service components to shrink certification scope.
 url: https://raw.githubusercontent.com/api-evangelist/switstack/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.prod.website-files.com/677bdd3fa1a7f9a1d8e76d2e/67879a394c57fb7c99783259_switstack_meta.png
 x-type: company
 x-source: serena-portfolio
