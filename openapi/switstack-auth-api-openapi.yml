@@ -1,0 +1,316 @@
+openapi: 3.2.0
+info:
+  title: Switstack Auth API
+  version: '1.0'
+  description: 'Operations tagged Auth across 2 of this provider''s published API definitions: switstack-switcloud-openapi.yml, switstack-swittest-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://switcloud.switstack.io/
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Auth
+paths:
+  /auth/token:
+    post:
+      tags:
+      - Auth
+      summary: Token
+      operationId: token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OAuth2Form'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://switcloud.switstack.io/
+      description: Base URL declared by the provider in apis.yml (roadmap#122).
+  /auth/refresh-token:
+    post:
+      tags:
+      - Auth
+      summary: Refresh Token
+      operationId: refresh_token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_refresh_token_auth_refresh_token_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://switcloud.switstack.io/
+      description: Base URL declared by the provider in apis.yml (roadmap#122).
+  /auth/revoke-token:
+    post:
+      tags:
+      - Auth
+      summary: Revoke Token
+      operationId: revoke_token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_revoke_token_auth_revoke_token_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://switcloud.switstack.io/
+      description: Base URL declared by the provider in apis.yml (roadmap#122).
+components:
+  schemas:
+    Body_refresh_token_auth_refresh_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_refresh_token_auth_refresh_token_post
+    TokenSchema:
+      properties:
+        token_type:
+          type: string
+          const: Bearer
+          title: Token Type
+        access_token:
+          type: string
+          pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
+          title: Access Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+        expires_in:
+          type: integer
+          title: Expires In
+          default: 300
+        refresh_token:
+          anyOf:
+          - type: string
+            pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
+            examples:
+            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+          - type: 'null'
+          title: Refresh Token
+        refresh_expires_in:
+          type: integer
+          title: Refresh Expires In
+          default: 1800
+      type: object
+      required:
+      - token_type
+      - access_token
+      title: TokenSchema
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Body_revoke_token_auth_revoke_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_revoke_token_auth_revoke_token_post
+    Oauth2GrantType:
+      type: string
+      enum:
+      - password
+      - client_credentials
+      title: Oauth2GrantType
+    OAuth2Form:
+      properties:
+        grant_type:
+          $ref: '#/components/schemas/Oauth2GrantType'
+        username:
+          anyOf:
+          - type: string
+            maxLength: 255
+            format: email
+            examples:
+            - email@example.io
+          - type: 'null'
+          title: Username
+        password:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - gha3d%Loin6%6b$DPHH8
+          - type: 'null'
+          title: Password
+        client_id:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - client_id_OmwkXY21oxg_ZpHBKYdvm-22BCOR4GURohBxnbCSNSeypSa0Dozstr5uOyO67O79P8bSjwWpx5biSm_Aoqqaew
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - client_secret_OcEl4AUv3abh-OuYalDQk0L1pAr0Dqvqb4FUs5d9HOw89bGPTZYVRGf-wOjjyHRoabx21tWcwlVjyWz8x90AtQ
+          - type: 'null'
+          title: Client Secret
+      additionalProperties: false
+      type: object
+      required:
+      - grant_type
+      title: OAuth2Form
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Body_refresh_token_auth_refresh_token_post_2:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+          default: ''
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      title: Body_refresh_token_auth_refresh_token_post
+    TokenSchema_2:
+      properties:
+        token_type:
+          type: string
+          const: Bearer
+          title: Token Type
+        access_token:
+          type: string
+          minLength: 1
+          title: Access Token
+        expires_in:
+          type: integer
+          title: Expires In
+          default: 300
+        refresh_token:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Refresh Token
+        refresh_expires_in:
+          type: integer
+          title: Refresh Expires In
+          default: 1800
+      type: object
+      required:
+      - token_type
+      - access_token
+      title: TokenSchema
+    Body_revoke_token_auth_revoke_token_post_2:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+          default: ''
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      title: Body_revoke_token_auth_revoke_token_post
+    ValidationError_2:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: auth/token
+x-refined-from:
+- switstack-switcloud-openapi.yml
+- switstack-swittest-openapi.yml

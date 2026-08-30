@@ -1,0 +1,919 @@
+openapi: 3.2.0
+info:
+  title: Switcloud API 🚀 Payment API
+  description: '
+
+    ### Prerequisites
+
+    To use this API, you must have an active organization, an active admin user, and either a basic user or a machine user. If you don''t have an account yet, please contact us at [contact@switstack.io](mailto:contact@switstack.io).
+
+
+    ### Roles
+
+    - **Admin user**: Can manage users, merchants, stores, and POI configurations but cannot create payments.
+
+    - **Basic user**: Can only manage payments.
+
+
+    ### Authentication
+
+    To make authenticated requests, call `/auth/token` with your credentials and the appropriate grant type. An access token will be returned, which must be included in the request''s Authorization header using the Bearer prefix (`Authorization: Bearer <access_token>`).
+
+
+    ### Before Creating a Payment
+
+
+    1. Log in as an admin user.
+
+    2. Using the BOM sub-API, create a merchant, store, and POI, if applicable.
+
+    3. Using the config sub-API, create a POI configuration, if applicable.
+
+
+    The minimum required POI configuration includes:
+
+    - An EMV.
+
+    - An EMV list containing the previously created EMV.
+
+    - An EMV config using the EMV list as the nominal list.
+
+    - A POI config containing the EMV config.
+
+
+    ### Creating a Payment
+
+    1. Log in as a basic or machine user.
+
+    2. Create a payment with at least a POI ID and a POI config ID.
+
+    '
+  version: 2.28.0
+servers:
+- url: https://switcloud.switstack.io/
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Payment
+paths:
+  /api/payment/payments:
+    get:
+      tags:
+      - Payment
+      summary: List Payments
+      operationId: list_payments
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: poi_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Poi Id
+      - name: state
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/State'
+          - type: 'null'
+          title: State
+      - name: outcome_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeStatus'
+          - type: 'null'
+          title: Outcome Status
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_PaymentReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Payment
+      summary: Create Payment
+      operationId: create_payment
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/payment/payments/{id}:
+    get:
+      tags:
+      - Payment
+      summary: Get Payment
+      operationId: get_payment
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Payment
+      summary: Update Payment
+      operationId: update_payment
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Payment
+      summary: Partial Update Payment
+      operationId: partial_update_payment
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/payment/logs:
+    get:
+      tags:
+      - Payment
+      summary: List Log Data Sets
+      operationId: list_log_data_sets
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_LogDataSetReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/payment/logs/{id}:
+    get:
+      tags:
+      - Payment
+      summary: Get Log Data Set
+      operationId: get_log_data_set
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogDataSetReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Payment
+      summary: Update Log Data Set
+      operationId: update_log_data_set
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogDataSetUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogDataSetReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Payment
+      summary: Partial Update Log Data Set
+      operationId: partial_update_log_data_set
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogDataSetPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogDataSetReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    OutcomeStatus:
+      type: string
+      enum:
+      - UNDEFINED
+      - APPROVED
+      - DECLINED
+      - ONLINE_REQUEST
+      - END_APPLICATION
+      - SELECT_NEXT
+      - TRY_ANOTHER_INTERFACE
+      - TRY_AGAIN
+      - NA
+      title: OutcomeStatus
+    PaymentPartialUpdateSchema:
+      properties:
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/State'
+          - type: 'null'
+        outcome_status:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeStatus'
+          - type: 'null'
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+      additionalProperties: false
+      type: object
+      title: PaymentPartialUpdateSchema
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LogDataSetUpdateSchema:
+      properties:
+        meta_data:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Meta Data
+        telemetry:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Telemetry
+        config:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Config
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trd
+        all_tags:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: All Tags
+        apdus:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Apdus
+        trace:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trace
+        signals:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Signals
+      additionalProperties: false
+      type: object
+      title: LogDataSetUpdateSchema
+    State:
+      type: string
+      enum:
+      - UNDEFINED
+      - CREATED
+      - READY
+      - INITIATED
+      - REQUESTED
+      - COMPLETED
+      title: State
+    Page_TypeVar_Customized_PaymentReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PaymentReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[PaymentReadSchema]
+    LogDataSetPartialUpdateSchema:
+      properties:
+        meta_data:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Meta Data
+        telemetry:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Telemetry
+        config:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Config
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trd
+        all_tags:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: All Tags
+        apdus:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Apdus
+        trace:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trace
+        signals:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Signals
+      additionalProperties: false
+      type: object
+      title: LogDataSetPartialUpdateSchema
+    PaymentUpdateSchema:
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+          default: UNDEFINED
+        outcome_status:
+          $ref: '#/components/schemas/OutcomeStatus'
+          default: UNDEFINED
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+      additionalProperties: false
+      type: object
+      title: PaymentUpdateSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Page_TypeVar_Customized_LogDataSetReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/LogDataSetReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[LogDataSetReadSchema]
+    PaymentReadSchema:
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+          default: UNDEFINED
+        outcome_status:
+          $ref: '#/components/schemas/OutcomeStatus'
+          default: UNDEFINED
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        poi_id:
+          type: string
+          format: uuid
+          title: Poi Id
+        poi_config_id:
+          type: string
+          format: uuid
+          title: Poi Config Id
+        log_data_set_id:
+          type: string
+          format: uuid
+          title: Log Data Set Id
+      type: object
+      required:
+      - id
+      - organization_id
+      - poi_id
+      - poi_config_id
+      - log_data_set_id
+      title: PaymentReadSchema
+    PaymentCreateSchema:
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+          default: UNDEFINED
+        outcome_status:
+          $ref: '#/components/schemas/OutcomeStatus'
+          default: UNDEFINED
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 9F02060000000015009F7C1411223344556677889900112233445566778899009F5301465F2A0209785F3601029A032505069C01009F2103105929
+          - type: 'null'
+          title: Trd
+        authorization:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Authorization
+        completion:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - DF81290840F0F00098F0FF00FF81060ADF81150600030000001CDF81160D1C00000013656E646566720000E721DFA0090A00000000000000000000DFA028050402000000DFA02006000000030000
+          - type: 'null'
+          title: Completion
+        pin_block:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Pin Block
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+        poi_id:
+          type: string
+          format: uuid
+          title: Poi Id
+        poi_config_id:
+          type: string
+          format: uuid
+          title: Poi Config Id
+      additionalProperties: false
+      type: object
+      required:
+      - poi_id
+      - poi_config_id
+      title: PaymentCreateSchema
+    LogDataSetReadSchema:
+      properties:
+        meta_data:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Meta Data
+        telemetry:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Telemetry
+        config:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Config
+        trd:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trd
+        all_tags:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: All Tags
+        apdus:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Apdus
+        trace:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Trace
+        signals:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Signals
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - id
+      - organization_id
+      title: LogDataSetReadSchema
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: auth/token

@@ -1,0 +1,925 @@
+openapi: 3.2.0
+info:
+  title: Swittest API 🚀 Parser API
+  description: '
+
+    ### Prerequisites
+
+    To use this API, you must have an active organization and an active user. If you don''t have an account yet, please contact us at [contact@switstack.io](mailto:contact@switstack.io).
+
+
+    ### Roles
+
+    - **Data**: Can get test suites, tests, configs and vcards.
+
+    - **Full**: Can fully use swittest.
+
+
+    ### Authentication
+
+    To make authenticated requests, call `/auth/token` with your credentials and the appropriate grant type. An access token will be returned, which must be included in the request''s Authorization header using the Bearer prefix (`Authorization: Bearer <access_token>`).
+
+
+    '
+  version: 0.13.0
+tags:
+- name: Parser
+paths:
+  /api/parse/log:
+    post:
+      tags:
+      - Parser
+      summary: Parse Log
+      description: Accepts an uploaded HTML file and returns a test schema and vCard from it.
+      operationId: parse_log
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_parse_log_api_parse_log_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/parse/tag:
+    post:
+      tags:
+      - Parser
+      summary: Parse Tag
+      description: Parse a specific tag and returns all the information that can be extracted from it.
+      operationId: parse_tag
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: verbose
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+          title: Verbose
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_parse_tag_api_parse_tag_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/ParsedTag'
+                - type: object
+                  additionalProperties:
+                    anyOf:
+                    - type: string
+                    - type: integer
+                    - type: number
+                title: Response Parse Tag Api Parse Tag Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/parse/list-tags:
+    post:
+      tags:
+      - Parser
+      summary: List Tags
+      description: List all supported tags with their names, description and length.
+      operationId: list_tags
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  $ref: '#/components/schemas/TagDescription'
+                type: object
+                title: Response List Tags Api Parse List Tags Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/parse/tlv:
+    post:
+      tags:
+      - Parser
+      summary: Parse Tlv
+      description: Parse a TLV string and return a dict of the tag's name and value(s).
+      operationId: parse_tlv
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_parse_tlv_api_parse_tlv_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - additionalProperties: true
+                  type: object
+                - items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+                title: Response Parse Tlv Api Parse Tlv Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+components:
+  schemas:
+    TestSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+        payments:
+          items:
+            $ref: '#/components/schemas/PaymentSchema'
+          type: array
+          title: Payments
+        vcard:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Vcard
+        ics:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ics
+        ics_not:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ics Not
+        environment:
+          $ref: '#/components/schemas/EnvironmentSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - version
+      - date
+      - poi_config
+      - payments
+      - environment
+      title: TestSchema
+    ToolEnum:
+      type: string
+      enum:
+      - swittest
+      - fime
+      - gallit
+      title: ToolEnum
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ParsedTag:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        tag:
+          type: string
+          title: Tag
+        blocks:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/BitBlock'
+            - $ref: '#/components/schemas/ByteBlock'
+          type: array
+          title: Blocks
+      type: object
+      required:
+      - name
+      - description
+      - tag
+      - blocks
+      title: ParsedTag
+    ExpectationsPartSchema:
+      properties:
+        intermediate_signals:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/IntermediateSignalSchema'
+            type: array
+          - type: 'null'
+          title: Intermediate Signals
+        data_record:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        discretionary_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        user_interface_request_data:
+          anyOf:
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: 'null'
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: ExpectationsPartSchema
+    SupportedSchemes:
+      type: string
+      enum:
+      - mastercard
+      title: SupportedSchemes
+    Body_parse_tlv_api_parse_tlv_post:
+      properties:
+        tlv:
+          type: string
+          title: Tlv
+      type: object
+      required:
+      - tlv
+      title: Body_parse_tlv_api_parse_tlv_post
+    ByteBlock:
+      properties:
+        type:
+          type: string
+          const: byte
+          title: Type
+        value:
+          type: string
+          title: Value
+        length:
+          type: integer
+          title: Length
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        meaning:
+          type: string
+          title: Meaning
+        number_format:
+          anyOf:
+          - type: string
+            enum:
+            - decimal
+            - binary
+          - type: 'null'
+          title: Number Format
+        coefficient:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Coefficient
+        unit:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unit
+        combination:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Combination
+      type: object
+      required:
+      - type
+      - value
+      - length
+      - meaning
+      title: ByteBlock
+    BitSection:
+      properties:
+        value:
+          type: string
+          title: Value
+        length:
+          type: integer
+          title: Length
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        meaning:
+          anyOf:
+          - type: string
+          - type: integer
+          - type: number
+          title: Meaning
+        is_true:
+          type: boolean
+          title: Is True
+        combinations:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Combinations
+      type: object
+      required:
+      - value
+      - length
+      - meaning
+      - is_true
+      title: BitSection
+    SchemeEnum:
+      type: string
+      enum:
+      - mastercard
+      - amex
+      - discover
+      - jcb
+      - cup
+      - rupay
+      - eftpos
+      - cpace
+      title: SchemeEnum
+    IntermediateSignalSchema:
+      properties:
+        user_interface_request_data:
+          anyOf:
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: 'null'
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: IntermediateSignalSchema
+    ErrorIndicationSchema:
+      properties:
+        l1:
+          anyOf:
+          - type: string
+            enum:
+            - OK
+            - TIME OUT ERROR
+            - TRANSMISSION ERROR
+            - PROTOCOL ERROR
+          - type: 'null'
+          title: L1
+        l2:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - OK
+              - CARD DATA MISSING
+              - CAM FAILED
+              - STATUS BYTES
+              - PARSING ERROR
+              - MAX LIMIT EXCEEDED
+              - CARD DATA ERROR
+              - MAGSTRIPE NOT SUPPORTED
+              - NO PPSE
+              - PPSE FAULT
+              - EMPTY CANDIDATE LIST
+              - IDS READ ERROR
+              - IDS WRITE ERROR
+              - IDS DATA ERROR
+              - IDS NO MATCHING AC
+              - TERMINAL DATA ERROR
+            type: array
+          - type: 'null'
+          title: L2
+        l3:
+          anyOf:
+          - type: string
+            enum:
+            - OK
+            - TIME OUT
+            - STOP
+            - AMOUNT NOT PRESENT
+          - type: 'null'
+          title: L3
+        status_word:
+          anyOf:
+          - type: string
+            maxLength: 4
+            minLength: 4
+            pattern: ^([0-9a-fA-F]{2})+$
+          - type: 'null'
+          title: Status Word
+        message_on_error:
+          anyOf:
+          - type: string
+            enum:
+            - CARD READ OK
+            - TRY AGAIN
+            - APPROVED
+            - APPROVED - SIGN
+            - DECLINED
+            - ERROR - OTHER CARD
+            - INSERT CARD
+            - SEE PHONE
+            - AUTHORISING - PLEASE WAIT
+            - CLEAR DISPLAY
+            - N/A
+            - PROCESSING ERROR
+          - type: 'null'
+          title: Message On Error
+      additionalProperties: false
+      type: object
+      title: ErrorIndicationSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TagDescription:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        tag:
+          type: string
+          title: Tag
+        length:
+          type: integer
+          title: Length
+        max_length:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Length
+      type: object
+      required:
+      - name
+      - description
+      - tag
+      - length
+      title: TagDescription
+    SupportedTypes:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: SupportedTypes
+    OutcomeParameterSetSchema:
+      properties:
+        status:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - APPROVED
+              - DECLINED
+              - ONLINE REQUEST
+              - END APPLICATION
+              - SELECT NEXT
+              - TRY ANOTHER INTERFACE
+              - TRY AGAIN
+              - N/A
+            type: array
+          - type: 'null'
+          title: Status
+        start:
+          anyOf:
+          - type: string
+            enum:
+            - A
+            - B
+            - C
+            - D
+            - N/A
+          - type: 'null'
+          title: Start
+        online_response_data:
+          anyOf:
+          - type: string
+            const: N/A
+          - type: 'null'
+          title: Online Response Data
+        cvm:
+          anyOf:
+          - type: string
+            enum:
+            - NO CVM
+            - OBTAIN SIGNATURE
+            - ONLINE PIN
+            - CONFIRMATION CODE VERIFIED
+            - N/A
+          - type: 'null'
+          title: Cvm
+        ui_request_on_outcome_present:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ui Request On Outcome Present
+        ui_request_on_restart_present:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ui Request On Restart Present
+        data_record_present:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Data Record Present
+        discretionary_data_present:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Discretionary Data Present
+        receipt:
+          anyOf:
+          - type: string
+            enum:
+            - N/A
+            - 'YES'
+          - type: 'null'
+          title: Receipt
+        alternate_interface_preference:
+          anyOf:
+          - type: string
+            const: N/A
+          - type: 'null'
+          title: Alternate Interface Preference
+        field_off_request:
+          anyOf:
+          - type: string
+            pattern: ^([0-9a-fA-F]{2}|N/A)$
+          - type: 'null'
+          title: Field Off Request
+        removal_timeout:
+          anyOf:
+          - type: string
+            pattern: ^[0-9a-fA-F]{2}$
+          - type: 'null'
+          title: Removal Timeout
+      additionalProperties: false
+      type: object
+      title: OutcomeParameterSetSchema
+    ExpectationsDataSchema:
+      properties:
+        tags:
+          title: Tags
+        tags_present:
+          anyOf:
+          - items:
+              type: string
+              maxLength: 6
+              minLength: 2
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
+          - type: 'null'
+          title: Tags Present
+        tags_not_present:
+          anyOf:
+          - items:
+              type: string
+              maxLength: 6
+              minLength: 2
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
+          - type: 'null'
+          title: Tags Not Present
+      additionalProperties: false
+      type: object
+      title: ExpectationsDataSchema
+    ExpectationsSchema:
+      properties:
+        restart:
+          anyOf:
+          - $ref: '#/components/schemas/RestartSchema'
+          - type: 'null'
+        authorization:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+        completion:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: ExpectationsSchema
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
+    PaymentSchema:
+      properties:
+        randoms:
+          anyOf:
+          - items:
+              type: string
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
+          - type: 'null'
+          title: Randoms
+        trd:
+          anyOf:
+          - patternProperties:
+              ^([0-9a-fA-F]{2})+$:
+                anyOf:
+                - type: string
+                  pattern: ^([0-9a-fA-F]{2})+$
+                - type: string
+                  pattern: ^[0-9YMD]{6}$
+                - type: string
+                  pattern: ^[0-9HMS]{6}$
+                - type: string
+                  maxLength: 0
+                  minLength: 0
+            propertyNames:
+              maxLength: 6
+              minLength: 2
+            type: object
+          - type: 'null'
+          title: Trd
+        authorization_response:
+          anyOf:
+          - type: string
+            pattern: ^([0-9a-fA-F]{2})+$
+          - type: 'null'
+          title: Authorization Response
+        expectations:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: PaymentSchema
+    Body_parse_tag_api_parse_tag_post:
+      properties:
+        tag:
+          type: string
+          title: Tag
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - tag
+      - value
+      title: Body_parse_tag_api_parse_tag_post
+    BitBlock:
+      properties:
+        type:
+          type: string
+          const: bit
+          title: Type
+        value:
+          type: string
+          title: Value
+        sections:
+          items:
+            $ref: '#/components/schemas/BitSection'
+          type: array
+          title: Sections
+      type: object
+      required:
+      - type
+      - value
+      - sections
+      title: BitBlock
+    UserInterfaceRequestDataSchema:
+      properties:
+        message_identifier:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - CARD READ OK
+              - TRY AGAIN
+              - APPROVED
+              - APPROVED - SIGN
+              - DECLINED
+              - ERROR - OTHER CARD
+              - INSERT CARD
+              - SEE PHONE
+              - AUTHORISING - PLEASE WAIT
+              - CLEAR DISPLAY
+              - N/A
+              - PROCESSING ERROR
+              - PRESENT CARD
+            type: array
+          - type: 'null'
+          title: Message Identifier
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - NOT READY
+            - IDLE
+            - READY TO READ
+            - PROCESSING
+            - CARD READ SUCCESSFULLY
+            - PROCESSING ERROR
+            - N/A
+          - type: 'null'
+          title: Status
+        hold_time:
+          anyOf:
+          - type: string
+            maxLength: 6
+            minLength: 6
+            pattern: ^([0-9]{2})+$
+          - type: 'null'
+          title: Hold Time
+        language_preference:
+          anyOf:
+          - type: string
+            maxLength: 16
+            minLength: 16
+            pattern: ^([0-9a-fA-F]{2})+$
+          - type: 'null'
+          title: Language Preference
+      additionalProperties: false
+      type: object
+      title: UserInterfaceRequestDataSchema
+    POIConfigSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        bin_config:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bin Config
+        capk_list:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Capk List
+        cr_list:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cr List
+        emv_config:
+          type: string
+          title: Emv Config
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emv_config
+      title: POIConfigSchema
+    RestartSchema:
+      properties:
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: RestartSchema
+    Body_parse_log_api_parse_log_post:
+      properties:
+        file:
+          type: string
+          contentMediaType: application/octet-stream
+          title: File
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/SupportedTypes'
+          - type: 'null'
+        scheme:
+          anyOf:
+          - $ref: '#/components/schemas/SupportedSchemes'
+          - type: 'null'
+      type: object
+      required:
+      - file
+      title: Body_parse_log_api_parse_log_post
+    EnvironmentSchema:
+      properties:
+        tool:
+          $ref: '#/components/schemas/ToolEnum'
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        scheme:
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          type: string
+          title: Test Suite Version
+      additionalProperties: false
+      type: object
+      required:
+      - tool
+      - type
+      - scheme
+      - test_suite_version
+      title: EnvironmentSchema
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: auth/token

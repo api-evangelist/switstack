@@ -1,0 +1,1299 @@
+openapi: 3.2.0
+info:
+  title: Switcloud API 🚀 BOM API
+  description: '
+
+    ### Prerequisites
+
+    To use this API, you must have an active organization, an active admin user, and either a basic user or a machine user. If you don''t have an account yet, please contact us at [contact@switstack.io](mailto:contact@switstack.io).
+
+
+    ### Roles
+
+    - **Admin user**: Can manage users, merchants, stores, and POI configurations but cannot create payments.
+
+    - **Basic user**: Can only manage payments.
+
+
+    ### Authentication
+
+    To make authenticated requests, call `/auth/token` with your credentials and the appropriate grant type. An access token will be returned, which must be included in the request''s Authorization header using the Bearer prefix (`Authorization: Bearer <access_token>`).
+
+
+    ### Before Creating a Payment
+
+
+    1. Log in as an admin user.
+
+    2. Using the BOM sub-API, create a merchant, store, and POI, if applicable.
+
+    3. Using the config sub-API, create a POI configuration, if applicable.
+
+
+    The minimum required POI configuration includes:
+
+    - An EMV.
+
+    - An EMV list containing the previously created EMV.
+
+    - An EMV config using the EMV list as the nominal list.
+
+    - A POI config containing the EMV config.
+
+
+    ### Creating a Payment
+
+    1. Log in as a basic or machine user.
+
+    2. Create a payment with at least a POI ID and a POI config ID.
+
+    '
+  version: 2.28.0
+servers:
+- url: https://switcloud.switstack.io/
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: BOM
+paths:
+  /api/bom/merchants:
+    get:
+      tags:
+      - BOM
+      summary: List Merchants
+      operationId: list_merchants
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_MerchantReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - BOM
+      summary: Create Merchant
+      operationId: create_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/merchants/{id}:
+    get:
+      tags:
+      - BOM
+      summary: Get Merchant
+      operationId: get_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - BOM
+      summary: Update Merchant
+      operationId: update_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - BOM
+      summary: Partial Update Merchant
+      operationId: partial_update_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - BOM
+      summary: Delete Merchant
+      operationId: delete_merchant
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/stores:
+    get:
+      tags:
+      - BOM
+      summary: List Stores
+      operationId: list_stores
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_StoreReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - BOM
+      summary: Create Store
+      operationId: create_store
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/stores/{id}:
+    get:
+      tags:
+      - BOM
+      summary: Get Store
+      operationId: get_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - BOM
+      summary: Update Store
+      operationId: update_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - BOM
+      summary: Partial Update Store
+      operationId: partial_update_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorePartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - BOM
+      summary: Delete Store
+      operationId: delete_store
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/pois:
+    get:
+      tags:
+      - BOM
+      summary: List Pois
+      operationId: list_pois
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: organization_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      - name: order_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Order By
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: store_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Store Id
+      - name: brand
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/POIBrandType'
+          - type: 'null'
+          title: Brand
+      - name: state
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/POIStateType'
+          - type: 'null'
+          title: State
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          description: Page number
+          default: 1
+          title: Page
+        description: Page number
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_TypeVar_Customized_POIReadSchema_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - BOM
+      summary: Create Poi
+      operationId: create_poi
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POICreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/bom/pois/{id}:
+    get:
+      tags:
+      - BOM
+      summary: Get Poi
+      operationId: get_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - BOM
+      summary: Update Poi
+      operationId: update_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POIUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - BOM
+      summary: Partial Update Poi
+      operationId: partial_update_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/POIPartialUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POIReadSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - BOM
+      summary: Delete Poi
+      operationId: delete_poi
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    POIBrandType:
+      type: string
+      enum:
+      - UNDEFINED
+      - SUNMI
+      - CASTLES
+      - PAX
+      - SAMSUNG
+      - GOOGLE
+      title: POIBrandType
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    POIStateType:
+      type: string
+      enum:
+      - UNDEFINED
+      - PROVISIONED
+      - OPERATED
+      - SUSPENDED
+      - PHASED_OUT
+      title: POIStateType
+    POIUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      title: POIUpdateSchema
+    StoreReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+      type: object
+      required:
+      - name
+      - merchant_id
+      - id
+      - organization_id
+      - address
+      title: StoreReadSchema
+    StoreUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - merchant_id
+      title: StoreUpdateSchema
+    MerchantPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: MerchantPartialUpdateSchema
+    Page_TypeVar_Customized_StoreReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/StoreReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[StoreReadSchema]
+    MerchantUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: MerchantUpdateSchema
+    StorePartialUpdateSchema:
+      properties:
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Merchant Id
+      additionalProperties: false
+      type: object
+      title: StorePartialUpdateSchema
+    StoreCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - merchant_id
+      title: StoreCreateSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    POIReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      - id
+      - organization_id
+      title: POIReadSchema
+    POICreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      title: POICreateSchema
+    Page_TypeVar_Customized_MerchantReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/MerchantReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[MerchantReadSchema]
+    POIPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI name
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          anyOf:
+          - type: string
+            maxLength: 16
+            minLength: 1
+            examples:
+            - '00000003'
+          - type: 'null'
+          title: Identifier
+        serial_number:
+          anyOf:
+          - type: string
+            maxLength: 25
+            minLength: 1
+            examples:
+            - SN-DF2948A38DC
+          - type: 'null'
+          title: Serial Number
+        brand:
+          anyOf:
+          - $ref: '#/components/schemas/POIBrandType'
+          - type: 'null'
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/POIStateType'
+          - type: 'null'
+        store_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Store Id
+      additionalProperties: false
+      type: object
+      title: POIPartialUpdateSchema
+    Page_TypeVar_Customized_POIReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/POIReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[POIReadSchema]
+    MerchantCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: MerchantCreateSchema
+    MerchantReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Merchant name
+          - type: 'null'
+          title: Name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: MerchantReadSchema
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: auth/token
