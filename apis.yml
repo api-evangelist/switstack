@@ -22,6 +22,22 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  - sandbox
+  generated: '2026-09-02'
+  method: derived
 image: https://cdn.prod.website-files.com/677bdd3fa1a7f9a1d8e76d2e/67879a394c57fb7c99783259_switstack_meta.png
 x-type: company
 x-source: serena-portfolio
