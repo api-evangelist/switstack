@@ -189,6 +189,8 @@ apis:
   humanURL: https://docs.switstack.io/switcloud/
   baseURL: https://switcloud.switstack.io/
   tags:
+  - Payments
+  tags_raw:
   - Payment
   properties:
   - type: OpenAPI
