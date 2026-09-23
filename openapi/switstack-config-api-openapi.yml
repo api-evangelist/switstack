@@ -2,10 +2,7 @@ openapi: 3.2.0
 info:
   title: Switstack Config API
   version: '1.0'
-  description: 'Operations tagged Config across 2 of this provider''s published API definitions: switstack-switcloud-openapi.yml, switstack-swittest-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://switcloud.switstack.io/
-  description: Base URL declared by the provider in apis.yml (roadmap#122).
+  description: 'Operations tagged Config across 2 of this provider''s published API definitions: switstack-switcloud-openapi.json, switstack-swittest-openapi.json. Each path carries the servers of the definition it was published in.'
 tags:
 - name: Config
 paths:
@@ -101,9 +98,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/bins/{id}:
     get:
       tags:
@@ -225,9 +219,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/bin-lists:
     get:
       tags:
@@ -327,9 +318,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/bin-lists/{id}:
     get:
       tags:
@@ -465,9 +453,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/bin-lists/{id}/bin/{bin_id}:
     post:
       tags:
@@ -531,9 +516,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/bin-configs:
     get:
       tags:
@@ -633,9 +615,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/bin-configs/{id}:
     get:
       tags:
@@ -771,9 +750,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/bin-configs/{id}/bin-list/{bin_list_id}:
     post:
       tags:
@@ -837,9 +813,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/capks:
     get:
       tags:
@@ -948,9 +921,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/capks/{id}:
     get:
       tags:
@@ -1072,9 +1042,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/capk-lists:
     get:
       tags:
@@ -1174,9 +1141,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/capk-lists/{id}:
     get:
       tags:
@@ -1312,9 +1276,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/capk-lists/{id}/capk/{capk_id}:
     post:
       tags:
@@ -1378,9 +1339,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/crs:
     get:
       tags:
@@ -1473,9 +1431,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/crs/{id}:
     get:
       tags:
@@ -1597,9 +1552,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/cr-lists:
     get:
       tags:
@@ -1699,9 +1651,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/cr-lists/{id}:
     get:
       tags:
@@ -1837,9 +1786,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/cr-lists/{id}/cr/{cr_id}:
     post:
       tags:
@@ -1903,9 +1849,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/emvs:
     get:
       tags:
@@ -2014,9 +1957,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/emvs/{id}:
     get:
       tags:
@@ -2138,9 +2078,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/emv-lists:
     get:
       tags:
@@ -2240,9 +2177,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/emv-lists/{id}:
     get:
       tags:
@@ -2378,9 +2312,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/emv-lists/{id}/emv/{emv_id}:
     post:
       tags:
@@ -2444,9 +2375,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/emv-configs:
     get:
       tags:
@@ -2546,9 +2474,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/emv-configs/{id}:
     get:
       tags:
@@ -2684,9 +2609,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/poi-configs:
     get:
       tags:
@@ -2786,9 +2708,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/config/poi-configs/{id}:
     get:
       tags:
@@ -2924,9 +2843,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /api/configs/list:
     get:
       tags:
@@ -3004,7 +2920,53 @@ components:
       required:
       - name
       title: CAPKListUpdateSchema
-    CRListReadSchema:
+    CAPKListPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK list name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CAPKListPartialUpdateSchema
+    BINListReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        bins:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/BINReadSchema'
+            type: array
+          - type: 'null'
+          title: Bins
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: BINListReadSchema
+    CRListUpdateSchema:
       properties:
         name:
           type: string
@@ -3013,71 +2975,43 @@ components:
           title: Name
           examples:
           - CR list name
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-        crs:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/CRReadSchema'
-            type: array
-          - type: 'null'
-          title: Crs
+      additionalProperties: false
       type: object
       required:
       - name
-      - id
-      - organization_id
-      title: CRListReadSchema
-    EMVConfigReadSchema:
+      title: CRListUpdateSchema
+    Page_TypeVar_Customized_POIConfigReadSchema_:
       properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - EMV config name
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-        emv_nominal_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Emv Nominal List Id
-        emv_nominal_list:
-          anyOf:
-          - $ref: '#/components/schemas/EMVListReadSchema'
-          - type: 'null'
-        emv_failsafe_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Emv Failsafe List Id
-        emv_failsafe_list:
-          anyOf:
-          - $ref: '#/components/schemas/EMVListReadSchema'
-          - type: 'null'
+        items:
+          items:
+            $ref: '#/components/schemas/POIConfigReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
       type: object
       required:
-      - name
-      - id
-      - organization_id
-      title: EMVConfigReadSchema
-    POIConfigPartialUpdateSchema:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[POIConfigReadSchema]
+    BINPartialUpdateSchema:
       properties:
         name:
           anyOf:
@@ -3085,50 +3019,40 @@ components:
             maxLength: 255
             minLength: 1
             examples:
-            - POI config name
+            - BIN name
           - type: 'null'
           title: Name
-        emv_config_id:
+        min_range:
           anyOf:
-          - type: string
-            format: uuid
+          - type: integer
+            examples:
+            - 0
           - type: 'null'
-          title: Emv Config Id
-        capk_list_id:
+          title: Min Range
+        max_range:
           anyOf:
-          - type: string
-            format: uuid
+          - type: integer
+            examples:
+            - 99999999
           - type: 'null'
-          title: Capk List Id
-        cr_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Cr List Id
-        bin_config_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Bin Config Id
+          title: Max Range
       additionalProperties: false
       type: object
-      title: POIConfigPartialUpdateSchema
-    HTTPValidationError:
+      title: BINPartialUpdateSchema
+    CRListPartialUpdateSchema:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR list name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
       type: object
-      title: HTTPValidationError
-    CAPKAlgorithmType:
-      type: string
-      enum:
-      - RSA
-      title: CAPKAlgorithmType
+      title: CRListPartialUpdateSchema
     POIConfigUpdateSchema:
       properties:
         name:
@@ -3166,7 +3090,82 @@ components:
       - name
       - emv_config_id
       title: POIConfigUpdateSchema
-    CAPKCreateSchema:
+    EMVTransactionType:
+      type: string
+      enum:
+      - '00'
+      - '01'
+      - '02'
+      - 09
+      - '17'
+      - '20'
+      - '21'
+      - '93'
+      title: EMVTransactionType
+    POIConfigReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI config name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        bin_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Bin Config Id
+        bin_config:
+          anyOf:
+          - $ref: '#/components/schemas/BINConfigReadSchema'
+          - type: 'null'
+        capk_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Capk List Id
+        capk_list:
+          anyOf:
+          - $ref: '#/components/schemas/CAPKListReadSchema'
+          - type: 'null'
+        cr_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Cr List Id
+        cr_list:
+          anyOf:
+          - $ref: '#/components/schemas/CRListReadSchema'
+          - type: 'null'
+        emv_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Config Id
+        emv_config:
+          anyOf:
+          - $ref: '#/components/schemas/EMVConfigReadSchema'
+          - type: 'null'
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: POIConfigReadSchema
+    BINReadSchema:
       properties:
         name:
           anyOf:
@@ -3174,99 +3173,64 @@ components:
             maxLength: 255
             minLength: 1
             examples:
-            - CAPK name
+            - BIN name
           - type: 'null'
           title: Name
-        rid:
-          type: string
-          maxLength: 10
-          minLength: 10
-          title: Rid
+        min_range:
+          type: integer
+          title: Min Range
           examples:
-          - A000000004
-        index:
-          type: string
-          maxLength: 2
-          minLength: 2
-          title: Index
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
           examples:
-          - EF
-        hash_type:
-          $ref: '#/components/schemas/CAPKHashType'
-          default: UNDEFINED
-        algorithm_type:
-          $ref: '#/components/schemas/CAPKAlgorithmType'
-          default: RSA
-        modulus:
+          - 99999999
+        id:
           type: string
-          maxLength: 1024
-          minLength: 1
-          title: Modulus
-          examples:
-          - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
-        exponent:
-          type: string
-          maxLength: 6
-          minLength: 2
-          title: Exponent
-          examples:
-          - '03'
-        hash:
-          type: string
-          minLength: 1
-          title: Hash
-        expires_at:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Expires At
+          format: uuid
+          title: Id
         organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
+          type: string
+          format: uuid
           title: Organization Id
-      additionalProperties: false
       type: object
       required:
-      - rid
-      - index
-      - modulus
-      - exponent
-      - hash
-      title: CAPKCreateSchema
-    Page_TypeVar_Customized_EMVConfigReadSchema_:
+      - min_range
+      - max_range
+      - id
+      - organization_id
+      title: BINReadSchema
+    EMVListReadSchema:
       properties:
-        items:
-          items:
-            $ref: '#/components/schemas/EMVConfigReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        emvs:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EMVReadSchema'
+            type: array
+          - type: 'null'
+          title: Emvs
       type: object
       required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[EMVConfigReadSchema]
+      - name
+      - id
+      - organization_id
+      title: EMVListReadSchema
     EMVListCreateSchema:
       properties:
         name:
@@ -3287,7 +3251,7 @@ components:
       required:
       - name
       title: EMVListCreateSchema
-    BINConfigCreateSchema:
+    CRListReadSchema:
       properties:
         name:
           type: string
@@ -3295,7 +3259,81 @@ components:
           minLength: 1
           title: Name
           examples:
-          - BIN config name
+          - CR list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        crs:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CRReadSchema'
+            type: array
+          - type: 'null'
+          title: Crs
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: CRListReadSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CRCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - '00'
+        serial_number:
+          type: string
+          maxLength: 6
+          minLength: 6
+          title: Serial Number
+          examples:
+          - 3F70D8
         organization_id:
           anyOf:
           - type: string
@@ -3305,8 +3343,49 @@ components:
       additionalProperties: false
       type: object
       required:
-      - name
-      title: BINConfigCreateSchema
+      - rid
+      - index
+      - serial_number
+      title: CRCreateSchema
+    CRUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - '00'
+        serial_number:
+          type: string
+          maxLength: 6
+          minLength: 6
+          title: Serial Number
+          examples:
+          - 3F70D8
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - serial_number
+      title: CRUpdateSchema
     CRPartialUpdateSchema:
       properties:
         name:
@@ -3348,20 +3427,6 @@ components:
       additionalProperties: false
       type: object
       title: CRPartialUpdateSchema
-    BINConfigUpdateSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - BIN config name
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      title: BINConfigUpdateSchema
     POIConfigCreateSchema:
       properties:
         name:
@@ -3405,7 +3470,58 @@ components:
       - name
       - emv_config_id
       title: POIConfigCreateSchema
-    EMVConfigUpdateSchema:
+    CRListCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CR list name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CRListCreateSchema
+    Page_TypeVar_Customized_EMVListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EMVListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[EMVListReadSchema]
+    EMVConfigReadSchema:
       properties:
         name:
           type: string
@@ -3414,31 +3530,6 @@ components:
           title: Name
           examples:
           - EMV config name
-        emv_nominal_list_id:
-          type: string
-          format: uuid
-          title: Emv Nominal List Id
-        emv_failsafe_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Emv Failsafe List Id
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - emv_nominal_list_id
-      title: EMVConfigUpdateSchema
-    BINConfigReadSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - BIN config name
         id:
           type: string
           format: uuid
@@ -3447,19 +3538,94 @@ components:
           type: string
           format: uuid
           title: Organization Id
-        bin_lists:
+        emv_nominal_list_id:
           anyOf:
-          - items:
-              $ref: '#/components/schemas/BINListReadSchema'
-            type: array
+          - type: string
+            format: uuid
           - type: 'null'
-          title: Bin Lists
+          title: Emv Nominal List Id
+        emv_nominal_list:
+          anyOf:
+          - $ref: '#/components/schemas/EMVListReadSchema'
+          - type: 'null'
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
+        emv_failsafe_list:
+          anyOf:
+          - $ref: '#/components/schemas/EMVListReadSchema'
+          - type: 'null'
       type: object
       required:
       - name
       - id
       - organization_id
-      title: BINConfigReadSchema
+      title: EMVConfigReadSchema
+    Page_TypeVar_Customized_CRListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CRListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CRListReadSchema]
+    Page_TypeVar_Customized_EMVConfigReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EMVConfigReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[EMVConfigReadSchema]
     EMVUpdateSchema:
       properties:
         name:
@@ -3508,58 +3674,7 @@ components:
       - aid
       - tlv
       title: EMVUpdateSchema
-    CRListCreateSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - CR list name
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      title: CRListCreateSchema
-    Page_TypeVar_Customized_CRReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CRReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[CRReadSchema]
-    EMVListPartialUpdateSchema:
+    BINListPartialUpdateSchema:
       properties:
         name:
           anyOf:
@@ -3567,74 +3682,13 @@ components:
             maxLength: 255
             minLength: 1
             examples:
-            - EMV list name
+            - BIN list name
           - type: 'null'
           title: Name
       additionalProperties: false
       type: object
-      title: EMVListPartialUpdateSchema
-    Page_TypeVar_Customized_CAPKReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CAPKReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[CAPKReadSchema]
-    BINListReadSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - BIN list name
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-        bins:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/BINReadSchema'
-            type: array
-          - type: 'null'
-          title: Bins
-      type: object
-      required:
-      - name
-      - id
-      - organization_id
-      title: BINListReadSchema
-    EMVReadSchema:
+      title: BINListPartialUpdateSchema
+    EMVCreateSchema:
       properties:
         name:
           anyOf:
@@ -3675,6 +3729,68 @@ components:
           title: Tlv
           examples:
           - 5F20 0F 4D696B65204A6F686E20536D697468
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - kernel
+      - aid
+      - tlv
+      title: EMVCreateSchema
+    EMVListPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV list name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: EMVListPartialUpdateSchema
+    EMVConfigPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV config name
+          - type: 'null'
+          title: Name
+        emv_nominal_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Nominal List Id
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
+      additionalProperties: false
+      type: object
+      title: EMVConfigPartialUpdateSchema
+    BINConfigReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN config name
         id:
           type: string
           format: uuid
@@ -3683,45 +3799,19 @@ components:
           type: string
           format: uuid
           title: Organization Id
+        bin_lists:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/BINListReadSchema'
+            type: array
+          - type: 'null'
+          title: Bin Lists
       type: object
       required:
-      - kernel
-      - aid
-      - tlv
+      - name
       - id
       - organization_id
-      title: EMVReadSchema
-    Page_TypeVar_Customized_EMVListReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/EMVListReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[EMVListReadSchema]
+      title: BINConfigReadSchema
     CAPKPartialUpdateSchema:
       properties:
         name:
@@ -3792,7 +3882,71 @@ components:
       additionalProperties: false
       type: object
       title: CAPKPartialUpdateSchema
-    CRListUpdateSchema:
+    BINCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
+          title: Name
+        min_range:
+          type: integer
+          title: Min Range
+          examples:
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
+          examples:
+          - 99999999
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - min_range
+      - max_range
+      title: BINCreateSchema
+    Page_TypeVar_Customized_EMVReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EMVReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[EMVReadSchema]
+    EMVConfigCreateSchema:
       properties:
         name:
           type: string
@@ -3800,19 +3954,137 @@ components:
           minLength: 1
           title: Name
           examples:
-          - CR list name
+          - EMV config name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+        emv_nominal_list_id:
+          type: string
+          format: uuid
+          title: Emv Nominal List Id
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
       additionalProperties: false
       type: object
       required:
       - name
-      title: CRListUpdateSchema
-    CAPKHashType:
-      type: string
-      enum:
-      - UNDEFINED
-      - SHA1
-      - SHA256
-      title: CAPKHashType
+      - emv_nominal_list_id
+      title: EMVConfigCreateSchema
+    CAPKCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - EF
+        hash_type:
+          $ref: '#/components/schemas/CAPKHashType'
+          default: UNDEFINED
+        algorithm_type:
+          $ref: '#/components/schemas/CAPKAlgorithmType'
+          default: RSA
+        modulus:
+          type: string
+          maxLength: 1024
+          minLength: 1
+          title: Modulus
+          examples:
+          - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
+        exponent:
+          type: string
+          maxLength: 6
+          minLength: 2
+          title: Exponent
+          examples:
+          - '03'
+        hash:
+          type: string
+          minLength: 1
+          title: Hash
+        expires_at:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expires At
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - modulus
+      - exponent
+      - hash
+      title: CAPKCreateSchema
+    POIConfigPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI config name
+          - type: 'null'
+          title: Name
+        emv_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Config Id
+        capk_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Capk List Id
+        cr_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Cr List Id
+        bin_config_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Bin Config Id
+      additionalProperties: false
+      type: object
+      title: POIConfigPartialUpdateSchema
     CRReadSchema:
       properties:
         name:
@@ -3861,27 +4133,25 @@ components:
       - id
       - organization_id
       title: CRReadSchema
-    CAPKListPartialUpdateSchema:
+    BINConfigUpdateSchema:
       properties:
         name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - CAPK list name
-          - type: 'null'
+          type: string
+          maxLength: 255
+          minLength: 1
           title: Name
+          examples:
+          - BIN config name
       additionalProperties: false
       type: object
       required:
       - name
-      title: CAPKListPartialUpdateSchema
-    Page_TypeVar_Customized_BINReadSchema_:
+      title: BINConfigUpdateSchema
+    Page_TypeVar_Customized_BINConfigReadSchema_:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/BINReadSchema'
+            $ref: '#/components/schemas/BINConfigReadSchema'
           type: array
           title: Items
         total:
@@ -3907,7 +4177,507 @@ components:
       - page
       - size
       - pages
-      title: Page[TypeVar]Customized[BINReadSchema]
+      title: Page[TypeVar]Customized[BINConfigReadSchema]
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    EMVReadSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV name
+          - type: 'null'
+          title: Name
+        technology_type:
+          $ref: '#/components/schemas/EMVTechnologyType'
+          default: CONTACTLESS
+        kernel:
+          type: string
+          maxLength: 2
+          minLength: 1
+          title: Kernel
+          examples:
+          - 0F
+        aid:
+          type: string
+          maxLength: 32
+          minLength: 1
+          title: Aid
+          examples:
+          - A0000000041010
+        transaction_type:
+          $ref: '#/components/schemas/EMVTransactionType'
+          default: '00'
+        asf:
+          type: boolean
+          title: Asf
+          default: true
+        tlv:
+          type: string
+          minLength: 1
+          title: Tlv
+          examples:
+          - 5F20 0F 4D696B65204A6F686E20536D697468
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - kernel
+      - aid
+      - tlv
+      - id
+      - organization_id
+      title: EMVReadSchema
+    CAPKListCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CAPK list name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CAPKListCreateSchema
+    Page_TypeVar_Customized_BINListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BINListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[BINListReadSchema]
+    BINConfigPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN config name
+          - type: 'null'
+          title: Name
+      additionalProperties: false
+      type: object
+      title: BINConfigPartialUpdateSchema
+    BINConfigCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN config name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: BINConfigCreateSchema
+    Page_TypeVar_Customized_CRReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CRReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CRReadSchema]
+    BINListUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN list name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: BINListUpdateSchema
+    EMVPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - EMV name
+          - type: 'null'
+          title: Name
+        technology_type:
+          anyOf:
+          - $ref: '#/components/schemas/EMVTechnologyType'
+          - type: 'null'
+        kernel:
+          anyOf:
+          - type: string
+            maxLength: 2
+            minLength: 1
+            examples:
+            - 0F
+          - type: 'null'
+          title: Kernel
+        aid:
+          anyOf:
+          - type: string
+            maxLength: 32
+            minLength: 1
+            examples:
+            - A0000000041010
+          - type: 'null'
+          title: Aid
+        transaction_type:
+          anyOf:
+          - $ref: '#/components/schemas/EMVTransactionType'
+          - type: 'null'
+        asf:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Asf
+        tlv:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Tlv
+      additionalProperties: false
+      type: object
+      title: EMVPartialUpdateSchema
+    CAPKListReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - CAPK list name
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+        capks:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CAPKReadSchema'
+            type: array
+          - type: 'null'
+          title: Capks
+      type: object
+      required:
+      - name
+      - id
+      - organization_id
+      title: CAPKListReadSchema
+    EMVTechnologyType:
+      type: string
+      enum:
+      - CONTACT
+      - CONTACTLESS
+      title: EMVTechnologyType
+    CAPKAlgorithmType:
+      type: string
+      enum:
+      - RSA
+      title: CAPKAlgorithmType
+    Page_TypeVar_Customized_CAPKListReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CAPKListReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CAPKListReadSchema]
+    CAPKUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CAPK name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - EF
+        hash_type:
+          $ref: '#/components/schemas/CAPKHashType'
+          default: UNDEFINED
+        algorithm_type:
+          $ref: '#/components/schemas/CAPKAlgorithmType'
+          default: RSA
+        modulus:
+          type: string
+          maxLength: 1024
+          minLength: 1
+          title: Modulus
+          examples:
+          - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
+        exponent:
+          type: string
+          maxLength: 6
+          minLength: 2
+          title: Exponent
+          examples:
+          - '03'
+        hash:
+          type: string
+          minLength: 1
+          title: Hash
+        expires_at:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expires At
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - modulus
+      - exponent
+      - hash
+      title: CAPKUpdateSchema
+    Page_TypeVar_Customized_CAPKReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/CAPKReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[CAPKReadSchema]
+    EMVListUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV list name
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: EMVListUpdateSchema
+    BINUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
+          title: Name
+        min_range:
+          type: integer
+          title: Min Range
+          examples:
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
+          examples:
+          - 99999999
+      additionalProperties: false
+      type: object
+      required:
+      - min_range
+      - max_range
+      title: BINUpdateSchema
+    EMVConfigUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - EMV config name
+        emv_nominal_list_id:
+          type: string
+          format: uuid
+          title: Emv Nominal List Id
+        emv_failsafe_list_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Emv Failsafe List Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emv_nominal_list_id
+      title: EMVConfigUpdateSchema
+    BINListCreateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - BIN list name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: BINListCreateSchema
     CAPKReadSchema:
       properties:
         name:
@@ -3981,898 +4751,44 @@ components:
       - id
       - organization_id
       title: CAPKReadSchema
-    ValidationError:
+    Page_TypeVar_Customized_BINReadSchema_:
       properties:
-        loc:
+        items:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/BINReadSchema'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    EMVTechnologyType:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[BINReadSchema]
+    CAPKHashType:
       type: string
       enum:
-      - CONTACT
-      - CONTACTLESS
-      title: EMVTechnologyType
-    BINReadSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - BIN name
-          - type: 'null'
-          title: Name
-        min_range:
-          type: integer
-          title: Min Range
-          examples:
-          - 0
-        max_range:
-          type: integer
-          title: Max Range
-          examples:
-          - 99999999
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-      type: object
-      required:
-      - min_range
-      - max_range
-      - id
-      - organization_id
-      title: BINReadSchema
-    CRUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - CR name
-          - type: 'null'
-          title: Name
-        rid:
-          type: string
-          maxLength: 10
-          minLength: 10
-          title: Rid
-          examples:
-          - A000000004
-        index:
-          type: string
-          maxLength: 2
-          minLength: 2
-          title: Index
-          examples:
-          - '00'
-        serial_number:
-          type: string
-          maxLength: 6
-          minLength: 6
-          title: Serial Number
-          examples:
-          - 3F70D8
-      additionalProperties: false
-      type: object
-      required:
-      - rid
-      - index
-      - serial_number
-      title: CRUpdateSchema
-    EMVTransactionType:
-      type: string
-      enum:
-      - '00'
-      - '01'
-      - '02'
-      - 09
-      - '17'
-      - '20'
-      - '21'
-      - '93'
-      title: EMVTransactionType
-    Page_TypeVar_Customized_BINListReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/BINListReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[BINListReadSchema]
-    EMVCreateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - EMV name
-          - type: 'null'
-          title: Name
-        technology_type:
-          $ref: '#/components/schemas/EMVTechnologyType'
-          default: CONTACTLESS
-        kernel:
-          type: string
-          maxLength: 2
-          minLength: 1
-          title: Kernel
-          examples:
-          - 0F
-        aid:
-          type: string
-          maxLength: 32
-          minLength: 1
-          title: Aid
-          examples:
-          - A0000000041010
-        transaction_type:
-          $ref: '#/components/schemas/EMVTransactionType'
-          default: '00'
-        asf:
-          type: boolean
-          title: Asf
-          default: true
-        tlv:
-          type: string
-          minLength: 1
-          title: Tlv
-          examples:
-          - 5F20 0F 4D696B65204A6F686E20536D697468
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-      additionalProperties: false
-      type: object
-      required:
-      - kernel
-      - aid
-      - tlv
-      title: EMVCreateSchema
-    EMVConfigCreateSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - EMV config name
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-        emv_nominal_list_id:
-          type: string
-          format: uuid
-          title: Emv Nominal List Id
-        emv_failsafe_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Emv Failsafe List Id
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - emv_nominal_list_id
-      title: EMVConfigCreateSchema
-    EMVListUpdateSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - EMV list name
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      title: EMVListUpdateSchema
-    Page_TypeVar_Customized_EMVReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/EMVReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[EMVReadSchema]
-    EMVListReadSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - EMV list name
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-        emvs:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/EMVReadSchema'
-            type: array
-          - type: 'null'
-          title: Emvs
-      type: object
-      required:
-      - name
-      - id
-      - organization_id
-      title: EMVListReadSchema
-    BINUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - BIN name
-          - type: 'null'
-          title: Name
-        min_range:
-          type: integer
-          title: Min Range
-          examples:
-          - 0
-        max_range:
-          type: integer
-          title: Max Range
-          examples:
-          - 99999999
-      additionalProperties: false
-      type: object
-      required:
-      - min_range
-      - max_range
-      title: BINUpdateSchema
-    EMVPartialUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - EMV name
-          - type: 'null'
-          title: Name
-        technology_type:
-          anyOf:
-          - $ref: '#/components/schemas/EMVTechnologyType'
-          - type: 'null'
-        kernel:
-          anyOf:
-          - type: string
-            maxLength: 2
-            minLength: 1
-            examples:
-            - 0F
-          - type: 'null'
-          title: Kernel
-        aid:
-          anyOf:
-          - type: string
-            maxLength: 32
-            minLength: 1
-            examples:
-            - A0000000041010
-          - type: 'null'
-          title: Aid
-        transaction_type:
-          anyOf:
-          - $ref: '#/components/schemas/EMVTransactionType'
-          - type: 'null'
-        asf:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Asf
-        tlv:
-          anyOf:
-          - type: string
-            minLength: 1
-          - type: 'null'
-          title: Tlv
-      additionalProperties: false
-      type: object
-      title: EMVPartialUpdateSchema
-    POIConfigReadSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - POI config name
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-        bin_config_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Bin Config Id
-        bin_config:
-          anyOf:
-          - $ref: '#/components/schemas/BINConfigReadSchema'
-          - type: 'null'
-        capk_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Capk List Id
-        capk_list:
-          anyOf:
-          - $ref: '#/components/schemas/CAPKListReadSchema'
-          - type: 'null'
-        cr_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Cr List Id
-        cr_list:
-          anyOf:
-          - $ref: '#/components/schemas/CRListReadSchema'
-          - type: 'null'
-        emv_config_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Emv Config Id
-        emv_config:
-          anyOf:
-          - $ref: '#/components/schemas/EMVConfigReadSchema'
-          - type: 'null'
-      type: object
-      required:
-      - name
-      - id
-      - organization_id
-      title: POIConfigReadSchema
-    CRCreateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - CR name
-          - type: 'null'
-          title: Name
-        rid:
-          type: string
-          maxLength: 10
-          minLength: 10
-          title: Rid
-          examples:
-          - A000000004
-        index:
-          type: string
-          maxLength: 2
-          minLength: 2
-          title: Index
-          examples:
-          - '00'
-        serial_number:
-          type: string
-          maxLength: 6
-          minLength: 6
-          title: Serial Number
-          examples:
-          - 3F70D8
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-      additionalProperties: false
-      type: object
-      required:
-      - rid
-      - index
-      - serial_number
-      title: CRCreateSchema
-    CAPKUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - CAPK name
-          - type: 'null'
-          title: Name
-        rid:
-          type: string
-          maxLength: 10
-          minLength: 10
-          title: Rid
-          examples:
-          - A000000004
-        index:
-          type: string
-          maxLength: 2
-          minLength: 2
-          title: Index
-          examples:
-          - EF
-        hash_type:
-          $ref: '#/components/schemas/CAPKHashType'
-          default: UNDEFINED
-        algorithm_type:
-          $ref: '#/components/schemas/CAPKAlgorithmType'
-          default: RSA
-        modulus:
-          type: string
-          maxLength: 1024
-          minLength: 1
-          title: Modulus
-          examples:
-          - A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B
-        exponent:
-          type: string
-          maxLength: 6
-          minLength: 2
-          title: Exponent
-          examples:
-          - '03'
-        hash:
-          type: string
-          minLength: 1
-          title: Hash
-        expires_at:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Expires At
-      additionalProperties: false
-      type: object
-      required:
-      - rid
-      - index
-      - modulus
-      - exponent
-      - hash
-      title: CAPKUpdateSchema
-    BINConfigPartialUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - BIN config name
-          - type: 'null'
-          title: Name
-      additionalProperties: false
-      type: object
-      title: BINConfigPartialUpdateSchema
-    BINListPartialUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - BIN list name
-          - type: 'null'
-          title: Name
-      additionalProperties: false
-      type: object
-      title: BINListPartialUpdateSchema
-    BINPartialUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - BIN name
-          - type: 'null'
-          title: Name
-        min_range:
-          anyOf:
-          - type: integer
-            examples:
-            - 0
-          - type: 'null'
-          title: Min Range
-        max_range:
-          anyOf:
-          - type: integer
-            examples:
-            - 99999999
-          - type: 'null'
-          title: Max Range
-      additionalProperties: false
-      type: object
-      title: BINPartialUpdateSchema
-    BINListCreateSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - BIN list name
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      title: BINListCreateSchema
-    BINListUpdateSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - BIN list name
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      title: BINListUpdateSchema
-    CAPKListReadSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - CAPK list name
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-        capks:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/CAPKReadSchema'
-            type: array
-          - type: 'null'
-          title: Capks
-      type: object
-      required:
-      - name
-      - id
-      - organization_id
-      title: CAPKListReadSchema
-    CRListPartialUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - CR list name
-          - type: 'null'
-          title: Name
-      additionalProperties: false
-      type: object
-      title: CRListPartialUpdateSchema
-    CAPKListCreateSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - CAPK list name
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      title: CAPKListCreateSchema
-    Page_TypeVar_Customized_CRListReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CRListReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[CRListReadSchema]
-    Page_TypeVar_Customized_CAPKListReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/CAPKListReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[CAPKListReadSchema]
-    BINCreateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - BIN name
-          - type: 'null'
-          title: Name
-        min_range:
-          type: integer
-          title: Min Range
-          examples:
-          - 0
-        max_range:
-          type: integer
-          title: Max Range
-          examples:
-          - 99999999
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-      additionalProperties: false
-      type: object
-      required:
-      - min_range
-      - max_range
-      title: BINCreateSchema
-    Page_TypeVar_Customized_POIConfigReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/POIConfigReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[POIConfigReadSchema]
-    Page_TypeVar_Customized_BINConfigReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/BINConfigReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[BINConfigReadSchema]
-    EMVConfigPartialUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - EMV config name
-          - type: 'null'
-          title: Name
-        emv_nominal_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Emv Nominal List Id
-        emv_failsafe_list_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Emv Failsafe List Id
-      additionalProperties: false
-      type: object
-      title: EMVConfigPartialUpdateSchema
+      - UNDEFINED
+      - SHA1
+      - SHA256
+      title: CAPKHashType
     ListDirectorySchema:
       properties:
         sub_directories:
@@ -4924,5 +4840,5 @@ components:
           scopes: {}
           tokenUrl: auth/token
 x-refined-from:
-- switstack-switcloud-openapi.yml
-- switstack-swittest-openapi.yml
+- switstack-switcloud-openapi.json
+- switstack-swittest-openapi.json

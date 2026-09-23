@@ -2,10 +2,7 @@ openapi: 3.2.0
 info:
   title: Switstack Auth API
   version: '1.0'
-  description: 'Operations tagged Auth across 2 of this provider''s published API definitions: switstack-switcloud-openapi.yml, switstack-swittest-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://switcloud.switstack.io/
-  description: Base URL declared by the provider in apis.yml (roadmap#122).
+  description: 'Operations tagged Auth across 2 of this provider''s published API definitions: switstack-switcloud-openapi.json, switstack-swittest-openapi.json. Each path carries the servers of the definition it was published in.'
 tags:
 - name: Auth
 paths:
@@ -34,9 +31,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /auth/refresh-token:
     post:
       tags:
@@ -62,9 +56,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
   /auth/revoke-token:
     post:
       tags:
@@ -89,11 +80,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://switcloud.switstack.io/
-      description: Base URL declared by the provider in apis.yml (roadmap#122).
 components:
   schemas:
+    Body_revoke_token_auth_revoke_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_revoke_token_auth_revoke_token_post
     Body_refresh_token_auth_refresh_token_post:
       properties:
         refresh_token:
@@ -106,6 +106,21 @@ components:
       required:
       - refresh_token
       title: Body_refresh_token_auth_refresh_token_post
+    Oauth2GrantType:
+      type: string
+      enum:
+      - password
+      - client_credentials
+      title: Oauth2GrantType
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     TokenSchema:
       properties:
         token_type:
@@ -139,33 +154,6 @@ components:
       - token_type
       - access_token
       title: TokenSchema
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Body_revoke_token_auth_revoke_token_post:
-      properties:
-        refresh_token:
-          type: string
-          minLength: 1
-          title: Refresh Token
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-      type: object
-      required:
-      - refresh_token
-      title: Body_revoke_token_auth_revoke_token_post
-    Oauth2GrantType:
-      type: string
-      enum:
-      - password
-      - client_credentials
-      title: Oauth2GrantType
     OAuth2Form:
       properties:
         grant_type:
@@ -229,6 +217,16 @@ components:
       - msg
       - type
       title: ValidationError
+    Body_revoke_token_auth_revoke_token_post_2:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+          default: ''
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      title: Body_revoke_token_auth_revoke_token_post
     Body_refresh_token_auth_refresh_token_post_2:
       properties:
         refresh_token:
@@ -268,16 +266,6 @@ components:
       - token_type
       - access_token
       title: TokenSchema
-    Body_revoke_token_auth_revoke_token_post_2:
-      properties:
-        refresh_token:
-          type: string
-          title: Refresh Token
-          default: ''
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-      type: object
-      title: Body_revoke_token_auth_revoke_token_post
     ValidationError_2:
       properties:
         loc:
@@ -312,5 +300,5 @@ components:
           scopes: {}
           tokenUrl: auth/token
 x-refined-from:
-- switstack-switcloud-openapi.yml
-- switstack-swittest-openapi.yml
+- switstack-switcloud-openapi.json
+- switstack-swittest-openapi.json

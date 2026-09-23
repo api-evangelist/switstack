@@ -1,0 +1,51 @@
+{
+  "provider": "switstack",
+  "sources": [
+    "_original/switstack-switcloud-openapi.json",
+    "_original/switstack-swittest-openapi.json"
+  ],
+  "outputs": [
+    "switstack-auth-api-openapi.yml",
+    "switstack-bom-api-openapi.yml",
+    "switstack-config-api-openapi.yml",
+    "switstack-payment-api-openapi.yml",
+    "switstack-parser-api-openapi.yml",
+    "switstack-suite-api-openapi.yml",
+    "switstack-test-api-openapi.yml",
+    "switstack-validation-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "2 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "switstack-switcloud-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "switstack-switcloud-openapi.json: declared missing tag: Auth",
+    "switstack-switcloud-openapi.json: declared missing tag: BOM",
+    "switstack-switcloud-openapi.json: declared missing tag: Config",
+    "switstack-switcloud-openapi.json: declared missing tag: Payment",
+    "switstack-swittest-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "switstack-swittest-openapi.json: declared missing tag: Auth",
+    "switstack-swittest-openapi.json: declared missing tag: Config",
+    "switstack-swittest-openapi.json: declared missing tag: Parser",
+    "switstack-swittest-openapi.json: declared missing tag: Suite",
+    "switstack-swittest-openapi.json: declared missing tag: Test",
+    "switstack-swittest-openapi.json: declared missing tag: Validation",
+    "tag 'Auth' spans 2 source specs (switstack-switcloud-openapi.json, switstack-swittest-openapi.json): per-path servers applied",
+    "tag 'Config' spans 2 source specs (switstack-switcloud-openapi.json, switstack-swittest-openapi.json): per-path servers applied",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "_original/switstack-swittest-openapi.yml: archived document superseded by a larger archived document",
+    "_original/switstack-switcloud-openapi.yml: archived document superseded by a larger archived document",
+    "switstack-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "switstack-bom-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "switstack-config-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "switstack-parser-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "switstack-payment-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "switstack-suite-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "switstack-test-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "switstack-validation-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

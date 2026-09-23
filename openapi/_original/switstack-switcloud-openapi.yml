@@ -52,6 +52,9 @@ info:
 
     '
   version: 2.28.0
+servers:
+- url: https://switcloud.switstack.io/
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
 paths:
   /auth/token:
     post:

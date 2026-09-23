@@ -1,26 +1,9 @@
 openapi: 3.2.0
 info:
   title: Swittest API 🚀 Parser API
-  description: '
+  description: '### Prerequisites
 
-    ### Prerequisites
-
-    To use this API, you must have an active organization and an active user. If you don''t have an account yet, please contact us at [contact@switstack.io](mailto:contact@switstack.io).
-
-
-    ### Roles
-
-    - **Data**: Can get test suites, tests, configs and vcards.
-
-    - **Full**: Can fully use swittest.
-
-
-    ### Authentication
-
-    To make authenticated requests, call `/auth/token` with your credentials and the appropriate grant type. An access token will be returned, which must be included in the request''s Authorization header using the Bearer prefix (`Authorization: Bearer <access_token>`).
-
-
-    '
+    To use this API, you must have an active organization and an active user.'
   version: 0.13.0
 tags:
 - name: Parser
@@ -159,63 +142,12 @@ paths:
       - OAuth2PasswordBearer: []
 components:
   schemas:
-    TestSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        version:
-          type: string
-          title: Version
-        date:
-          type: string
-          format: date
-          title: Date
-        poi_config:
-          $ref: '#/components/schemas/POIConfigSchema'
-        payments:
-          items:
-            $ref: '#/components/schemas/PaymentSchema'
-          type: array
-          title: Payments
-        vcard:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Vcard
-        ics:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Ics
-        ics_not:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Ics Not
-        environment:
-          $ref: '#/components/schemas/EnvironmentSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - version
-      - date
-      - poi_config
-      - payments
-      - environment
-      title: TestSchema
+    SupportedTypes:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: SupportedTypes
     ToolEnum:
       type: string
       enum:
@@ -223,16 +155,7 @@ components:
       - fime
       - gallit
       title: ToolEnum
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ParsedTag:
+    TagDescription:
       properties:
         name:
           type: string
@@ -243,191 +166,102 @@ components:
         tag:
           type: string
           title: Tag
-        blocks:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/BitBlock'
-            - $ref: '#/components/schemas/ByteBlock'
-          type: array
-          title: Blocks
+        length:
+          type: integer
+          title: Length
+        max_length:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Length
       type: object
       required:
       - name
       - description
       - tag
-      - blocks
-      title: ParsedTag
-    ExpectationsPartSchema:
+      - length
+      title: TagDescription
+    ValidationError:
       properties:
-        intermediate_signals:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/IntermediateSignalSchema'
-            type: array
-          - type: 'null'
-          title: Intermediate Signals
-        data_record:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
-          - type: 'null'
-        discretionary_data:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
-          - type: 'null'
-        user_interface_request_data:
-          anyOf:
-          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
-          - type: 'null'
-        outcome_parameter_set:
-          anyOf:
-          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
-          - type: 'null'
-        error_indication:
-          anyOf:
-          - $ref: '#/components/schemas/ErrorIndicationSchema'
-          - type: 'null'
-        transaction_data:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: ExpectationsPartSchema
-    SupportedSchemes:
-      type: string
-      enum:
-      - mastercard
-      title: SupportedSchemes
-    Body_parse_tlv_api_parse_tlv_post:
-      properties:
-        tlv:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
           type: string
-          title: Tlv
-      type: object
-      required:
-      - tlv
-      title: Body_parse_tlv_api_parse_tlv_post
-    ByteBlock:
-      properties:
+          title: Message
         type:
           type: string
-          const: byte
-          title: Type
-        value:
-          type: string
-          title: Value
-        length:
-          type: integer
-          title: Length
-        label:
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    UserInterfaceRequestDataSchema:
+      properties:
+        message_identifier:
           anyOf:
-          - type: string
+          - items:
+              type: string
+              enum:
+              - CARD READ OK
+              - TRY AGAIN
+              - APPROVED
+              - APPROVED - SIGN
+              - DECLINED
+              - ERROR - OTHER CARD
+              - INSERT CARD
+              - SEE PHONE
+              - AUTHORISING - PLEASE WAIT
+              - CLEAR DISPLAY
+              - N/A
+              - PROCESSING ERROR
+              - PRESENT CARD
+            type: array
           - type: 'null'
-          title: Label
-        meaning:
-          type: string
-          title: Meaning
-        number_format:
+          title: Message Identifier
+        status:
           anyOf:
           - type: string
             enum:
-            - decimal
-            - binary
+            - NOT READY
+            - IDLE
+            - READY TO READ
+            - PROCESSING
+            - CARD READ SUCCESSFULLY
+            - PROCESSING ERROR
+            - N/A
           - type: 'null'
-          title: Number Format
-        coefficient:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Coefficient
-        unit:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Unit
-        combination:
-          anyOf:
-          - additionalProperties:
-              type: string
-            type: object
-          - type: 'null'
-          title: Combination
-      type: object
-      required:
-      - type
-      - value
-      - length
-      - meaning
-      title: ByteBlock
-    BitSection:
-      properties:
-        value:
-          type: string
-          title: Value
-        length:
-          type: integer
-          title: Length
-        label:
+          title: Status
+        hold_time:
           anyOf:
           - type: string
+            maxLength: 6
+            minLength: 6
+            pattern: ^([0-9]{2})+$
           - type: 'null'
-          title: Label
-        meaning:
+          title: Hold Time
+        language_preference:
           anyOf:
           - type: string
-          - type: integer
-          - type: number
-          title: Meaning
-        is_true:
-          type: boolean
-          title: Is True
-        combinations:
-          anyOf:
-          - additionalProperties:
-              type: string
-            type: object
+            maxLength: 16
+            minLength: 16
+            pattern: ^([0-9a-fA-F]{2})+$
           - type: 'null'
-          title: Combinations
-      type: object
-      required:
-      - value
-      - length
-      - meaning
-      - is_true
-      title: BitSection
-    SchemeEnum:
-      type: string
-      enum:
-      - mastercard
-      - amex
-      - discover
-      - jcb
-      - cup
-      - rupay
-      - eftpos
-      - cpace
-      title: SchemeEnum
-    IntermediateSignalSchema:
-      properties:
-        user_interface_request_data:
-          anyOf:
-          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
-          - type: 'null'
-        outcome_parameter_set:
-          anyOf:
-          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
-          - type: 'null'
-        error_indication:
-          anyOf:
-          - $ref: '#/components/schemas/ErrorIndicationSchema'
-          - type: 'null'
-        transaction_data:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
-          - type: 'null'
+          title: Language Preference
       additionalProperties: false
       type: object
-      title: IntermediateSignalSchema
+      title: UserInterfaceRequestDataSchema
     ErrorIndicationSchema:
       properties:
         l1:
@@ -503,64 +337,127 @@ components:
       additionalProperties: false
       type: object
       title: ErrorIndicationSchema
-    ValidationError:
+    ExpectationsSchema:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        restart:
+          anyOf:
+          - $ref: '#/components/schemas/RestartSchema'
+          - type: 'null'
+        authorization:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+        completion:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: ExpectationsSchema
+    SchemeEnum:
+      type: string
+      enum:
+      - mastercard
+      - amex
+      - discover
+      - jcb
+      - cup
+      - rupay
+      - eftpos
+      - cpace
+      title: SchemeEnum
+    Body_parse_tlv_api_parse_tlv_post:
+      properties:
+        tlv:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Tlv
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    TagDescription:
+      - tlv
+      title: Body_parse_tlv_api_parse_tlv_post
+    TestSchema:
       properties:
         name:
           type: string
           title: Name
         description:
-          type: string
-          title: Description
-        tag:
-          type: string
-          title: Tag
-        length:
-          type: integer
-          title: Length
-        max_length:
           anyOf:
-          - type: integer
+          - type: string
           - type: 'null'
-          title: Max Length
+          title: Description
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+        payments:
+          items:
+            $ref: '#/components/schemas/PaymentSchema'
+          type: array
+          title: Payments
+        vcard:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Vcard
+        ics:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ics
+        ics_not:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ics Not
+        environment:
+          $ref: '#/components/schemas/EnvironmentSchema'
+      additionalProperties: false
       type: object
       required:
       - name
-      - description
+      - version
+      - date
+      - poi_config
+      - payments
+      - environment
+      title: TestSchema
+    RestartSchema:
+      properties:
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: RestartSchema
+    Body_parse_tag_api_parse_tag_post:
+      properties:
+        tag:
+          type: string
+          title: Tag
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
       - tag
-      - length
-      title: TagDescription
-    SupportedTypes:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: SupportedTypes
+      - value
+      title: Body_parse_tag_api_parse_tag_post
     OutcomeParameterSetSchema:
       properties:
         status:
@@ -656,6 +553,78 @@ components:
       additionalProperties: false
       type: object
       title: OutcomeParameterSetSchema
+    BitBlock:
+      properties:
+        type:
+          type: string
+          const: bit
+          title: Type
+        value:
+          type: string
+          title: Value
+        sections:
+          items:
+            $ref: '#/components/schemas/BitSection'
+          type: array
+          title: Sections
+      type: object
+      required:
+      - type
+      - value
+      - sections
+      title: BitBlock
+    ByteBlock:
+      properties:
+        type:
+          type: string
+          const: byte
+          title: Type
+        value:
+          type: string
+          title: Value
+        length:
+          type: integer
+          title: Length
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        meaning:
+          type: string
+          title: Meaning
+        number_format:
+          anyOf:
+          - type: string
+            enum:
+            - decimal
+            - binary
+          - type: 'null'
+          title: Number Format
+        coefficient:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Coefficient
+        unit:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unit
+        combination:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Combination
+      type: object
+      required:
+      - type
+      - value
+      - length
+      - meaning
+      title: ByteBlock
     ExpectationsDataSchema:
       properties:
         tags:
@@ -683,29 +652,165 @@ components:
       additionalProperties: false
       type: object
       title: ExpectationsDataSchema
-    ExpectationsSchema:
+    HTTPValidationError:
       properties:
-        restart:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    SupportedSchemes:
+      type: string
+      enum:
+      - mastercard
+      title: SupportedSchemes
+    POIConfigSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        bin_config:
           anyOf:
-          - $ref: '#/components/schemas/RestartSchema'
+          - type: string
           - type: 'null'
-        authorization:
+          title: Bin Config
+        capk_list:
           anyOf:
-          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: string
           - type: 'null'
-        completion:
+          title: Capk List
+        cr_list:
           anyOf:
-          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: string
+          - type: 'null'
+          title: Cr List
+        emv_config:
+          type: string
+          title: Emv Config
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emv_config
+      title: POIConfigSchema
+    ParsedTag:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        tag:
+          type: string
+          title: Tag
+        blocks:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/BitBlock'
+            - $ref: '#/components/schemas/ByteBlock'
+          type: array
+          title: Blocks
+      type: object
+      required:
+      - name
+      - description
+      - tag
+      - blocks
+      title: ParsedTag
+    EnvironmentSchema:
+      properties:
+        tool:
+          $ref: '#/components/schemas/ToolEnum'
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        scheme:
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          type: string
+          title: Test Suite Version
+      additionalProperties: false
+      type: object
+      required:
+      - tool
+      - type
+      - scheme
+      - test_suite_version
+      title: EnvironmentSchema
+    BitSection:
+      properties:
+        value:
+          type: string
+          title: Value
+        length:
+          type: integer
+          title: Length
+        label:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Label
+        meaning:
+          anyOf:
+          - type: string
+          - type: integer
+          - type: number
+          title: Meaning
+        is_true:
+          type: boolean
+          title: Is True
+        combinations:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Combinations
+      type: object
+      required:
+      - value
+      - length
+      - meaning
+      - is_true
+      title: BitSection
+    ExpectationsPartSchema:
+      properties:
+        intermediate_signals:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/IntermediateSignalSchema'
+            type: array
+          - type: 'null'
+          title: Intermediate Signals
+        data_record:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        discretionary_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        user_interface_request_data:
+          anyOf:
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: 'null'
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
           - type: 'null'
       additionalProperties: false
       type: object
-      title: ExpectationsSchema
-    TypeEnum:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: TypeEnum
+      title: ExpectationsPartSchema
     PaymentSchema:
       properties:
         randoms:
@@ -749,136 +854,6 @@ components:
       additionalProperties: false
       type: object
       title: PaymentSchema
-    Body_parse_tag_api_parse_tag_post:
-      properties:
-        tag:
-          type: string
-          title: Tag
-        value:
-          type: string
-          title: Value
-      type: object
-      required:
-      - tag
-      - value
-      title: Body_parse_tag_api_parse_tag_post
-    BitBlock:
-      properties:
-        type:
-          type: string
-          const: bit
-          title: Type
-        value:
-          type: string
-          title: Value
-        sections:
-          items:
-            $ref: '#/components/schemas/BitSection'
-          type: array
-          title: Sections
-      type: object
-      required:
-      - type
-      - value
-      - sections
-      title: BitBlock
-    UserInterfaceRequestDataSchema:
-      properties:
-        message_identifier:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - CARD READ OK
-              - TRY AGAIN
-              - APPROVED
-              - APPROVED - SIGN
-              - DECLINED
-              - ERROR - OTHER CARD
-              - INSERT CARD
-              - SEE PHONE
-              - AUTHORISING - PLEASE WAIT
-              - CLEAR DISPLAY
-              - N/A
-              - PROCESSING ERROR
-              - PRESENT CARD
-            type: array
-          - type: 'null'
-          title: Message Identifier
-        status:
-          anyOf:
-          - type: string
-            enum:
-            - NOT READY
-            - IDLE
-            - READY TO READ
-            - PROCESSING
-            - CARD READ SUCCESSFULLY
-            - PROCESSING ERROR
-            - N/A
-          - type: 'null'
-          title: Status
-        hold_time:
-          anyOf:
-          - type: string
-            maxLength: 6
-            minLength: 6
-            pattern: ^([0-9]{2})+$
-          - type: 'null'
-          title: Hold Time
-        language_preference:
-          anyOf:
-          - type: string
-            maxLength: 16
-            minLength: 16
-            pattern: ^([0-9a-fA-F]{2})+$
-          - type: 'null'
-          title: Language Preference
-      additionalProperties: false
-      type: object
-      title: UserInterfaceRequestDataSchema
-    POIConfigSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        bin_config:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Bin Config
-        capk_list:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Capk List
-        cr_list:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Cr List
-        emv_config:
-          type: string
-          title: Emv Config
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - emv_config
-      title: POIConfigSchema
-    RestartSchema:
-      properties:
-        outcome_parameter_set:
-          anyOf:
-          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
-          - type: 'null'
-        error_indication:
-          anyOf:
-          - $ref: '#/components/schemas/ErrorIndicationSchema'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: RestartSchema
     Body_parse_log_api_parse_log_post:
       properties:
         file:
@@ -897,25 +872,33 @@ components:
       required:
       - file
       title: Body_parse_log_api_parse_log_post
-    EnvironmentSchema:
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
+    IntermediateSignalSchema:
       properties:
-        tool:
-          $ref: '#/components/schemas/ToolEnum'
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        scheme:
-          $ref: '#/components/schemas/SchemeEnum'
-        test_suite_version:
-          type: string
-          title: Test Suite Version
+        user_interface_request_data:
+          anyOf:
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: 'null'
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
       additionalProperties: false
       type: object
-      required:
-      - tool
-      - type
-      - scheme
-      - test_suite_version
-      title: EnvironmentSchema
+      title: IntermediateSignalSchema
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2

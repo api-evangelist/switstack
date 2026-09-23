@@ -1,26 +1,9 @@
 openapi: 3.2.0
 info:
   title: Swittest API 🚀 Suite API
-  description: '
+  description: '### Prerequisites
 
-    ### Prerequisites
-
-    To use this API, you must have an active organization and an active user. If you don''t have an account yet, please contact us at [contact@switstack.io](mailto:contact@switstack.io).
-
-
-    ### Roles
-
-    - **Data**: Can get test suites, tests, configs and vcards.
-
-    - **Full**: Can fully use swittest.
-
-
-    ### Authentication
-
-    To make authenticated requests, call `/auth/token` with your credentials and the appropriate grant type. An access token will be returned, which must be included in the request''s Authorization header using the Bearer prefix (`Authorization: Bearer <access_token>`).
-
-
-    '
+    To use this API, you must have an active organization and an active user.'
   version: 0.13.0
 tags:
 - name: Suite
@@ -92,13 +75,34 @@ components:
       - name
       - poi_config
       title: TestListSchema
-    ToolEnum:
-      type: string
-      enum:
-      - swittest
-      - fime
-      - gallit
-      title: ToolEnum
+    TestSuiteSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        environment:
+          $ref: '#/components/schemas/EnvironmentSchema'
+        tests:
+          items:
+            $ref: '#/components/schemas/TestListSchema'
+          type: array
+          title: Tests
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - version
+      - date
+      - environment
+      - tests
+      title: TestSuiteSchema
     HTTPValidationError:
       properties:
         detail:
@@ -120,12 +124,6 @@ components:
       - eftpos
       - cpace
       title: SchemeEnum
-    TypeEnum:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: TypeEnum
     POIConfigSchema:
       properties:
         name:
@@ -155,34 +153,19 @@ components:
       - name
       - emv_config
       title: POIConfigSchema
-    TestSuiteSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        version:
-          type: string
-          title: Version
-        date:
-          type: string
-          format: date
-          title: Date
-        environment:
-          $ref: '#/components/schemas/EnvironmentSchema'
-        tests:
-          items:
-            $ref: '#/components/schemas/TestListSchema'
-          type: array
-          title: Tests
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - version
-      - date
-      - environment
-      - tests
-      title: TestSuiteSchema
+    ToolEnum:
+      type: string
+      enum:
+      - swittest
+      - fime
+      - gallit
+      title: ToolEnum
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
     ValidationError:
       properties:
         loc:
