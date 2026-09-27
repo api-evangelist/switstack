@@ -62,6 +62,34 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    EnvironmentSchema:
+      properties:
+        tool:
+          $ref: '#/components/schemas/ToolEnum'
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        scheme:
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          type: string
+          title: Test Suite Version
+      additionalProperties: false
+      type: object
+      required:
+      - tool
+      - type
+      - scheme
+      - test_suite_version
+      title: EnvironmentSchema
     TestListSchema:
       properties:
         name:
@@ -75,43 +103,19 @@ components:
       - name
       - poi_config
       title: TestListSchema
-    TestSuiteSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        version:
-          type: string
-          title: Version
-        date:
-          type: string
-          format: date
-          title: Date
-        environment:
-          $ref: '#/components/schemas/EnvironmentSchema'
-        tests:
-          items:
-            $ref: '#/components/schemas/TestListSchema'
-          type: array
-          title: Tests
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - version
-      - date
-      - environment
-      - tests
-      title: TestSuiteSchema
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
+    ToolEnum:
+      type: string
+      enum:
+      - swittest
+      - fime
+      - gallit
+      title: ToolEnum
     SchemeEnum:
       type: string
       enum:
@@ -153,19 +157,34 @@ components:
       - name
       - emv_config
       title: POIConfigSchema
-    ToolEnum:
-      type: string
-      enum:
-      - swittest
-      - fime
-      - gallit
-      title: ToolEnum
-    TypeEnum:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: TypeEnum
+    TestSuiteSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        environment:
+          $ref: '#/components/schemas/EnvironmentSchema'
+        tests:
+          items:
+            $ref: '#/components/schemas/TestListSchema'
+          type: array
+          title: Tests
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - version
+      - date
+      - environment
+      - tests
+      title: TestSuiteSchema
     ValidationError:
       properties:
         loc:
@@ -192,25 +211,6 @@ components:
       - msg
       - type
       title: ValidationError
-    EnvironmentSchema:
-      properties:
-        tool:
-          $ref: '#/components/schemas/ToolEnum'
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        scheme:
-          $ref: '#/components/schemas/SchemeEnum'
-        test_suite_version:
-          type: string
-          title: Test Suite Version
-      additionalProperties: false
-      type: object
-      required:
-      - tool
-      - type
-      - scheme
-      - test_suite_version
-      title: EnvironmentSchema
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2
