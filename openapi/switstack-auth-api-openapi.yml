@@ -82,72 +82,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    Body_refresh_token_auth_refresh_token_post:
-      properties:
-        refresh_token:
-          type: string
-          minLength: 1
-          title: Refresh Token
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-      type: object
-      required:
-      - refresh_token
-      title: Body_refresh_token_auth_refresh_token_post
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    TokenSchema:
-      properties:
-        token_type:
-          type: string
-          const: Bearer
-          title: Token Type
-        access_token:
-          type: string
-          pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
-          title: Access Token
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-        expires_in:
-          type: integer
-          title: Expires In
-          default: 300
-        refresh_token:
-          anyOf:
-          - type: string
-            pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
-            examples:
-            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-          - type: 'null'
-          title: Refresh Token
-        refresh_expires_in:
-          type: integer
-          title: Refresh Expires In
-          default: 1800
-      type: object
-      required:
-      - token_type
-      - access_token
-      title: TokenSchema
     OAuth2Form:
       properties:
         grant_type:
@@ -190,18 +124,39 @@ components:
       required:
       - grant_type
       title: OAuth2Form
-    Body_revoke_token_auth_revoke_token_post:
+    TokenSchema:
       properties:
-        refresh_token:
+        token_type:
           type: string
-          minLength: 1
-          title: Refresh Token
+          const: Bearer
+          title: Token Type
+        access_token:
+          type: string
+          pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
+          title: Access Token
           examples:
           - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+        expires_in:
+          type: integer
+          title: Expires In
+          default: 300
+        refresh_token:
+          anyOf:
+          - type: string
+            pattern: ^((?:\.?(?:[A-Za-z0-9-_]+)){3})$
+            examples:
+            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+          - type: 'null'
+          title: Refresh Token
+        refresh_expires_in:
+          type: integer
+          title: Refresh Expires In
+          default: 1800
       type: object
       required:
-      - refresh_token
-      title: Body_revoke_token_auth_revoke_token_post
+      - token_type
+      - access_token
+      title: TokenSchema
     HTTPValidationError:
       properties:
         detail:
@@ -211,23 +166,7 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    Oauth2GrantType:
-      type: string
-      enum:
-      - password
-      - client_credentials
-      title: Oauth2GrantType
-    Body_refresh_token_auth_refresh_token_post_2:
-      properties:
-        refresh_token:
-          type: string
-          title: Refresh Token
-          default: ''
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-      type: object
-      title: Body_refresh_token_auth_refresh_token_post
-    ValidationError_2:
+    ValidationError:
       properties:
         loc:
           items:
@@ -242,17 +181,42 @@ components:
         type:
           type: string
           title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
       type: object
       required:
       - loc
       - msg
       - type
       title: ValidationError
+    Body_refresh_token_auth_refresh_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_refresh_token_auth_refresh_token_post
+    Body_revoke_token_auth_revoke_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_revoke_token_auth_revoke_token_post
+    Oauth2GrantType:
+      type: string
+      enum:
+      - password
+      - client_credentials
+      title: Oauth2GrantType
     TokenSchema_2:
       properties:
         token_type:
@@ -282,6 +246,42 @@ components:
       - token_type
       - access_token
       title: TokenSchema
+    ValidationError_2:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Body_refresh_token_auth_refresh_token_post_2:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+          default: ''
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      title: Body_refresh_token_auth_refresh_token_post
     Body_revoke_token_auth_revoke_token_post_2:
       properties:
         refresh_token:
