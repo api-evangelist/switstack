@@ -1,0 +1,26 @@
+slug: switstack
+provider: Switstack
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Test
+  spec_file: switstack-test-api-openapi.yml
+  capability_id: BC-4200.50
+  capability_id_l1: BC-4200
+  capability_name: Software Quality Engineering
+  confidence: 0.7
+  evidence: POST /api/tests/{test_suite_name_or_index}/{test_selection} run_tests  Run Tests; POST /api/tests
+    run_custom_test; schemas TestResultSchema, TestStatusEnum
+  reason: Operations execute defined and custom test cases and return test results/status — automated
+    test execution, i.e. software quality engineering. Some ambiguity because the testing is for EMV compliance
+    certification, which could also be read as quality control.
