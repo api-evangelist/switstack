@@ -157,15 +157,6 @@ components:
       - token_type
       - access_token
       title: TokenSchema
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -187,18 +178,6 @@ components:
       - msg
       - type
       title: ValidationError
-    Body_refresh_token_auth_refresh_token_post:
-      properties:
-        refresh_token:
-          type: string
-          minLength: 1
-          title: Refresh Token
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-      type: object
-      required:
-      - refresh_token
-      title: Body_refresh_token_auth_refresh_token_post
     Body_revoke_token_auth_revoke_token_post:
       properties:
         refresh_token:
@@ -217,6 +196,27 @@ components:
       - password
       - client_credentials
       title: Oauth2GrantType
+    Body_refresh_token_auth_refresh_token_post:
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          title: Refresh Token
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      required:
+      - refresh_token
+      title: Body_refresh_token_auth_refresh_token_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     TokenSchema_2:
       properties:
         token_type:
@@ -272,16 +272,6 @@ components:
       - msg
       - type
       title: ValidationError
-    Body_refresh_token_auth_refresh_token_post_2:
-      properties:
-        refresh_token:
-          type: string
-          title: Refresh Token
-          default: ''
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
-      type: object
-      title: Body_refresh_token_auth_refresh_token_post
     Body_revoke_token_auth_revoke_token_post_2:
       properties:
         refresh_token:
@@ -292,6 +282,16 @@ components:
           - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
       type: object
       title: Body_revoke_token_auth_revoke_token_post
+    Body_refresh_token_auth_refresh_token_post_2:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+          default: ''
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjowfQ.CzKsmenoSSYvhTq_SGoFvnTB-zO3hwjTu98Qo50kqQg
+      type: object
+      title: Body_refresh_token_auth_refresh_token_post
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2

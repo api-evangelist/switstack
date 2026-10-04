@@ -62,47 +62,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    TypeEnum:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: TypeEnum
-    EnvironmentSchema:
-      properties:
-        tool:
-          $ref: '#/components/schemas/ToolEnum'
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        scheme:
-          $ref: '#/components/schemas/SchemeEnum'
-        test_suite_version:
-          type: string
-          title: Test Suite Version
-      additionalProperties: false
-      type: object
-      required:
-      - tool
-      - type
-      - scheme
-      - test_suite_version
-      title: EnvironmentSchema
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ToolEnum:
-      type: string
-      enum:
-      - swittest
-      - fime
-      - gallit
-      title: ToolEnum
     ValidationError:
       properties:
         loc:
@@ -129,6 +88,32 @@ components:
       - msg
       - type
       title: ValidationError
+    ToolEnum:
+      type: string
+      enum:
+      - swittest
+      - fime
+      - gallit
+      title: ToolEnum
+    EnvironmentSchema:
+      properties:
+        tool:
+          $ref: '#/components/schemas/ToolEnum'
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        scheme:
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          type: string
+          title: Test Suite Version
+      additionalProperties: false
+      type: object
+      required:
+      - tool
+      - type
+      - scheme
+      - test_suite_version
+      title: EnvironmentSchema
     POIConfigSchema:
       properties:
         name:
@@ -158,31 +143,6 @@ components:
       - name
       - emv_config
       title: POIConfigSchema
-    SchemeEnum:
-      type: string
-      enum:
-      - mastercard
-      - amex
-      - discover
-      - jcb
-      - cup
-      - rupay
-      - eftpos
-      - cpace
-      title: SchemeEnum
-    TestListSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        poi_config:
-          $ref: '#/components/schemas/POIConfigSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - poi_config
-      title: TestListSchema
     TestSuiteSchema:
       properties:
         name:
@@ -211,6 +171,46 @@ components:
       - environment
       - tests
       title: TestSuiteSchema
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
+    TestListSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - poi_config
+      title: TestListSchema
+    SchemeEnum:
+      type: string
+      enum:
+      - mastercard
+      - amex
+      - discover
+      - jcb
+      - cup
+      - rupay
+      - eftpos
+      - cpace
+      title: SchemeEnum
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2

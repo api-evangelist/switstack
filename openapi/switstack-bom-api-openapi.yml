@@ -673,170 +673,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    StoreUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - Store name
-          - type: 'null'
-          title: Name
-        merchant_id:
-          type: string
-          format: uuid
-          title: Merchant Id
-        address:
-          anyOf:
-          - type: string
-            minLength: 1
-            examples:
-            - 2 Bd Léon Bureau, 44200 Nantes
-          - type: 'null'
-          title: Address
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - merchant_id
-      title: StoreUpdateSchema
-    POIReadSchema:
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - POI name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - POI description
-          - type: 'null'
-          title: Description
-        identifier:
-          type: string
-          maxLength: 16
-          minLength: 1
-          title: Identifier
-          examples:
-          - '00000003'
-        serial_number:
-          type: string
-          maxLength: 25
-          minLength: 1
-          title: Serial Number
-          examples:
-          - SN-DF2948A38DC
-        brand:
-          $ref: '#/components/schemas/POIBrandType'
-          default: UNDEFINED
-        state:
-          $ref: '#/components/schemas/POIStateType'
-          default: UNDEFINED
-        store_id:
-          type: string
-          format: uuid
-          title: Store Id
-        id:
-          type: string
-          format: uuid
-          title: Id
-        organization_id:
-          type: string
-          format: uuid
-          title: Organization Id
-      type: object
-      required:
-      - name
-      - identifier
-      - serial_number
-      - store_id
-      - id
-      - organization_id
-      title: POIReadSchema
-    StoreCreateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - Store name
-          - type: 'null'
-          title: Name
-        merchant_id:
-          type: string
-          format: uuid
-          title: Merchant Id
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
-        address:
-          anyOf:
-          - type: string
-            minLength: 1
-            examples:
-            - 2 Bd Léon Bureau, 44200 Nantes
-          - type: 'null'
-          title: Address
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - merchant_id
-      title: StoreCreateSchema
-    Page_TypeVar_Customized_MerchantReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/MerchantReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[MerchantReadSchema]
-    POIStateType:
-      type: string
-      enum:
-      - UNDEFINED
-      - PROVISIONED
-      - OPERATED
-      - SUSPENDED
-      - PHASED_OUT
-      title: POIStateType
-    MerchantCreateSchema:
+    MerchantPartialUpdateSchema:
       properties:
         name:
           anyOf:
@@ -847,133 +684,9 @@ components:
             - Merchant name
           - type: 'null'
           title: Name
-        organization_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Organization Id
       additionalProperties: false
       type: object
-      required:
-      - name
-      title: MerchantCreateSchema
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    POIPartialUpdateSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - POI name
-          - type: 'null'
-          title: Name
-        description:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - POI description
-          - type: 'null'
-          title: Description
-        identifier:
-          anyOf:
-          - type: string
-            maxLength: 16
-            minLength: 1
-            examples:
-            - '00000003'
-          - type: 'null'
-          title: Identifier
-        serial_number:
-          anyOf:
-          - type: string
-            maxLength: 25
-            minLength: 1
-            examples:
-            - SN-DF2948A38DC
-          - type: 'null'
-          title: Serial Number
-        brand:
-          anyOf:
-          - $ref: '#/components/schemas/POIBrandType'
-          - type: 'null'
-        state:
-          anyOf:
-          - $ref: '#/components/schemas/POIStateType'
-          - type: 'null'
-        store_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Store Id
-      additionalProperties: false
-      type: object
-      title: POIPartialUpdateSchema
-    Page_TypeVar_Customized_POIReadSchema_:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/POIReadSchema'
-          type: array
-          title: Items
-        total:
-          type: integer
-          minimum: 0
-          title: Total
-        page:
-          type: integer
-          minimum: 1
-          title: Page
-        size:
-          type: integer
-          minimum: 1
-          title: Size
-        pages:
-          type: integer
-          minimum: 0
-          title: Pages
-      type: object
-      required:
-      - items
-      - total
-      - page
-      - size
-      - pages
-      title: Page[TypeVar]Customized[POIReadSchema]
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      title: MerchantPartialUpdateSchema
     MerchantReadSchema:
       properties:
         name:
@@ -1038,7 +751,28 @@ components:
       - organization_id
       - address
       title: StoreReadSchema
-    MerchantPartialUpdateSchema:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    StoreUpdateSchema:
       properties:
         name:
           anyOf:
@@ -1046,22 +780,58 @@ components:
             maxLength: 255
             minLength: 1
             examples:
-            - Merchant name
+            - Store name
           - type: 'null'
           title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
       additionalProperties: false
       type: object
-      title: MerchantPartialUpdateSchema
-    POIBrandType:
-      type: string
-      enum:
-      - UNDEFINED
-      - SUNMI
-      - CASTLES
-      - PAX
-      - SAMSUNG
-      - GOOGLE
-      title: POIBrandType
+      required:
+      - name
+      - merchant_id
+      title: StoreUpdateSchema
+    Page_TypeVar_Customized_POIReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/POIReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[POIReadSchema]
     Page_TypeVar_Customized_StoreReadSchema_:
       properties:
         items:
@@ -1093,6 +863,174 @@ components:
       - size
       - pages
       title: Page[TypeVar]Customized[StoreReadSchema]
+    POIPartialUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI name
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          anyOf:
+          - type: string
+            maxLength: 16
+            minLength: 1
+            examples:
+            - '00000003'
+          - type: 'null'
+          title: Identifier
+        serial_number:
+          anyOf:
+          - type: string
+            maxLength: 25
+            minLength: 1
+            examples:
+            - SN-DF2948A38DC
+          - type: 'null'
+          title: Serial Number
+        brand:
+          anyOf:
+          - $ref: '#/components/schemas/POIBrandType'
+          - type: 'null'
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/POIStateType'
+          - type: 'null'
+        store_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Store Id
+      additionalProperties: false
+      type: object
+      title: POIPartialUpdateSchema
+    StoreCreateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - Store name
+          - type: 'null'
+          title: Name
+        merchant_id:
+          type: string
+          format: uuid
+          title: Merchant Id
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
+        address:
+          anyOf:
+          - type: string
+            minLength: 1
+            examples:
+            - 2 Bd Léon Bureau, 44200 Nantes
+          - type: 'null'
+          title: Address
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - merchant_id
+      title: StoreCreateSchema
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    POIBrandType:
+      type: string
+      enum:
+      - UNDEFINED
+      - SUNMI
+      - CASTLES
+      - PAX
+      - SAMSUNG
+      - GOOGLE
+      title: POIBrandType
+    POIReadSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+        id:
+          type: string
+          format: uuid
+          title: Id
+        organization_id:
+          type: string
+          format: uuid
+          title: Organization Id
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      - id
+      - organization_id
+      title: POIReadSchema
     StorePartialUpdateSchema:
       properties:
         address:
@@ -1121,6 +1059,65 @@ components:
       additionalProperties: false
       type: object
       title: StorePartialUpdateSchema
+    POIStateType:
+      type: string
+      enum:
+      - UNDEFINED
+      - PROVISIONED
+      - OPERATED
+      - SUSPENDED
+      - PHASED_OUT
+      title: POIStateType
+    POIUpdateSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Name
+          examples:
+          - POI name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - POI description
+          - type: 'null'
+          title: Description
+        identifier:
+          type: string
+          maxLength: 16
+          minLength: 1
+          title: Identifier
+          examples:
+          - '00000003'
+        serial_number:
+          type: string
+          maxLength: 25
+          minLength: 1
+          title: Serial Number
+          examples:
+          - SN-DF2948A38DC
+        brand:
+          $ref: '#/components/schemas/POIBrandType'
+          default: UNDEFINED
+        state:
+          $ref: '#/components/schemas/POIStateType'
+          default: UNDEFINED
+        store_id:
+          type: string
+          format: uuid
+          title: Store Id
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - identifier
+      - serial_number
+      - store_id
+      title: POIUpdateSchema
     MerchantUpdateSchema:
       properties:
         name:
@@ -1193,56 +1190,59 @@ components:
       - serial_number
       - store_id
       title: POICreateSchema
-    POIUpdateSchema:
+    MerchantCreateSchema:
       properties:
         name:
-          type: string
-          maxLength: 255
-          minLength: 1
-          title: Name
-          examples:
-          - POI name
-        description:
           anyOf:
           - type: string
             maxLength: 255
             minLength: 1
             examples:
-            - POI description
+            - Merchant name
           - type: 'null'
-          title: Description
-        identifier:
-          type: string
-          maxLength: 16
-          minLength: 1
-          title: Identifier
-          examples:
-          - '00000003'
-        serial_number:
-          type: string
-          maxLength: 25
-          minLength: 1
-          title: Serial Number
-          examples:
-          - SN-DF2948A38DC
-        brand:
-          $ref: '#/components/schemas/POIBrandType'
-          default: UNDEFINED
-        state:
-          $ref: '#/components/schemas/POIStateType'
-          default: UNDEFINED
-        store_id:
-          type: string
-          format: uuid
-          title: Store Id
+          title: Name
+        organization_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Organization Id
       additionalProperties: false
       type: object
       required:
       - name
-      - identifier
-      - serial_number
-      - store_id
-      title: POIUpdateSchema
+      title: MerchantCreateSchema
+    Page_TypeVar_Customized_MerchantReadSchema_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/MerchantReadSchema'
+          type: array
+          title: Items
+        total:
+          type: integer
+          minimum: 0
+          title: Total
+        page:
+          type: integer
+          minimum: 1
+          title: Page
+        size:
+          type: integer
+          minimum: 1
+          title: Size
+        pages:
+          type: integer
+          minimum: 0
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: Page[TypeVar]Customized[MerchantReadSchema]
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2

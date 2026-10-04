@@ -168,6 +168,105 @@ paths:
       - OAuth2PasswordBearer: []
 components:
   schemas:
+    ToolEnum:
+      type: string
+      enum:
+      - swittest
+      - fime
+      - gallit
+      title: ToolEnum
+    TestSuiteSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        environment:
+          $ref: '#/components/schemas/EnvironmentSchema'
+        tests:
+          items:
+            $ref: '#/components/schemas/TestListSchema'
+          type: array
+          title: Tests
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - version
+      - date
+      - environment
+      - tests
+      title: TestSuiteSchema
+    CRListSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        crs:
+          items:
+            type: string
+          type: array
+          title: Crs
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - crs
+      title: CRListSchema
+    BINScopeSchema:
+      properties:
+        bins:
+          additionalProperties:
+            $ref: '#/components/schemas/BINSchema'
+          type: object
+          title: Bins
+        bin_lists:
+          additionalProperties:
+            $ref: '#/components/schemas/BINListSchema'
+          type: object
+          title: Bin Lists
+        bin_config:
+          $ref: '#/components/schemas/BINConfigSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - bins
+      - bin_lists
+      - bin_config
+      title: BINScopeSchema
+    BINSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
+          title: Name
+        min_range:
+          type: integer
+          title: Min Range
+          examples:
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
+          examples:
+          - 99999999
+      additionalProperties: false
+      type: object
+      required:
+      - min_range
+      - max_range
+      title: BINSchema
     EMVScopeSchema:
       properties:
         emvs:
@@ -189,139 +288,25 @@ components:
       - emv_lists
       - emv_config
       title: EMVScopeSchema
-    EMVListSchema:
+    EMVConfigSchema:
       properties:
         name:
           type: string
           title: Name
-        emvs:
-          items:
-            type: string
-          type: array
-          title: Emvs
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - emvs
-      title: EMVListSchema
-    CRScopeSchema:
-      properties:
-        crs:
-          additionalProperties:
-            $ref: '#/components/schemas/CRSchema'
-          type: object
-          title: Crs
-        cr_list:
-          $ref: '#/components/schemas/CRListSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - crs
-      - cr_list
-      title: CRScopeSchema
-    BINListSchema:
-      properties:
-        name:
+        emv_nominal_list:
           type: string
-          title: Name
-        bins:
-          items:
-            type: string
-          type: array
-          title: Bins
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - bins
-      title: BINListSchema
-    CRSchema:
-      properties:
-        name:
+          title: Emv Nominal List
+        emv_failsafe_list:
           anyOf:
           - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - CR name
           - type: 'null'
-          title: Name
-        rid:
-          type: string
-          maxLength: 10
-          minLength: 10
-          title: Rid
-          examples:
-          - A000000004
-        index:
-          type: string
-          maxLength: 2
-          minLength: 2
-          title: Index
-          examples:
-          - '00'
-        serial_number:
-          type: string
-          maxLength: 6
-          minLength: 6
-          title: Serial Number
-          examples:
-          - 3F70D8
-      additionalProperties: false
-      type: object
-      required:
-      - rid
-      - index
-      - serial_number
-      title: CRSchema
-    CRListSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        crs:
-          items:
-            type: string
-          type: array
-          title: Crs
+          title: Emv Failsafe List
       additionalProperties: false
       type: object
       required:
       - name
-      - crs
-      title: CRListSchema
-    EMVTransactionType:
-      type: string
-      enum:
-      - '00'
-      - '01'
-      - '02'
-      - 09
-      - '17'
-      - '20'
-      - '21'
-      - '93'
-      title: EMVTransactionType
-    EnvironmentSchema:
-      properties:
-        tool:
-          $ref: '#/components/schemas/ToolEnum'
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        scheme:
-          $ref: '#/components/schemas/SchemeEnum'
-        test_suite_version:
-          type: string
-          title: Test Suite Version
-      additionalProperties: false
-      type: object
-      required:
-      - tool
-      - type
-      - scheme
-      - test_suite_version
-      title: EnvironmentSchema
+      - emv_nominal_list
+      title: EMVConfigSchema
     CAPKSchema:
       properties:
         name:
@@ -386,40 +371,21 @@ components:
       - exponent
       - hash
       title: CAPKSchema
-    ToolEnum:
-      type: string
-      enum:
-      - swittest
-      - fime
-      - gallit
-      title: ToolEnum
-    EMVTechnologyType:
-      type: string
-      enum:
-      - CONTACT
-      - CONTACTLESS
-      title: EMVTechnologyType
-    BINConfigSchema:
+    CAPKScopeSchema:
       properties:
-        name:
-          type: string
-          title: Name
-        bin_lists:
-          items:
-            type: string
-          type: array
-          title: Bin Lists
+        capks:
+          additionalProperties:
+            $ref: '#/components/schemas/CAPKSchema'
+          type: object
+          title: Capks
+        capk_list:
+          $ref: '#/components/schemas/CAPKListSchema'
       additionalProperties: false
       type: object
       required:
-      - name
-      - bin_lists
-      title: BINConfigSchema
-    CAPKAlgorithmType:
-      type: string
-      enum:
-      - RSA
-      title: CAPKAlgorithmType
+      - capks
+      - capk_list
+      title: CAPKScopeSchema
     ValidationError:
       properties:
         loc:
@@ -446,7 +412,18 @@ components:
       - msg
       - type
       title: ValidationError
-    BINSchema:
+    CAPKAlgorithmType:
+      type: string
+      enum:
+      - RSA
+      title: CAPKAlgorithmType
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
+    CRSchema:
       properties:
         name:
           anyOf:
@@ -454,25 +431,181 @@ components:
             maxLength: 255
             minLength: 1
             examples:
-            - BIN name
+            - CR name
           - type: 'null'
           title: Name
-        min_range:
-          type: integer
-          title: Min Range
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
           examples:
-          - 0
-        max_range:
-          type: integer
-          title: Max Range
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
           examples:
-          - 99999999
+          - '00'
+        serial_number:
+          type: string
+          maxLength: 6
+          minLength: 6
+          title: Serial Number
+          examples:
+          - 3F70D8
       additionalProperties: false
       type: object
       required:
-      - min_range
-      - max_range
-      title: BINSchema
+      - rid
+      - index
+      - serial_number
+      title: CRSchema
+    SchemeEnum:
+      type: string
+      enum:
+      - mastercard
+      - amex
+      - discover
+      - jcb
+      - cup
+      - rupay
+      - eftpos
+      - cpace
+      title: SchemeEnum
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    BINConfigSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        bin_lists:
+          items:
+            type: string
+          type: array
+          title: Bin Lists
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - bin_lists
+      title: BINConfigSchema
+    EMVTransactionType:
+      type: string
+      enum:
+      - '00'
+      - '01'
+      - '02'
+      - 09
+      - '17'
+      - '20'
+      - '21'
+      - '93'
+      title: EMVTransactionType
+    BINListSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        bins:
+          items:
+            type: string
+          type: array
+          title: Bins
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - bins
+      title: BINListSchema
+    TestListSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - poi_config
+      title: TestListSchema
+    CRScopeSchema:
+      properties:
+        crs:
+          additionalProperties:
+            $ref: '#/components/schemas/CRSchema'
+          type: object
+          title: Crs
+        cr_list:
+          $ref: '#/components/schemas/CRListSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - crs
+      - cr_list
+      title: CRScopeSchema
+    EMVListSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        emvs:
+          items:
+            type: string
+          type: array
+          title: Emvs
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - emvs
+      title: EMVListSchema
+    CAPKListSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        capks:
+          items:
+            type: string
+          type: array
+          title: Capks
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - capks
+      title: CAPKListSchema
+    EnvironmentSchema:
+      properties:
+        tool:
+          $ref: '#/components/schemas/ToolEnum'
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        scheme:
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          type: string
+          title: Test Suite Version
+      additionalProperties: false
+      type: object
+      required:
+      - tool
+      - type
+      - scheme
+      - test_suite_version
+      title: EnvironmentSchema
     POIConfigSchema:
       properties:
         name:
@@ -502,110 +635,6 @@ components:
       - name
       - emv_config
       title: POIConfigSchema
-    SchemeEnum:
-      type: string
-      enum:
-      - mastercard
-      - amex
-      - discover
-      - jcb
-      - cup
-      - rupay
-      - eftpos
-      - cpace
-      title: SchemeEnum
-    EMVConfigSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        emv_nominal_list:
-          type: string
-          title: Emv Nominal List
-        emv_failsafe_list:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Emv Failsafe List
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - emv_nominal_list
-      title: EMVConfigSchema
-    TestSuiteSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        version:
-          type: string
-          title: Version
-        date:
-          type: string
-          format: date
-          title: Date
-        environment:
-          $ref: '#/components/schemas/EnvironmentSchema'
-        tests:
-          items:
-            $ref: '#/components/schemas/TestListSchema'
-          type: array
-          title: Tests
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - version
-      - date
-      - environment
-      - tests
-      title: TestSuiteSchema
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    CAPKScopeSchema:
-      properties:
-        capks:
-          additionalProperties:
-            $ref: '#/components/schemas/CAPKSchema'
-          type: object
-          title: Capks
-        capk_list:
-          $ref: '#/components/schemas/CAPKListSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - capks
-      - capk_list
-      title: CAPKScopeSchema
-    BINScopeSchema:
-      properties:
-        bins:
-          additionalProperties:
-            $ref: '#/components/schemas/BINSchema'
-          type: object
-          title: Bins
-        bin_lists:
-          additionalProperties:
-            $ref: '#/components/schemas/BINListSchema'
-          type: object
-          title: Bin Lists
-        bin_config:
-          $ref: '#/components/schemas/BINConfigSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - bins
-      - bin_lists
-      - bin_config
-      title: BINScopeSchema
     EMVSchema:
       properties:
         name:
@@ -654,12 +683,6 @@ components:
       - aid
       - tlv
       title: EMVSchema
-    TypeEnum:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: TypeEnum
     CAPKHashType:
       type: string
       enum:
@@ -667,35 +690,12 @@ components:
       - SHA1
       - SHA256
       title: CAPKHashType
-    CAPKListSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        capks:
-          items:
-            type: string
-          type: array
-          title: Capks
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - capks
-      title: CAPKListSchema
-    TestListSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        poi_config:
-          $ref: '#/components/schemas/POIConfigSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - poi_config
-      title: TestListSchema
+    EMVTechnologyType:
+      type: string
+      enum:
+      - CONTACT
+      - CONTACTLESS
+      title: EMVTechnologyType
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2
