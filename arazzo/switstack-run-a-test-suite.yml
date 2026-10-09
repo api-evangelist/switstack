@@ -6,6 +6,17 @@ info:
     Authenticate, discover a suite, inspect a test and its scope, validate a custom suite, then run a selection and
     consume the Server-Sent Events stream. Every operationId is verified verbatim against
     openapi/switstack-swittest-openapi.yml.
+  x-realizes-capability-ids:
+  - BC-4200.50
+  x-capability-derivation:
+    method: 'deterministic join: sourceDescriptions -> per-tag OpenAPI -> tag/capability edge. No classification at this step.'
+    min_confidence: 0.7
+    sources:
+    - capability_id: BC-4200.50
+      capability_name: Software Quality Engineering
+      spec: switstack-test-api-openapi.yml
+      confidence: 0.7
+    model: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities, CC BY 4.0
 sourceDescriptions:
 - name: authApi
   url: ../openapi/switstack-auth-api-openapi.yml
