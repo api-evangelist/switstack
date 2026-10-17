@@ -142,125 +142,21 @@ paths:
       - OAuth2PasswordBearer: []
 components:
   schemas:
-    SupportedTypes:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: SupportedTypes
-    BitBlock:
+    HTTPValidationError:
       properties:
-        type:
-          type: string
-          const: bit
-          title: Type
-        value:
-          type: string
-          title: Value
-        sections:
+        detail:
           items:
-            $ref: '#/components/schemas/BitSection'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Sections
+          title: Detail
       type: object
-      required:
-      - type
-      - value
-      - sections
-      title: BitBlock
-    Body_parse_tlv_api_parse_tlv_post:
+      title: HTTPValidationError
+    IntermediateSignalSchema:
       properties:
-        tlv:
-          type: string
-          title: Tlv
-      type: object
-      required:
-      - tlv
-      title: Body_parse_tlv_api_parse_tlv_post
-    ErrorIndicationSchema:
-      properties:
-        l1:
+        user_interface_request_data:
           anyOf:
-          - type: string
-            enum:
-            - OK
-            - TIME OUT ERROR
-            - TRANSMISSION ERROR
-            - PROTOCOL ERROR
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
           - type: 'null'
-          title: L1
-        l2:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - OK
-              - CARD DATA MISSING
-              - CAM FAILED
-              - STATUS BYTES
-              - PARSING ERROR
-              - MAX LIMIT EXCEEDED
-              - CARD DATA ERROR
-              - MAGSTRIPE NOT SUPPORTED
-              - NO PPSE
-              - PPSE FAULT
-              - EMPTY CANDIDATE LIST
-              - IDS READ ERROR
-              - IDS WRITE ERROR
-              - IDS DATA ERROR
-              - IDS NO MATCHING AC
-              - TERMINAL DATA ERROR
-            type: array
-          - type: 'null'
-          title: L2
-        l3:
-          anyOf:
-          - type: string
-            enum:
-            - OK
-            - TIME OUT
-            - STOP
-            - AMOUNT NOT PRESENT
-          - type: 'null'
-          title: L3
-        status_word:
-          anyOf:
-          - type: string
-            maxLength: 4
-            minLength: 4
-            pattern: ^([0-9a-fA-F]{2})+$
-          - type: 'null'
-          title: Status Word
-        message_on_error:
-          anyOf:
-          - type: string
-            enum:
-            - CARD READ OK
-            - TRY AGAIN
-            - APPROVED
-            - APPROVED - SIGN
-            - DECLINED
-            - ERROR - OTHER CARD
-            - INSERT CARD
-            - SEE PHONE
-            - AUTHORISING - PLEASE WAIT
-            - CLEAR DISPLAY
-            - N/A
-            - PROCESSING ERROR
-          - type: 'null'
-          title: Message On Error
-      additionalProperties: false
-      type: object
-      title: ErrorIndicationSchema
-    ToolEnum:
-      type: string
-      enum:
-      - swittest
-      - fime
-      - gallit
-      title: ToolEnum
-    RestartSchema:
-      properties:
         outcome_parameter_set:
           anyOf:
           - $ref: '#/components/schemas/OutcomeParameterSetSchema'
@@ -269,66 +165,164 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ErrorIndicationSchema'
           - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
       additionalProperties: false
       type: object
-      title: RestartSchema
-    TestSchema:
+      title: IntermediateSignalSchema
+    ExpectationsPartSchema:
       properties:
-        name:
-          type: string
-          title: Name
-        description:
+        intermediate_signals:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/IntermediateSignalSchema'
+            type: array
+          - type: 'null'
+          title: Intermediate Signals
+        data_record:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        discretionary_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        user_interface_request_data:
+          anyOf:
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: 'null'
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: ExpectationsPartSchema
+    UserInterfaceRequestDataSchema:
+      properties:
+        message_identifier:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - CARD READ OK
+              - TRY AGAIN
+              - APPROVED
+              - APPROVED - SIGN
+              - DECLINED
+              - ERROR - OTHER CARD
+              - INSERT CARD
+              - SEE PHONE
+              - AUTHORISING - PLEASE WAIT
+              - CLEAR DISPLAY
+              - N/A
+              - PROCESSING ERROR
+              - PRESENT CARD
+            type: array
+          - type: 'null'
+          title: Message Identifier
+        status:
           anyOf:
           - type: string
+            enum:
+            - NOT READY
+            - IDLE
+            - READY TO READ
+            - PROCESSING
+            - CARD READ SUCCESSFULLY
+            - PROCESSING ERROR
+            - N/A
           - type: 'null'
-          title: Description
-        version:
-          type: string
-          title: Version
-        date:
-          type: string
-          format: date
-          title: Date
-        poi_config:
-          $ref: '#/components/schemas/POIConfigSchema'
-        payments:
-          items:
-            $ref: '#/components/schemas/PaymentSchema'
-          type: array
-          title: Payments
-        vcard:
+          title: Status
+        hold_time:
           anyOf:
-          - items:
-              type: string
-            type: array
+          - type: string
+            maxLength: 6
+            minLength: 6
+            pattern: ^([0-9]{2})+$
           - type: 'null'
-          title: Vcard
-        ics:
+          title: Hold Time
+        language_preference:
           anyOf:
-          - items:
-              type: string
-            type: array
+          - type: string
+            maxLength: 16
+            minLength: 16
+            pattern: ^([0-9a-fA-F]{2})+$
           - type: 'null'
-          title: Ics
-        ics_not:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Ics Not
-        environment:
-          $ref: '#/components/schemas/EnvironmentSchema'
+          title: Language Preference
       additionalProperties: false
       type: object
-      required:
-      - name
-      - version
-      - date
-      - poi_config
-      - payments
-      - environment
-      title: TestSchema
+      title: UserInterfaceRequestDataSchema
+    PaymentSchema:
+      properties:
+        randoms:
+          anyOf:
+          - items:
+              type: string
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
+          - type: 'null'
+          title: Randoms
+        trd:
+          anyOf:
+          - patternProperties:
+              ^([0-9a-fA-F]{2})+$:
+                anyOf:
+                - type: string
+                  pattern: ^([0-9a-fA-F]{2})+$
+                - type: string
+                  pattern: ^[0-9YMD]{6}$
+                - type: string
+                  pattern: ^[0-9HMS]{6}$
+                - type: string
+                  maxLength: 0
+                  minLength: 0
+            propertyNames:
+              maxLength: 6
+              minLength: 2
+            type: object
+          - type: 'null'
+          title: Trd
+        authorization_response:
+          anyOf:
+          - type: string
+            pattern: ^([0-9a-fA-F]{2})+$
+          - type: 'null'
+          title: Authorization Response
+        expectations:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: PaymentSchema
+    ExpectationsSchema:
+      properties:
+        restart:
+          anyOf:
+          - $ref: '#/components/schemas/RestartSchema'
+          - type: 'null'
+        authorization:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+        completion:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: ExpectationsSchema
     ParsedTag:
       properties:
         name:
@@ -354,6 +348,52 @@ components:
       - tag
       - blocks
       title: ParsedTag
+    BitBlock:
+      properties:
+        type:
+          type: string
+          const: bit
+          title: Type
+        value:
+          type: string
+          title: Value
+        sections:
+          items:
+            $ref: '#/components/schemas/BitSection'
+          type: array
+          title: Sections
+      type: object
+      required:
+      - type
+      - value
+      - sections
+      title: BitBlock
+    TagDescription:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        tag:
+          type: string
+          title: Tag
+        length:
+          type: integer
+          title: Length
+        max_length:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Length
+      type: object
+      required:
+      - name
+      - description
+      - tag
+      - length
+      title: TagDescription
     OutcomeParameterSetSchema:
       properties:
         status:
@@ -449,42 +489,81 @@ components:
       additionalProperties: false
       type: object
       title: OutcomeParameterSetSchema
-    ExpectationsPartSchema:
+    ErrorIndicationSchema:
       properties:
-        intermediate_signals:
+        l1:
+          anyOf:
+          - type: string
+            enum:
+            - OK
+            - TIME OUT ERROR
+            - TRANSMISSION ERROR
+            - PROTOCOL ERROR
+          - type: 'null'
+          title: L1
+        l2:
           anyOf:
           - items:
-              $ref: '#/components/schemas/IntermediateSignalSchema'
+              type: string
+              enum:
+              - OK
+              - CARD DATA MISSING
+              - CAM FAILED
+              - STATUS BYTES
+              - PARSING ERROR
+              - MAX LIMIT EXCEEDED
+              - CARD DATA ERROR
+              - MAGSTRIPE NOT SUPPORTED
+              - NO PPSE
+              - PPSE FAULT
+              - EMPTY CANDIDATE LIST
+              - IDS READ ERROR
+              - IDS WRITE ERROR
+              - IDS DATA ERROR
+              - IDS NO MATCHING AC
+              - TERMINAL DATA ERROR
             type: array
           - type: 'null'
-          title: Intermediate Signals
-        data_record:
+          title: L2
+        l3:
           anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: string
+            enum:
+            - OK
+            - TIME OUT
+            - STOP
+            - AMOUNT NOT PRESENT
           - type: 'null'
-        discretionary_data:
+          title: L3
+        status_word:
           anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: string
+            maxLength: 4
+            minLength: 4
+            pattern: ^([0-9a-fA-F]{2})+$
           - type: 'null'
-        user_interface_request_data:
+          title: Status Word
+        message_on_error:
           anyOf:
-          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: string
+            enum:
+            - CARD READ OK
+            - TRY AGAIN
+            - APPROVED
+            - APPROVED - SIGN
+            - DECLINED
+            - ERROR - OTHER CARD
+            - INSERT CARD
+            - SEE PHONE
+            - AUTHORISING - PLEASE WAIT
+            - CLEAR DISPLAY
+            - N/A
+            - PROCESSING ERROR
           - type: 'null'
-        outcome_parameter_set:
-          anyOf:
-          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
-          - type: 'null'
-        error_indication:
-          anyOf:
-          - $ref: '#/components/schemas/ErrorIndicationSchema'
-          - type: 'null'
-        transaction_data:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
-          - type: 'null'
+          title: Message On Error
       additionalProperties: false
       type: object
-      title: ExpectationsPartSchema
+      title: ErrorIndicationSchema
     ValidationError:
       properties:
         loc:
@@ -511,113 +590,25 @@ components:
       - msg
       - type
       title: ValidationError
-    Body_parse_log_api_parse_log_post:
+    EnvironmentSchema:
       properties:
-        file:
-          type: string
-          contentMediaType: application/octet-stream
-          title: File
+        tool:
+          $ref: '#/components/schemas/ToolEnum'
         type:
-          anyOf:
-          - $ref: '#/components/schemas/SupportedTypes'
-          - type: 'null'
+          $ref: '#/components/schemas/TypeEnum'
         scheme:
-          anyOf:
-          - $ref: '#/components/schemas/SupportedSchemes'
-          - type: 'null'
-      type: object
-      required:
-      - file
-      title: Body_parse_log_api_parse_log_post
-    ExpectationsDataSchema:
-      properties:
-        tags:
-          title: Tags
-        tags_present:
-          anyOf:
-          - items:
-              type: string
-              maxLength: 6
-              minLength: 2
-              pattern: ^([0-9a-fA-F]{2})+$
-            type: array
-          - type: 'null'
-          title: Tags Present
-        tags_not_present:
-          anyOf:
-          - items:
-              type: string
-              maxLength: 6
-              minLength: 2
-              pattern: ^([0-9a-fA-F]{2})+$
-            type: array
-          - type: 'null'
-          title: Tags Not Present
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          type: string
+          title: Test Suite Version
       additionalProperties: false
       type: object
-      title: ExpectationsDataSchema
-    SupportedSchemes:
-      type: string
-      enum:
-      - mastercard
-      title: SupportedSchemes
-    TypeEnum:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: TypeEnum
-    SchemeEnum:
-      type: string
-      enum:
-      - mastercard
-      - amex
-      - discover
-      - jcb
-      - cup
-      - rupay
-      - eftpos
-      - cpace
-      title: SchemeEnum
-    Body_parse_tag_api_parse_tag_post:
-      properties:
-        tag:
-          type: string
-          title: Tag
-        value:
-          type: string
-          title: Value
-      type: object
       required:
-      - tag
-      - value
-      title: Body_parse_tag_api_parse_tag_post
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ExpectationsSchema:
-      properties:
-        restart:
-          anyOf:
-          - $ref: '#/components/schemas/RestartSchema'
-          - type: 'null'
-        authorization:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsPartSchema'
-          - type: 'null'
-        completion:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsPartSchema'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: ExpectationsSchema
+      - tool
+      - type
+      - scheme
+      - test_suite_version
+      title: EnvironmentSchema
     ByteBlock:
       properties:
         type:
@@ -670,96 +661,127 @@ components:
       - length
       - meaning
       title: ByteBlock
-    IntermediateSignalSchema:
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
+    ExpectationsDataSchema:
       properties:
-        user_interface_request_data:
-          anyOf:
-          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
-          - type: 'null'
-        outcome_parameter_set:
-          anyOf:
-          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
-          - type: 'null'
-        error_indication:
-          anyOf:
-          - $ref: '#/components/schemas/ErrorIndicationSchema'
-          - type: 'null'
-        transaction_data:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: IntermediateSignalSchema
-    PaymentSchema:
-      properties:
-        randoms:
+        tags:
+          title: Tags
+        tags_present:
           anyOf:
           - items:
               type: string
+              maxLength: 6
+              minLength: 2
               pattern: ^([0-9a-fA-F]{2})+$
             type: array
           - type: 'null'
-          title: Randoms
-        trd:
+          title: Tags Present
+        tags_not_present:
           anyOf:
-          - patternProperties:
-              ^([0-9a-fA-F]{2})+$:
-                anyOf:
-                - type: string
-                  pattern: ^([0-9a-fA-F]{2})+$
-                - type: string
-                  pattern: ^[0-9YMD]{6}$
-                - type: string
-                  pattern: ^[0-9HMS]{6}$
-                - type: string
-                  maxLength: 0
-                  minLength: 0
-            propertyNames:
+          - items:
+              type: string
               maxLength: 6
               minLength: 2
-            type: object
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
           - type: 'null'
-          title: Trd
-        authorization_response:
-          anyOf:
-          - type: string
-            pattern: ^([0-9a-fA-F]{2})+$
-          - type: 'null'
-          title: Authorization Response
-        expectations:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsSchema'
-          - type: 'null'
+          title: Tags Not Present
       additionalProperties: false
       type: object
-      title: PaymentSchema
-    TagDescription:
+      title: ExpectationsDataSchema
+    SupportedTypes:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: SupportedTypes
+    ToolEnum:
+      type: string
+      enum:
+      - swittest
+      - fime
+      - gallit
+      title: ToolEnum
+    TestSchema:
       properties:
         name:
           type: string
           title: Name
         description:
-          type: string
-          title: Description
-        tag:
-          type: string
-          title: Tag
-        length:
-          type: integer
-          title: Length
-        max_length:
           anyOf:
-          - type: integer
+          - type: string
           - type: 'null'
-          title: Max Length
+          title: Description
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+        payments:
+          items:
+            $ref: '#/components/schemas/PaymentSchema'
+          type: array
+          title: Payments
+        vcard:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Vcard
+        ics:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ics
+        ics_not:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ics Not
+        environment:
+          $ref: '#/components/schemas/EnvironmentSchema'
+      additionalProperties: false
       type: object
       required:
       - name
-      - description
-      - tag
-      - length
-      title: TagDescription
+      - version
+      - date
+      - poi_config
+      - payments
+      - environment
+      title: TestSchema
+    Body_parse_log_api_parse_log_post:
+      properties:
+        file:
+          type: string
+          contentMediaType: application/octet-stream
+          title: File
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/SupportedTypes'
+          - type: 'null'
+        scheme:
+          anyOf:
+          - $ref: '#/components/schemas/SupportedSchemes'
+          - type: 'null'
+      type: object
+      required:
+      - file
+      title: Body_parse_log_api_parse_log_post
     BitSection:
       properties:
         value:
@@ -796,25 +818,46 @@ components:
       - meaning
       - is_true
       title: BitSection
-    EnvironmentSchema:
+    Body_parse_tlv_api_parse_tlv_post:
       properties:
-        tool:
-          $ref: '#/components/schemas/ToolEnum'
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        scheme:
-          $ref: '#/components/schemas/SchemeEnum'
-        test_suite_version:
+        tlv:
           type: string
-          title: Test Suite Version
-      additionalProperties: false
+          title: Tlv
       type: object
       required:
-      - tool
-      - type
-      - scheme
-      - test_suite_version
-      title: EnvironmentSchema
+      - tlv
+      title: Body_parse_tlv_api_parse_tlv_post
+    Body_parse_tag_api_parse_tag_post:
+      properties:
+        tag:
+          type: string
+          title: Tag
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - tag
+      - value
+      title: Body_parse_tag_api_parse_tag_post
+    SupportedSchemes:
+      type: string
+      enum:
+      - mastercard
+      title: SupportedSchemes
+    RestartSchema:
+      properties:
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: RestartSchema
     POIConfigSchema:
       properties:
         name:
@@ -844,61 +887,18 @@ components:
       - name
       - emv_config
       title: POIConfigSchema
-    UserInterfaceRequestDataSchema:
-      properties:
-        message_identifier:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - CARD READ OK
-              - TRY AGAIN
-              - APPROVED
-              - APPROVED - SIGN
-              - DECLINED
-              - ERROR - OTHER CARD
-              - INSERT CARD
-              - SEE PHONE
-              - AUTHORISING - PLEASE WAIT
-              - CLEAR DISPLAY
-              - N/A
-              - PROCESSING ERROR
-              - PRESENT CARD
-            type: array
-          - type: 'null'
-          title: Message Identifier
-        status:
-          anyOf:
-          - type: string
-            enum:
-            - NOT READY
-            - IDLE
-            - READY TO READ
-            - PROCESSING
-            - CARD READ SUCCESSFULLY
-            - PROCESSING ERROR
-            - N/A
-          - type: 'null'
-          title: Status
-        hold_time:
-          anyOf:
-          - type: string
-            maxLength: 6
-            minLength: 6
-            pattern: ^([0-9]{2})+$
-          - type: 'null'
-          title: Hold Time
-        language_preference:
-          anyOf:
-          - type: string
-            maxLength: 16
-            minLength: 16
-            pattern: ^([0-9a-fA-F]{2})+$
-          - type: 'null'
-          title: Language Preference
-      additionalProperties: false
-      type: object
-      title: UserInterfaceRequestDataSchema
+    SchemeEnum:
+      type: string
+      enum:
+      - mastercard
+      - amex
+      - discover
+      - jcb
+      - cup
+      - rupay
+      - eftpos
+      - cpace
+      title: SchemeEnum
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2

@@ -244,162 +244,137 @@ paths:
       - OAuth2PasswordBearer: []
 components:
   schemas:
-    ErrorIndicationSchema:
+    HTTPValidationError:
       properties:
-        l1:
-          anyOf:
-          - type: string
-            enum:
-            - OK
-            - TIME OUT ERROR
-            - TRANSMISSION ERROR
-            - PROTOCOL ERROR
-          - type: 'null'
-          title: L1
-        l2:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - OK
-              - CARD DATA MISSING
-              - CAM FAILED
-              - STATUS BYTES
-              - PARSING ERROR
-              - MAX LIMIT EXCEEDED
-              - CARD DATA ERROR
-              - MAGSTRIPE NOT SUPPORTED
-              - NO PPSE
-              - PPSE FAULT
-              - EMPTY CANDIDATE LIST
-              - IDS READ ERROR
-              - IDS WRITE ERROR
-              - IDS DATA ERROR
-              - IDS NO MATCHING AC
-              - TERMINAL DATA ERROR
-            type: array
-          - type: 'null'
-          title: L2
-        l3:
-          anyOf:
-          - type: string
-            enum:
-            - OK
-            - TIME OUT
-            - STOP
-            - AMOUNT NOT PRESENT
-          - type: 'null'
-          title: L3
-        status_word:
-          anyOf:
-          - type: string
-            maxLength: 4
-            minLength: 4
-            pattern: ^([0-9a-fA-F]{2})+$
-          - type: 'null'
-          title: Status Word
-        message_on_error:
-          anyOf:
-          - type: string
-            enum:
-            - CARD READ OK
-            - TRY AGAIN
-            - APPROVED
-            - APPROVED - SIGN
-            - DECLINED
-            - ERROR - OTHER CARD
-            - INSERT CARD
-            - SEE PHONE
-            - AUTHORISING - PLEASE WAIT
-            - CLEAR DISPLAY
-            - N/A
-            - PROCESSING ERROR
-          - type: 'null'
-          title: Message On Error
-      additionalProperties: false
-      type: object
-      title: ErrorIndicationSchema
-    CustomTestSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        version:
-          type: string
-          title: Version
-        date:
-          type: string
-          format: date
-          title: Date
-        poi_config:
-          $ref: '#/components/schemas/POIConfigSchema'
-        payments:
+        detail:
           items:
-            $ref: '#/components/schemas/PaymentSchema'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Payments
-        vcard:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Vcard
-        ics:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Ics
-        ics_not:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Ics Not
-        environment:
-          anyOf:
-          - $ref: '#/components/schemas/CustomEnvironmentSchema'
-          - type: 'null'
-      additionalProperties: false
+          title: Detail
       type: object
-      required:
-      - name
-      - version
-      - date
-      - poi_config
-      - payments
-      title: CustomTestSchema
-    ToolEnum:
-      type: string
-      enum:
-      - swittest
-      - fime
-      - gallit
-      title: ToolEnum
-    CRListSchema:
+      title: HTTPValidationError
+    EMVListSchema:
       properties:
         name:
           type: string
           title: Name
-        crs:
+        emvs:
           items:
             type: string
           type: array
-          title: Crs
+          title: Emvs
       additionalProperties: false
       type: object
       required:
       - name
-      - crs
-      title: CRListSchema
+      - emvs
+      title: EMVListSchema
+    ConfigSchema:
+      properties:
+        bin_scope:
+          anyOf:
+          - $ref: '#/components/schemas/BINScopeSchema'
+          - type: 'null'
+        capk_scope:
+          anyOf:
+          - $ref: '#/components/schemas/CAPKScopeSchema'
+          - type: 'null'
+        cr_scope:
+          anyOf:
+          - $ref: '#/components/schemas/CRScopeSchema'
+          - type: 'null'
+        emv_scope:
+          $ref: '#/components/schemas/EMVScopeSchema'
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - emv_scope
+      - poi_config
+      title: ConfigSchema
+    BINConfigSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        bin_lists:
+          items:
+            type: string
+          type: array
+          title: Bin Lists
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - bin_lists
+      title: BINConfigSchema
+    CAPKScopeSchema:
+      properties:
+        capks:
+          additionalProperties:
+            $ref: '#/components/schemas/CAPKSchema'
+          type: object
+          title: Capks
+        capk_list:
+          $ref: '#/components/schemas/CAPKListSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - capks
+      - capk_list
+      title: CAPKScopeSchema
+    RunTestSchema:
+      properties:
+        settings:
+          $ref: '#/components/schemas/SettingsSchema'
+        probe:
+          type: boolean
+          title: Probe
+          default: false
+        check_expectations:
+          type: boolean
+          title: Check Expectations
+          default: true
+        verbose:
+          type: integer
+          title: Verbose
+          default: 0
+        sync_run:
+          type: boolean
+          title: Sync Run
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - settings
+      title: RunTestSchema
+    IntermediateSignalSchema:
+      properties:
+        user_interface_request_data:
+          anyOf:
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: 'null'
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: IntermediateSignalSchema
+    CAPKAlgorithmType:
+      type: string
+      enum:
+      - RSA
+      title: CAPKAlgorithmType
     BINScopeSchema:
       properties:
         bins:
@@ -421,8 +396,27 @@ components:
       - bin_lists
       - bin_config
       title: BINScopeSchema
-    RestartSchema:
+    ExpectationsPartSchema:
       properties:
+        intermediate_signals:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/IntermediateSignalSchema'
+            type: array
+          - type: 'null'
+          title: Intermediate Signals
+        data_record:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        discretionary_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
+        user_interface_request_data:
+          anyOf:
+          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: 'null'
         outcome_parameter_set:
           anyOf:
           - $ref: '#/components/schemas/OutcomeParameterSetSchema'
@@ -431,67 +425,161 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ErrorIndicationSchema'
           - type: 'null'
+        transaction_data:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - type: 'null'
       additionalProperties: false
       type: object
-      title: RestartSchema
-    TestSchema:
+      title: ExpectationsPartSchema
+    TestResultSchema:
+      properties:
+        status:
+          $ref: '#/components/schemas/TestStatusEnum'
+        results:
+          additionalProperties: true
+          type: object
+          title: Results
+          default: {}
+      type: object
+      required:
+      - status
+      title: TestResultSchema
+    UserInterfaceRequestDataSchema:
+      properties:
+        message_identifier:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - CARD READ OK
+              - TRY AGAIN
+              - APPROVED
+              - APPROVED - SIGN
+              - DECLINED
+              - ERROR - OTHER CARD
+              - INSERT CARD
+              - SEE PHONE
+              - AUTHORISING - PLEASE WAIT
+              - CLEAR DISPLAY
+              - N/A
+              - PROCESSING ERROR
+              - PRESENT CARD
+            type: array
+          - type: 'null'
+          title: Message Identifier
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - NOT READY
+            - IDLE
+            - READY TO READ
+            - PROCESSING
+            - CARD READ SUCCESSFULLY
+            - PROCESSING ERROR
+            - N/A
+          - type: 'null'
+          title: Status
+        hold_time:
+          anyOf:
+          - type: string
+            maxLength: 6
+            minLength: 6
+            pattern: ^([0-9]{2})+$
+          - type: 'null'
+          title: Hold Time
+        language_preference:
+          anyOf:
+          - type: string
+            maxLength: 16
+            minLength: 16
+            pattern: ^([0-9a-fA-F]{2})+$
+          - type: 'null'
+          title: Language Preference
+      additionalProperties: false
+      type: object
+      title: UserInterfaceRequestDataSchema
+    PaymentSchema:
+      properties:
+        randoms:
+          anyOf:
+          - items:
+              type: string
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
+          - type: 'null'
+          title: Randoms
+        trd:
+          anyOf:
+          - patternProperties:
+              ^([0-9a-fA-F]{2})+$:
+                anyOf:
+                - type: string
+                  pattern: ^([0-9a-fA-F]{2})+$
+                - type: string
+                  pattern: ^[0-9YMD]{6}$
+                - type: string
+                  pattern: ^[0-9HMS]{6}$
+                - type: string
+                  maxLength: 0
+                  minLength: 0
+            propertyNames:
+              maxLength: 6
+              minLength: 2
+            type: object
+          - type: 'null'
+          title: Trd
+        authorization_response:
+          anyOf:
+          - type: string
+            pattern: ^([0-9a-fA-F]{2})+$
+          - type: 'null'
+          title: Authorization Response
+        expectations:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: PaymentSchema
+    EMVConfigSchema:
       properties:
         name:
           type: string
           title: Name
-        description:
+        emv_nominal_list:
+          type: string
+          title: Emv Nominal List
+        emv_failsafe_list:
           anyOf:
           - type: string
           - type: 'null'
-          title: Description
-        version:
-          type: string
-          title: Version
-        date:
-          type: string
-          format: date
-          title: Date
-        poi_config:
-          $ref: '#/components/schemas/POIConfigSchema'
-        payments:
-          items:
-            $ref: '#/components/schemas/PaymentSchema'
-          type: array
-          title: Payments
-        vcard:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Vcard
-        ics:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Ics
-        ics_not:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Ics Not
-        environment:
-          $ref: '#/components/schemas/EnvironmentSchema'
+          title: Emv Failsafe List
       additionalProperties: false
       type: object
       required:
       - name
-      - version
-      - date
-      - poi_config
-      - payments
-      - environment
-      title: TestSchema
-    BINSchema:
+      - emv_nominal_list
+      title: EMVConfigSchema
+    ExpectationsSchema:
+      properties:
+        restart:
+          anyOf:
+          - $ref: '#/components/schemas/RestartSchema'
+          - type: 'null'
+        authorization:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+        completion:
+          anyOf:
+          - $ref: '#/components/schemas/ExpectationsPartSchema'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: ExpectationsSchema
+    EMVSchema:
       properties:
         name:
           anyOf:
@@ -499,46 +587,46 @@ components:
             maxLength: 255
             minLength: 1
             examples:
-            - BIN name
+            - EMV name
           - type: 'null'
           title: Name
-        min_range:
-          type: integer
-          title: Min Range
+        technology_type:
+          $ref: '#/components/schemas/EMVTechnologyType'
+          default: CONTACTLESS
+        kernel:
+          type: string
+          maxLength: 2
+          minLength: 1
+          title: Kernel
           examples:
-          - 0
-        max_range:
-          type: integer
-          title: Max Range
+          - 0F
+        aid:
+          type: string
+          maxLength: 32
+          minLength: 1
+          title: Aid
           examples:
-          - 99999999
+          - A0000000041010
+        transaction_type:
+          $ref: '#/components/schemas/EMVTransactionType'
+          default: '00'
+        asf:
+          type: boolean
+          title: Asf
+          default: true
+        tlv:
+          type: string
+          minLength: 1
+          title: Tlv
+          examples:
+          - 5F200F4D696B65204A6F686E20536D697468
       additionalProperties: false
       type: object
       required:
-      - min_range
-      - max_range
-      title: BINSchema
-    EMVScopeSchema:
-      properties:
-        emvs:
-          additionalProperties:
-            $ref: '#/components/schemas/EMVSchema'
-          type: object
-          title: Emvs
-        emv_lists:
-          additionalProperties:
-            $ref: '#/components/schemas/EMVListSchema'
-          type: object
-          title: Emv Lists
-        emv_config:
-          $ref: '#/components/schemas/EMVConfigSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - emvs
-      - emv_lists
-      - emv_config
-      title: EMVScopeSchema
+      - kernel
+      - aid
+      - tlv
+      title: EMVSchema
     OutcomeParameterSetSchema:
       properties:
         status:
@@ -634,61 +722,488 @@ components:
       additionalProperties: false
       type: object
       title: OutcomeParameterSetSchema
-    EMVConfigSchema:
+    CRScopeSchema:
+      properties:
+        crs:
+          additionalProperties:
+            $ref: '#/components/schemas/CRSchema'
+          type: object
+          title: Crs
+        cr_list:
+          $ref: '#/components/schemas/CRListSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - crs
+      - cr_list
+      title: CRScopeSchema
+    ErrorIndicationSchema:
+      properties:
+        l1:
+          anyOf:
+          - type: string
+            enum:
+            - OK
+            - TIME OUT ERROR
+            - TRANSMISSION ERROR
+            - PROTOCOL ERROR
+          - type: 'null'
+          title: L1
+        l2:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - OK
+              - CARD DATA MISSING
+              - CAM FAILED
+              - STATUS BYTES
+              - PARSING ERROR
+              - MAX LIMIT EXCEEDED
+              - CARD DATA ERROR
+              - MAGSTRIPE NOT SUPPORTED
+              - NO PPSE
+              - PPSE FAULT
+              - EMPTY CANDIDATE LIST
+              - IDS READ ERROR
+              - IDS WRITE ERROR
+              - IDS DATA ERROR
+              - IDS NO MATCHING AC
+              - TERMINAL DATA ERROR
+            type: array
+          - type: 'null'
+          title: L2
+        l3:
+          anyOf:
+          - type: string
+            enum:
+            - OK
+            - TIME OUT
+            - STOP
+            - AMOUNT NOT PRESENT
+          - type: 'null'
+          title: L3
+        status_word:
+          anyOf:
+          - type: string
+            maxLength: 4
+            minLength: 4
+            pattern: ^([0-9a-fA-F]{2})+$
+          - type: 'null'
+          title: Status Word
+        message_on_error:
+          anyOf:
+          - type: string
+            enum:
+            - CARD READ OK
+            - TRY AGAIN
+            - APPROVED
+            - APPROVED - SIGN
+            - DECLINED
+            - ERROR - OTHER CARD
+            - INSERT CARD
+            - SEE PHONE
+            - AUTHORISING - PLEASE WAIT
+            - CLEAR DISPLAY
+            - N/A
+            - PROCESSING ERROR
+          - type: 'null'
+          title: Message On Error
+      additionalProperties: false
+      type: object
+      title: ErrorIndicationSchema
+    RunCustomTestSchema:
+      properties:
+        settings:
+          $ref: '#/components/schemas/SettingsSchema'
+        probe:
+          type: boolean
+          title: Probe
+          default: false
+        check_expectations:
+          type: boolean
+          title: Check Expectations
+          default: true
+        verbose:
+          type: integer
+          title: Verbose
+          default: 0
+        test:
+          $ref: '#/components/schemas/CustomTestSchema'
+        config:
+          $ref: '#/components/schemas/ConfigSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - settings
+      - test
+      - config
+      title: RunCustomTestSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    SettingsSchema:
+      properties:
+        poi_id:
+          type: string
+          format: uuid
+          title: Poi Id
+        org_admin_email:
+          type: string
+          format: email
+          title: Org Admin Email
+        org_admin_password:
+          type: string
+          title: Org Admin Password
+        user_machine_client_id:
+          type: string
+          title: User Machine Client Id
+        user_machine_client_secret:
+          type: string
+          title: User Machine Client Secret
+      additionalProperties: false
+      type: object
+      required:
+      - poi_id
+      - org_admin_email
+      - org_admin_password
+      - user_machine_client_id
+      - user_machine_client_secret
+      title: SettingsSchema
+    CustomEnvironmentSchema:
+      properties:
+        tool:
+          anyOf:
+          - $ref: '#/components/schemas/ToolEnum'
+          - type: 'null'
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/TypeEnum'
+          - type: 'null'
+        scheme:
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Test Suite Version
+      additionalProperties: false
+      type: object
+      required:
+      - scheme
+      title: CustomEnvironmentSchema
+    EnvironmentSchema:
+      properties:
+        tool:
+          $ref: '#/components/schemas/ToolEnum'
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        scheme:
+          $ref: '#/components/schemas/SchemeEnum'
+        test_suite_version:
+          type: string
+          title: Test Suite Version
+      additionalProperties: false
+      type: object
+      required:
+      - tool
+      - type
+      - scheme
+      - test_suite_version
+      title: EnvironmentSchema
+    TypeEnum:
+      type: string
+      enum:
+      - l2
+      - l3
+      title: TypeEnum
+    ExpectationsDataSchema:
+      properties:
+        tags:
+          title: Tags
+        tags_present:
+          anyOf:
+          - items:
+              type: string
+              maxLength: 6
+              minLength: 2
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
+          - type: 'null'
+          title: Tags Present
+        tags_not_present:
+          anyOf:
+          - items:
+              type: string
+              maxLength: 6
+              minLength: 2
+              pattern: ^([0-9a-fA-F]{2})+$
+            type: array
+          - type: 'null'
+          title: Tags Not Present
+      additionalProperties: false
+      type: object
+      title: ExpectationsDataSchema
+    CRListSchema:
       properties:
         name:
           type: string
           title: Name
-        emv_nominal_list:
-          type: string
-          title: Emv Nominal List
-        emv_failsafe_list:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Emv Failsafe List
+        crs:
+          items:
+            type: string
+          type: array
+          title: Crs
       additionalProperties: false
       type: object
       required:
       - name
-      - emv_nominal_list
-      title: EMVConfigSchema
-    ExpectationsPartSchema:
+      - crs
+      title: CRListSchema
+    BINListSchema:
       properties:
-        intermediate_signals:
+        name:
+          type: string
+          title: Name
+        bins:
+          items:
+            type: string
+          type: array
+          title: Bins
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - bins
+      title: BINListSchema
+    ToolEnum:
+      type: string
+      enum:
+      - swittest
+      - fime
+      - gallit
+      title: ToolEnum
+    TestSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+        payments:
+          items:
+            $ref: '#/components/schemas/PaymentSchema'
+          type: array
+          title: Payments
+        vcard:
           anyOf:
           - items:
-              $ref: '#/components/schemas/IntermediateSignalSchema'
+              type: string
             type: array
           - type: 'null'
-          title: Intermediate Signals
-        data_record:
+          title: Vcard
+        ics:
           anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - items:
+              type: string
+            type: array
           - type: 'null'
-        discretionary_data:
+          title: Ics
+        ics_not:
           anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - items:
+              type: string
+            type: array
           - type: 'null'
-        user_interface_request_data:
+          title: Ics Not
+        environment:
+          $ref: '#/components/schemas/EnvironmentSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - version
+      - date
+      - poi_config
+      - payments
+      - environment
+      title: TestSchema
+    CAPKListSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        capks:
+          items:
+            type: string
+          type: array
+          title: Capks
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - capks
+      title: CAPKListSchema
+    CustomTestSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
           anyOf:
-          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
+          - type: string
           - type: 'null'
-        outcome_parameter_set:
+          title: Description
+        version:
+          type: string
+          title: Version
+        date:
+          type: string
+          format: date
+          title: Date
+        poi_config:
+          $ref: '#/components/schemas/POIConfigSchema'
+        payments:
+          items:
+            $ref: '#/components/schemas/PaymentSchema'
+          type: array
+          title: Payments
+        vcard:
           anyOf:
-          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - items:
+              type: string
+            type: array
           - type: 'null'
-        error_indication:
+          title: Vcard
+        ics:
           anyOf:
-          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - items:
+              type: string
+            type: array
           - type: 'null'
-        transaction_data:
+          title: Ics
+        ics_not:
           anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ics Not
+        environment:
+          anyOf:
+          - $ref: '#/components/schemas/CustomEnvironmentSchema'
           - type: 'null'
       additionalProperties: false
       type: object
-      title: ExpectationsPartSchema
+      required:
+      - name
+      - version
+      - date
+      - poi_config
+      - payments
+      title: CustomTestSchema
+    CRSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - CR name
+          - type: 'null'
+          title: Name
+        rid:
+          type: string
+          maxLength: 10
+          minLength: 10
+          title: Rid
+          examples:
+          - A000000004
+        index:
+          type: string
+          maxLength: 2
+          minLength: 2
+          title: Index
+          examples:
+          - '00'
+        serial_number:
+          type: string
+          maxLength: 6
+          minLength: 6
+          title: Serial Number
+          examples:
+          - 3F70D8
+      additionalProperties: false
+      type: object
+      required:
+      - rid
+      - index
+      - serial_number
+      title: CRSchema
+    EMVScopeSchema:
+      properties:
+        emvs:
+          additionalProperties:
+            $ref: '#/components/schemas/EMVSchema'
+          type: object
+          title: Emvs
+        emv_lists:
+          additionalProperties:
+            $ref: '#/components/schemas/EMVListSchema'
+          type: object
+          title: Emv Lists
+        emv_config:
+          $ref: '#/components/schemas/EMVConfigSchema'
+      additionalProperties: false
+      type: object
+      required:
+      - emvs
+      - emv_lists
+      - emv_config
+      title: EMVScopeSchema
+    CAPKHashType:
+      type: string
+      enum:
+      - UNDEFINED
+      - SHA1
+      - SHA256
+      title: CAPKHashType
     CAPKSchema:
       properties:
         name:
@@ -753,382 +1268,6 @@ components:
       - exponent
       - hash
       title: CAPKSchema
-    CAPKScopeSchema:
-      properties:
-        capks:
-          additionalProperties:
-            $ref: '#/components/schemas/CAPKSchema'
-          type: object
-          title: Capks
-        capk_list:
-          $ref: '#/components/schemas/CAPKListSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - capks
-      - capk_list
-      title: CAPKScopeSchema
-    ConfigSchema:
-      properties:
-        bin_scope:
-          anyOf:
-          - $ref: '#/components/schemas/BINScopeSchema'
-          - type: 'null'
-        capk_scope:
-          anyOf:
-          - $ref: '#/components/schemas/CAPKScopeSchema'
-          - type: 'null'
-        cr_scope:
-          anyOf:
-          - $ref: '#/components/schemas/CRScopeSchema'
-          - type: 'null'
-        emv_scope:
-          $ref: '#/components/schemas/EMVScopeSchema'
-        poi_config:
-          $ref: '#/components/schemas/POIConfigSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - emv_scope
-      - poi_config
-      title: ConfigSchema
-    CustomEnvironmentSchema:
-      properties:
-        tool:
-          anyOf:
-          - $ref: '#/components/schemas/ToolEnum'
-          - type: 'null'
-        type:
-          anyOf:
-          - $ref: '#/components/schemas/TypeEnum'
-          - type: 'null'
-        scheme:
-          $ref: '#/components/schemas/SchemeEnum'
-        test_suite_version:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Test Suite Version
-      additionalProperties: false
-      type: object
-      required:
-      - scheme
-      title: CustomEnvironmentSchema
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    TestResultSchema:
-      properties:
-        status:
-          $ref: '#/components/schemas/TestStatusEnum'
-        results:
-          additionalProperties: true
-          type: object
-          title: Results
-          default: {}
-      type: object
-      required:
-      - status
-      title: TestResultSchema
-    CAPKAlgorithmType:
-      type: string
-      enum:
-      - RSA
-      title: CAPKAlgorithmType
-    ExpectationsDataSchema:
-      properties:
-        tags:
-          title: Tags
-        tags_present:
-          anyOf:
-          - items:
-              type: string
-              maxLength: 6
-              minLength: 2
-              pattern: ^([0-9a-fA-F]{2})+$
-            type: array
-          - type: 'null'
-          title: Tags Present
-        tags_not_present:
-          anyOf:
-          - items:
-              type: string
-              maxLength: 6
-              minLength: 2
-              pattern: ^([0-9a-fA-F]{2})+$
-            type: array
-          - type: 'null'
-          title: Tags Not Present
-      additionalProperties: false
-      type: object
-      title: ExpectationsDataSchema
-    TypeEnum:
-      type: string
-      enum:
-      - l2
-      - l3
-      title: TypeEnum
-    CRSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - CR name
-          - type: 'null'
-          title: Name
-        rid:
-          type: string
-          maxLength: 10
-          minLength: 10
-          title: Rid
-          examples:
-          - A000000004
-        index:
-          type: string
-          maxLength: 2
-          minLength: 2
-          title: Index
-          examples:
-          - '00'
-        serial_number:
-          type: string
-          maxLength: 6
-          minLength: 6
-          title: Serial Number
-          examples:
-          - 3F70D8
-      additionalProperties: false
-      type: object
-      required:
-      - rid
-      - index
-      - serial_number
-      title: CRSchema
-    SchemeEnum:
-      type: string
-      enum:
-      - mastercard
-      - amex
-      - discover
-      - jcb
-      - cup
-      - rupay
-      - eftpos
-      - cpace
-      title: SchemeEnum
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    BINConfigSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        bin_lists:
-          items:
-            type: string
-          type: array
-          title: Bin Lists
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - bin_lists
-      title: BINConfigSchema
-    ExpectationsSchema:
-      properties:
-        restart:
-          anyOf:
-          - $ref: '#/components/schemas/RestartSchema'
-          - type: 'null'
-        authorization:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsPartSchema'
-          - type: 'null'
-        completion:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsPartSchema'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: ExpectationsSchema
-    EMVTransactionType:
-      type: string
-      enum:
-      - '00'
-      - '01'
-      - '02'
-      - 09
-      - '17'
-      - '20'
-      - '21'
-      - '93'
-      title: EMVTransactionType
-    RunTestSchema:
-      properties:
-        settings:
-          $ref: '#/components/schemas/SettingsSchema'
-        probe:
-          type: boolean
-          title: Probe
-          default: false
-        check_expectations:
-          type: boolean
-          title: Check Expectations
-          default: true
-        verbose:
-          type: integer
-          title: Verbose
-          default: 0
-        sync_run:
-          type: boolean
-          title: Sync Run
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - settings
-      title: RunTestSchema
-    BINListSchema:
-      properties:
-        name:
-          type: string
-          title: Name
-        bins:
-          items:
-            type: string
-          type: array
-          title: Bins
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - bins
-      title: BINListSchema
-    IntermediateSignalSchema:
-      properties:
-        user_interface_request_data:
-          anyOf:
-          - $ref: '#/components/schemas/UserInterfaceRequestDataSchema'
-          - type: 'null'
-        outcome_parameter_set:
-          anyOf:
-          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
-          - type: 'null'
-        error_indication:
-          anyOf:
-          - $ref: '#/components/schemas/ErrorIndicationSchema'
-          - type: 'null'
-        transaction_data:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsDataSchema'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: IntermediateSignalSchema
-    SettingsSchema:
-      properties:
-        poi_id:
-          type: string
-          format: uuid
-          title: Poi Id
-        org_admin_email:
-          type: string
-          format: email
-          title: Org Admin Email
-        org_admin_password:
-          type: string
-          title: Org Admin Password
-        user_machine_client_id:
-          type: string
-          title: User Machine Client Id
-        user_machine_client_secret:
-          type: string
-          title: User Machine Client Secret
-      additionalProperties: false
-      type: object
-      required:
-      - poi_id
-      - org_admin_email
-      - org_admin_password
-      - user_machine_client_id
-      - user_machine_client_secret
-      title: SettingsSchema
-    PaymentSchema:
-      properties:
-        randoms:
-          anyOf:
-          - items:
-              type: string
-              pattern: ^([0-9a-fA-F]{2})+$
-            type: array
-          - type: 'null'
-          title: Randoms
-        trd:
-          anyOf:
-          - patternProperties:
-              ^([0-9a-fA-F]{2})+$:
-                anyOf:
-                - type: string
-                  pattern: ^([0-9a-fA-F]{2})+$
-                - type: string
-                  pattern: ^[0-9YMD]{6}$
-                - type: string
-                  pattern: ^[0-9HMS]{6}$
-                - type: string
-                  maxLength: 0
-                  minLength: 0
-            propertyNames:
-              maxLength: 6
-              minLength: 2
-            type: object
-          - type: 'null'
-          title: Trd
-        authorization_response:
-          anyOf:
-          - type: string
-            pattern: ^([0-9a-fA-F]{2})+$
-          - type: 'null'
-          title: Authorization Response
-        expectations:
-          anyOf:
-          - $ref: '#/components/schemas/ExpectationsSchema'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: PaymentSchema
     TestStatusEnum:
       type: string
       enum:
@@ -1137,53 +1276,52 @@ components:
       - NON CONCLUSIVE
       - FAIL
       title: TestStatusEnum
-    CRScopeSchema:
-      properties:
-        crs:
-          additionalProperties:
-            $ref: '#/components/schemas/CRSchema'
-          type: object
-          title: Crs
-        cr_list:
-          $ref: '#/components/schemas/CRListSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - crs
-      - cr_list
-      title: CRScopeSchema
-    EMVListSchema:
+    EMVTechnologyType:
+      type: string
+      enum:
+      - CONTACT
+      - CONTACTLESS
+      title: EMVTechnologyType
+    BINSchema:
       properties:
         name:
-          type: string
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+            examples:
+            - BIN name
+          - type: 'null'
           title: Name
-        emvs:
-          items:
-            type: string
-          type: array
-          title: Emvs
+        min_range:
+          type: integer
+          title: Min Range
+          examples:
+          - 0
+        max_range:
+          type: integer
+          title: Max Range
+          examples:
+          - 99999999
       additionalProperties: false
       type: object
       required:
-      - name
-      - emvs
-      title: EMVListSchema
-    CAPKListSchema:
+      - min_range
+      - max_range
+      title: BINSchema
+    RestartSchema:
       properties:
-        name:
-          type: string
-          title: Name
-        capks:
-          items:
-            type: string
-          type: array
-          title: Capks
+        outcome_parameter_set:
+          anyOf:
+          - $ref: '#/components/schemas/OutcomeParameterSetSchema'
+          - type: 'null'
+        error_indication:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorIndicationSchema'
+          - type: 'null'
       additionalProperties: false
       type: object
-      required:
-      - name
-      - capks
-      title: CAPKListSchema
+      title: RestartSchema
     POIConfigSchema:
       properties:
         name:
@@ -1213,168 +1351,30 @@ components:
       - name
       - emv_config
       title: POIConfigSchema
-    UserInterfaceRequestDataSchema:
-      properties:
-        message_identifier:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - CARD READ OK
-              - TRY AGAIN
-              - APPROVED
-              - APPROVED - SIGN
-              - DECLINED
-              - ERROR - OTHER CARD
-              - INSERT CARD
-              - SEE PHONE
-              - AUTHORISING - PLEASE WAIT
-              - CLEAR DISPLAY
-              - N/A
-              - PROCESSING ERROR
-              - PRESENT CARD
-            type: array
-          - type: 'null'
-          title: Message Identifier
-        status:
-          anyOf:
-          - type: string
-            enum:
-            - NOT READY
-            - IDLE
-            - READY TO READ
-            - PROCESSING
-            - CARD READ SUCCESSFULLY
-            - PROCESSING ERROR
-            - N/A
-          - type: 'null'
-          title: Status
-        hold_time:
-          anyOf:
-          - type: string
-            maxLength: 6
-            minLength: 6
-            pattern: ^([0-9]{2})+$
-          - type: 'null'
-          title: Hold Time
-        language_preference:
-          anyOf:
-          - type: string
-            maxLength: 16
-            minLength: 16
-            pattern: ^([0-9a-fA-F]{2})+$
-          - type: 'null'
-          title: Language Preference
-      additionalProperties: false
-      type: object
-      title: UserInterfaceRequestDataSchema
-    EnvironmentSchema:
-      properties:
-        tool:
-          $ref: '#/components/schemas/ToolEnum'
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        scheme:
-          $ref: '#/components/schemas/SchemeEnum'
-        test_suite_version:
-          type: string
-          title: Test Suite Version
-      additionalProperties: false
-      type: object
-      required:
-      - tool
-      - type
-      - scheme
-      - test_suite_version
-      title: EnvironmentSchema
-    EMVSchema:
-      properties:
-        name:
-          anyOf:
-          - type: string
-            maxLength: 255
-            minLength: 1
-            examples:
-            - EMV name
-          - type: 'null'
-          title: Name
-        technology_type:
-          $ref: '#/components/schemas/EMVTechnologyType'
-          default: CONTACTLESS
-        kernel:
-          type: string
-          maxLength: 2
-          minLength: 1
-          title: Kernel
-          examples:
-          - 0F
-        aid:
-          type: string
-          maxLength: 32
-          minLength: 1
-          title: Aid
-          examples:
-          - A0000000041010
-        transaction_type:
-          $ref: '#/components/schemas/EMVTransactionType'
-          default: '00'
-        asf:
-          type: boolean
-          title: Asf
-          default: true
-        tlv:
-          type: string
-          minLength: 1
-          title: Tlv
-          examples:
-          - 5F200F4D696B65204A6F686E20536D697468
-      additionalProperties: false
-      type: object
-      required:
-      - kernel
-      - aid
-      - tlv
-      title: EMVSchema
-    CAPKHashType:
+    EMVTransactionType:
       type: string
       enum:
-      - UNDEFINED
-      - SHA1
-      - SHA256
-      title: CAPKHashType
-    RunCustomTestSchema:
-      properties:
-        settings:
-          $ref: '#/components/schemas/SettingsSchema'
-        probe:
-          type: boolean
-          title: Probe
-          default: false
-        check_expectations:
-          type: boolean
-          title: Check Expectations
-          default: true
-        verbose:
-          type: integer
-          title: Verbose
-          default: 0
-        test:
-          $ref: '#/components/schemas/CustomTestSchema'
-        config:
-          $ref: '#/components/schemas/ConfigSchema'
-      additionalProperties: false
-      type: object
-      required:
-      - settings
-      - test
-      - config
-      title: RunCustomTestSchema
-    EMVTechnologyType:
+      - '00'
+      - '01'
+      - '02'
+      - 09
+      - '17'
+      - '20'
+      - '21'
+      - '93'
+      title: EMVTransactionType
+    SchemeEnum:
       type: string
       enum:
-      - CONTACT
-      - CONTACTLESS
-      title: EMVTechnologyType
+      - mastercard
+      - amex
+      - discover
+      - jcb
+      - cup
+      - rupay
+      - eftpos
+      - cpace
+      title: SchemeEnum
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2
